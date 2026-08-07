@@ -107,9 +107,39 @@ def get_internships(params: dict) -> AgentResponse:
     )
 
 
+def general_synthesis(params: dict) -> AgentResponse:
+    session_id = params.get("session_id", "default")
+    profile = get_profile(session_id)
+    if not profile:
+        profile = create_session(session_id)
+
+    query = params.get("query", "placement readiness roadmap tier rules interview prep core dream tier")
+    rag_results = retrieve(query, k=2, category="placement")
+    top_rag = rag_results[0] if rag_results else None
+    citation = format_citation(top_rag) if top_rag else None
+
+    context_str = "\n".join([r.get("text", "") for r in rag_results])
+    summary = (
+        f"Placement Roadmap & Guidance for {profile['name']} (CGPA {profile['cgpa']}, {profile['backlog_count']} backlogs): "
+        f"Key requirements & policy context: {context_str[:250]}..."
+    )
+
+    return AgentResponse(
+        status="success",
+        data={
+            "profile": profile,
+            "rag_documents": rag_results,
+            "synthesis": summary
+        },
+        message=summary,
+        citation=citation
+    )
+
+
 ACTIONS = {
     "check_eligibility": check_eligibility,
     "get_internships": get_internships,
+    "general_synthesis": general_synthesis,
 }
 
 
