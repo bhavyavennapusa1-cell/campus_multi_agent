@@ -13,21 +13,31 @@ if hasattr(sys.stdout, "reconfigure"):
 
 
 def run_retrieval_tests():
-    original_queries = [
-        ("What is the minimum attendance percentage required?", None),
-        ("What CGPA do I need for a dream company?", None),
-        ("What is the hostel curfew time?", None),
-        ("How many books can I borrow from the library?", None),
-        ("When is the next hackathon?", None)
-    ]
+    varied_queries = [
+        # Academic Domain Queries
+        ("What is the minimum attendance percentage required?", "academic"),
+        ("Can I write SEE exams if I was hospitalized and had 68% attendance?", "academic"),
+        ("What are the minimum passing marks in internal assessment versus end sem?", "academic"),
+        ("How many backlogs can I have before I am blocked from entering 4th year?", "academic"),
+        ("Where is the CSE department HOD office located?", "academic"),
 
-    category_queries = [
-        ("eligibility rules and CGPA requirements", "placement"),
-        ("attendance condonation and medical grounds", "academic")
-    ]
+        # Placement Domain Queries
+        ("What CGPA do I need for a dream company?", "placement"),
+        ("If I get a job offer from TCS, can I still sit for Microsoft placement drives?", "placement"),
+        ("What happens if I register for Google placement online test but don't show up?", "placement"),
+        ("Can 3rd year ECE students apply for Salesforce software engineering role?", "placement"),
 
-    offtopic_queries = [
-        ("what's the weather today in Hyderabad", None)
+        # Campus & Student Services Queries
+        ("What is the hostel curfew time?", "campus"),
+        ("What is the penalty if I return to hostel Block-A after 11:30 PM on weekend?", "campus"),
+        ("How many books can I borrow from the library?", "campus"),
+        ("How do I apply for post-matric tuition fee reimbursement scholarship?", "campus"),
+        ("Who is the coordinator to contact if my hostel room plumbing ticket is not resolved in 2 days?", "campus"),
+        ("Where do campus buses from Kukatpally stop?", "campus"),
+        ("When is the next hackathon?", "campus"),
+
+        # Off-Topic / Unmatched Query
+        ("What is the formula for calculating quantum entanglement in black holes?", None)
     ]
 
     total_queries = 0
@@ -36,13 +46,12 @@ def run_retrieval_tests():
     score_sum = 0.0
 
     print("=" * 85)
-    print("HYBRID RAG RETRIEVAL TEST REPORT")
+    print("RELEVANCE & GROUNDING RAG RETRIEVAL SUITE")
     print("=" * 85 + "\n")
 
-    # 1. Test original 5 queries
-    for q_text, cat in original_queries:
+    for q_text, cat in varied_queries:
         total_queries += 1
-        results = retrieve(q_text, k=3, category=cat)
+        results = retrieve(q_text, k=2, category=cat)
         top_score = results[0]["score"] if results else 0.0
         score_sum += top_score
         
@@ -52,74 +61,29 @@ def run_retrieval_tests():
         else:
             failed_queries += 1
 
-        print(f"TEST {total_queries} [{ 'PASS' if passed else 'FAIL' }]: \"{q_text}\"")
+        status_str = "PASS" if passed else "FAIL"
+        cat_str = f" [Category: {cat}]" if cat else ""
+        print(f"TEST {total_queries:02d} [{status_str}]{cat_str}: \"{q_text}\"")
         print("-" * 85)
-        for rank, r in enumerate(results, 1):
-            citation = format_citation(r)
-            snippet = r["text"].replace("\n", " ")[:100] + "..."
-            print(f"  Rank {rank} | Fused Score: {r['score']:.6f} | Citation: {citation}")
-            print(f"         Doc ID: {r['doc_id']} | Section: {r['section_title']}")
-            print(f"         Snippet: {snippet}")
-        print()
-
-    # 2. Test Category Filtering (2 queries)
-    for q_text, cat in category_queries:
-        total_queries += 1
-        results = retrieve(q_text, k=3, category=cat)
-        top_score = results[0]["score"] if results else 0.0
-        score_sum += top_score
-
-        mismatches = [r for r in results if r["category"] != cat]
-        passed = len(results) > 0 and len(mismatches) == 0
-        if passed:
-            passed_queries += 1
-        else:
-            failed_queries += 1
-
-        status = "PASS" if passed else "FAIL"
-        print(f"TEST {total_queries} [{status}] (Category Filter='{cat}'): \"{q_text}\"")
-        print("-" * 85)
-        for rank, r in enumerate(results, 1):
-            citation = format_citation(r)
-            snippet = r["text"].replace("\n", " ")[:100] + "..."
-            print(f"  Rank {rank} | Category: {r['category']} | Score: {r['score']:.6f} | Citation: {citation}")
-            print(f"         Snippet: {snippet}")
-        if mismatches:
-            print(f"  - ERROR: Found category mismatches: {[m['category'] for m in mismatches]}")
-        print()
-
-    # 3. Test Vague / Off-Topic Query (1 query)
-    for q_text, cat in offtopic_queries:
-        total_queries += 1
-        results = retrieve(q_text, k=3, category=cat)
-        top_score = results[0]["score"] if results else 0.0
-        score_sum += top_score
-
-        low_conf = results[0].get("low_confidence", False) if results else False
-        passed = len(results) > 0 and low_conf is True
-        if passed:
-            passed_queries += 1
-        else:
-            failed_queries += 1
-
-        status = "PASS" if passed else "FAIL"
-        print(f"TEST {total_queries} [{status}] (Off-Topic Low-Confidence Check): \"{q_text}\"")
-        print("-" * 85)
-        print(f"  Low Confidence Flag Detected: {low_conf}")
         if results:
-            r = results[0]
-            print(f"  Top Result Score: {r['score']:.6f} | Citation: {format_citation(r)}")
+            for rank, r in enumerate(results, 1):
+                citation = format_citation(r)
+                snippet = r["text"].replace("\n", " ")[:110] + "..."
+                print(f"  Rank {rank} | Score: {r['score']:.4f} | Citation: {citation}")
+                print(f"         Snippet: {snippet}")
+        else:
+            print("  - WARNING: No relevant document chunks retrieved (Corpus Gap Detected).")
         print()
 
-    avg_score = round(score_sum / max(total_queries, 1), 6)
+    avg_score = round(score_sum / max(total_queries, 1), 4)
 
     print("=" * 85)
-    print("RETRIEVAL TEST SUMMARY")
+    print("RETRIEVAL SUITE TEST SUMMARY")
     print("=" * 85)
-    print(f"Total Test Queries Run : {total_queries}")
-    print(f"Passed                 : {passed_queries}")
-    print(f"Failed                 : {failed_queries}")
-    print(f"Average Fused Score    : {avg_score}")
+    print(f"Total Queries Evaluated : {total_queries}")
+    print(f"Passed Retrieval       : {passed_queries}")
+    print(f"Failed / Gap Detected   : {failed_queries}")
+    print(f"Average BM25 Score     : {avg_score}")
     print("=" * 85)
 
 

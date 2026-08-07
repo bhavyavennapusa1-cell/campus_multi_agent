@@ -1,0 +1,44 @@
+{
+  "classrooms": [
+    {
+      "class_id": "CLS_CSE_3A",
+      "branch": "CSE",
+      "year": 3,
+      "section": "A",
+      "class_representative": "Bhavya Vennapusa (STU001)",
+      "classmates": ["STU001", "STU002", "STU008"]
+    },
+    {
+      "class_id": "CLS_ECE_3A",
+      "branch": "ECE",
+      "year": 3,
+      "section": "A",
+      "class_representative": "Siddharth Verma (STU004)",
+      "classmates": ["STU004", "STU007"]
+    }
+  ],
+  "project_groups": [
+    {
+      "group_id": "GRP_CAPSTONE_01",
+      "title": "Smart Campus Multi-Agent Assistant System",
+      "department": "CSE",
+      "mentor_id": "FAC101",
+      "mentor_name": "Dr. P. V. Sudha",
+      "members": [
+        { "student_id": "STU001", "name": "Bhavya Vennapusa", "role": "Data, Memory & RAG Lead" },
+        { "student_id": "STU002", "name": "Rahul Sharma", "role": "Orchestrator Lead" }
+      ]
+    },
+    {
+      "group_id": "GRP_CAPSTONE_02",
+      "title": "Autonomous Robotics Navigation System",
+      "department": "ECE",
+      "mentor_id": "FAC103",
+      "mentor_name": "Dr. N. Srinivas",
+      "members": [
+        { "student_id": "STU004", "name": "Siddharth Verma", "role": "Hardware Lead" },
+        { "student_id": "STU007", "name": "Sneha Kulkarni", "role": "Software Lead" }
+      ]
+    }
+  ]
+}

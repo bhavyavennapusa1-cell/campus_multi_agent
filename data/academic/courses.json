@@ -1,0 +1,64 @@
+{
+  "courses": [
+    {
+      "course_id": "CS301",
+      "code": "CS301PC",
+      "name": "Design & Analysis of Algorithms",
+      "department": "CSE",
+      "semester": 6,
+      "credits": 4,
+      "faculty_id": "FAC101",
+      "syllabus_outline": ["Asymptotic Analysis", "Divide & Conquer", "Dynamic Programming", "Greedy Algorithms", "NP-Completeness"]
+    },
+    {
+      "course_id": "CS302",
+      "code": "CS302PC",
+      "name": "Database Management Systems",
+      "department": "CSE",
+      "semester": 6,
+      "credits": 4,
+      "faculty_id": "FAC102",
+      "syllabus_outline": ["ER Modeling", "Relational Algebra", "SQL Queries", "Normalization (BCNF/3NF)", "Transaction & Concurrency"]
+    },
+    {
+      "course_id": "CS303",
+      "code": "CS303PC",
+      "name": "Operating Systems",
+      "department": "CSE",
+      "semester": 6,
+      "credits": 3,
+      "faculty_id": "FAC101",
+      "syllabus_outline": ["Process Management", "CPU Scheduling", "Deadlocks", "Memory Management", "File Systems"]
+    },
+    {
+      "course_id": "EC201",
+      "code": "EC201PC",
+      "name": "Digital Signal Processing",
+      "department": "ECE",
+      "semester": 6,
+      "credits": 4,
+      "faculty_id": "FAC103",
+      "syllabus_outline": ["DFT & FFT", "IIR Filter Design", "FIR Filter Design", "Multirate DSP", "DSP Processors"]
+    },
+    {
+      "course_id": "IT301",
+      "code": "IT301PC",
+      "name": "Web Technologies & Cloud Computing",
+      "department": "IT",
+      "semester": 6,
+      "credits": 3,
+      "faculty_id": "FAC104",
+      "syllabus_outline": ["HTML5/CSS/JS", "RESTful APIs", "Microservices", "Docker & Kubernetes", "AWS/GCP Cloud Architecture"]
+    },
+    {
+      "course_id": "ME101",
+      "code": "ME101PC",
+      "name": "Thermodynamics & Heat Transfer",
+      "department": "MECH",
+      "semester": 6,
+      "credits": 4,
+      "faculty_id": "FAC106",
+      "syllabus_outline": ["First & Second Laws", "Entropy", "Conduction & Convection", "Radiation", "Heat Exchangers"]
+    }
+  ]
+}

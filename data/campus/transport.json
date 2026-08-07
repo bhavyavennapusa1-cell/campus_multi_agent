@@ -1,0 +1,24 @@
+{
+  "routes": [
+    {
+      "route_id": "R01",
+      "route_name": "Kukatpally to Campus Via Hitec City",
+      "bus_number": "TS 09 UA 1001",
+      "driver_name": "Srinivas Rao",
+      "driver_phone": "+91-9876544001",
+      "morning_pickup": "07:15 AM",
+      "evening_drop": "04:45 PM",
+      "stops": ["Kukatpally Y-Junction", "KPHB Phase 1", "Mindspace Junction", "Biodiversity Park", "College Campus"]
+    },
+    {
+      "route_id": "R02",
+      "route_name": "Dilsukhnagar to Campus Via Lakdikapul",
+      "bus_number": "TS 09 UA 1002",
+      "driver_name": "G. Krishna",
+      "driver_phone": "+91-9876544002",
+      "morning_pickup": "07:00 AM",
+      "evening_drop": "04:45 PM",
+      "stops": ["Dilsukhnagar Metro", "LB Nagar", "Koti", "Lakdikapul", "Mehdipatnam", "College Campus"]
+    }
+  ]
+}

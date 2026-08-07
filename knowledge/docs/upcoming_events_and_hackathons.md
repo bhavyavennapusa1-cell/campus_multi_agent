@@ -1,6 +1,15 @@
+---
+doc_id: DOC_CAMP_EVT_010
+title: Vasavi Campus Events, Hackathons, and Cultural Fests
+category: campus
+version: "2.0"
+effective_date: "2026-06-01"
+last_updated: "2026-08-01"
+---
+
 # Vasavi College of Engineering - Campus Events, Hackathons & Fests (2026)
 
-## Upcoming Technical Hackathons & Ideathons
+## 1. Upcoming Technical Hackathons & Ideathons
 - AgentX National Level Hackathon 2026:
   - Organizer: Vasavi College of Engineering & HackerRank Campus Crew
   - Date: April 10-11, 2026
@@ -8,15 +17,17 @@
   - Registration Deadline: April 8, 2026
 - Smart India Hackathon (SIH) Internal Hackathon:
   - Date: May 5, 2026
-  - Type: Software & Hardware Prototype Competition
-- VCE Annual Coding Sprint 2026:
-  - Date: March 25, 2026
-  - Type: 24-hour Competitive Programming Contest
+  - Venue: CSE Lab 3 & Lab 4
 
-## Cultural Fests & Symposiums
-- ECE / CSE Technical Symposium (Axiom / Euphoria):
-  - Date: March 15-16, 2026
-  - Events: Paper presentations, robotics, LAN gaming, web design challenges.
-- Annual Cultural Fest (Mantra):
-  - Date: April 22-23, 2026
-  - Events: Battle of the bands, classical/western dance competitions, fashion show.
+## 2. Workshops & Resume Building Sessions
+- Google Placement Prep & Resume Breakdown Workshop:
+  - Date: April 18, 2026
+  - Venue: Main Auditorium
+- Microsoft Cloud & Azure AI Workshop:
+  - Date: May 12, 2026
+
+## 3. Cultural Festivals & Sports Tournaments
+- Euphoria Annual Cultural Fest:
+  - Date: March 20-21, 2026
+- Inter-Departmental Sports Tournament:
+  - Date: February 15-18, 2026

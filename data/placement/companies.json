@@ -1,0 +1,129 @@
+{
+  "companies": [
+    {
+      "company_id": "COMP01",
+      "company_name": "Google",
+      "tier": "Dream Tier",
+      "role": "Software Development Engineer (SDE Intern / Grad)",
+      "min_cgpa": 8.0,
+      "min_attendance": 75.0,
+      "max_backlogs": 0,
+      "eligible_branches": ["CSE", "IT", "ECE"],
+      "eligible_years": [3, 4],
+      "ctc_lpa": 32.0,
+      "stipend_pm_inr": 100000,
+      "deadline": "2026-08-25",
+      "application_link": "https://careers.google.com/jobs/results/",
+      "interview_process": [
+        "Online Coding Round (2 LeetCode Medium/Hard DSA questions, 90 mins)",
+        "Technical Round 1 (Data Structures, Algorithms & Time Complexity)",
+        "Technical Round 2 (System Design Basics, OS & Networking Concepts)",
+        "Googleness & Leadership Behavioral Round"
+      ],
+      "resume_tips": [
+        "Highlight strong DSA problem-solving ratings (LeetCode/Codeforces)",
+        "Quantify impact in software projects (e.g. 'Improved API throughput by 40%')",
+        "Include links to GitHub repos and live hosted demos"
+      ]
+    },
+    {
+      "company_id": "COMP02",
+      "company_name": "Microsoft",
+      "tier": "Dream Tier",
+      "role": "Software Engineer (Intern & FTE)",
+      "min_cgpa": 7.5,
+      "min_attendance": 75.0,
+      "max_backlogs": 0,
+      "eligible_branches": ["CSE", "IT", "ECE"],
+      "eligible_years": [3, 4],
+      "ctc_lpa": 28.0,
+      "stipend_pm_inr": 85000,
+      "deadline": "2026-08-28",
+      "application_link": "https://careers.microsoft.com/",
+      "interview_process": [
+        "Codility Online Assessment (3 questions, 75 mins)",
+        "Technical Interview Round 1 (Trees, Graphs & Dynamic Programming)",
+        "Technical Interview Round 2 (Object-Oriented Design & DB Design)",
+        "AA (As-If-Appropriate) Final HR & Managerial Round"
+      ],
+      "resume_tips": [
+        "Emphasize Object-Oriented Programming (C++/Java/Python)",
+        "Demonstrate collaborative Git/GitHub team projects",
+        "Detail cloud fundamentals (Azure/AWS project experience)"
+      ]
+    },
+    {
+      "company_id": "COMP03",
+      "company_name": "Salesforce",
+      "tier": "Dream Tier",
+      "role": "Member of Technical Staff (MTS)",
+      "min_cgpa": 8.0,
+      "min_attendance": 75.0,
+      "max_backlogs": 0,
+      "eligible_branches": ["CSE", "IT"],
+      "eligible_years": [3, 4],
+      "ctc_lpa": 30.0,
+      "stipend_pm_inr": 90000,
+      "deadline": "2026-09-02",
+      "application_link": "https://salesforce.com/careers/",
+      "interview_process": [
+        "HackerRank Coding Test (3 DSA Questions)",
+        "Technical Round 1 (DSA & DBMS SQL Queries)",
+        "Technical Round 2 (Distributed Systems & Cloud Concepts)",
+        "HR & Fitment Interview"
+      ],
+      "resume_tips": [
+        "Highlight full-stack cloud projects and REST API architecture",
+        "Include database optimization techniques (indexing, normalization)"
+      ]
+    },
+    {
+      "company_id": "COMP04",
+      "company_name": "Oracle India",
+      "tier": "Core Tier",
+      "role": "Server Technology Engineer",
+      "min_cgpa": 7.0,
+      "min_attendance": 70.0,
+      "max_backlogs": 1,
+      "eligible_branches": ["CSE", "IT", "ECE"],
+      "eligible_years": [4],
+      "ctc_lpa": 18.0,
+      "stipend_pm_inr": 60000,
+      "deadline": "2026-09-10",
+      "application_link": "https://oracle.com/corporate/careers/",
+      "interview_process": [
+        "Oracle Online Aptitude & Coding Assessment",
+        "Technical Round 1 (C++/Java Deep Dive & DBMS)",
+        "Technical Round 2 (Operating Systems & Memory Management)",
+        "HR Round"
+      ],
+      "resume_tips": [
+        "Focus on core CS fundamentals: OS, DBMS, Networks",
+        "Strong C++ or Java memory management knowledge"
+      ]
+    },
+    {
+      "company_id": "COMP05",
+      "company_name": "TCS",
+      "tier": "Mass / Pool Tier",
+      "role": "Systems Engineer / Digital Developer",
+      "min_cgpa": 6.5,
+      "min_attendance": 65.0,
+      "max_backlogs": 2,
+      "eligible_branches": ["CSE", "IT", "ECE", "MECH", "CIVIL"],
+      "eligible_years": [4],
+      "ctc_lpa": 7.0,
+      "stipend_pm_inr": 25000,
+      "deadline": "2026-09-20",
+      "application_link": "https://nextstep.tcs.com/",
+      "interview_process": [
+        "TCS NQT (National Qualifier Test - Aptitude, Verbal, Coding)",
+        "Combined Technical + Managerial + HR Interview"
+      ],
+      "resume_tips": [
+        "Clean single-page resume with clear project summaries",
+        "Highlight fundamental programming skills in C/Python/Java"
+      ]
+    }
+  ]
+}

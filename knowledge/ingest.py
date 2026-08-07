@@ -53,9 +53,14 @@ def ingest_documents():
     print("STARTING RAG EMBEDDING AND INGESTION PIPELINE")
     print("=" * 80 + "\n")
 
-    # 1. Collect all markdown documents in /data/docs/
-    md_files = glob.glob(os.path.join(DATA_DOCS_DIR, "**", "*.md"), recursive=True)
+    # 1. Collect all markdown documents in /data/docs/ and /knowledge/docs/
+    md_files = (
+        glob.glob(os.path.join(DATA_DOCS_DIR, "**", "*.md"), recursive=True) +
+        glob.glob(os.path.join(PROJECT_ROOT, "knowledge", "docs", "**", "*.md"), recursive=True)
+    )
+    md_files = list(set(md_files))
     md_files = [f for f in md_files if os.path.basename(f).lower() != "readme.md"]
+
 
     documents = []
     metadatas = []
