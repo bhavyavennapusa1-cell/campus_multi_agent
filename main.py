@@ -7,9 +7,13 @@ with static frontend file serving and CORS middleware.
 import sys
 from pathlib import Path
 
+# pyrefly: ignore [missing-import]
 from fastapi import FastAPI, HTTPException
+# pyrefly: ignore [missing-import]
 from fastapi.middleware.cors import CORSMiddleware
+# pyrefly: ignore [missing-import]
 from fastapi.staticfiles import StaticFiles
+# pyrefly: ignore [missing-import]
 from pydantic import BaseModel
 
 # Ensure project root is in sys.path
