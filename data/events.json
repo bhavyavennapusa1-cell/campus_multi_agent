@@ -1,0 +1,18 @@
+{
+  "events": [
+    {
+      "id": "E001",
+      "name": "Google Placement Workshop",
+      "date": "2026-08-08",
+      "time": "10:00",
+      "type": "workshop"
+    },
+    {
+      "id": "E002",
+      "name": "AI/ML Hackathon Prep Session",
+      "date": "2026-08-10",
+      "time": "15:00",
+      "type": "workshop"
+    }
+  ]
+}

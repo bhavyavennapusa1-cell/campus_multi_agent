@@ -1,0 +1,25 @@
+{
+  "internships": [
+    {
+      "company": "Google",
+      "min_cgpa": 8.0,
+      "min_attendance": 75,
+      "eligible_branches": ["CSE", "IT", "ECE"],
+      "eligible_years": [3, 4]
+    },
+    {
+      "company": "Microsoft",
+      "min_cgpa": 7.5,
+      "min_attendance": 75,
+      "eligible_branches": ["CSE", "IT"],
+      "eligible_years": [3, 4]
+    },
+    {
+      "company": "TCS",
+      "min_cgpa": 6.5,
+      "min_attendance": 65,
+      "eligible_branches": ["CSE", "IT", "ECE", "MECH", "CIVIL"],
+      "eligible_years": [3, 4]
+    }
+  ]
+}

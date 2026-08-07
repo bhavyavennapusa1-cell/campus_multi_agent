@@ -1,0 +1,7 @@
+.env
+venv/
+__pycache__/
+*.pyc
+knowledge/chroma_db/
+data/memory.db
+.streamlit/
