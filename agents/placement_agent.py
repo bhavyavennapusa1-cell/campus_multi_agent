@@ -392,7 +392,9 @@ def general_synthesis(params: dict) -> AgentResponse:
     citation = format_citation(top_rag) if top_rag else None
 
     # Retrieve stored coding and course repos
+    # pyrefly: ignore [unknown-name]
     coding_stats = CODING_PLATFORM_REPOS.get(session_id, CODING_PLATFORM_REPOS["demo_session_frontend"])
+    # pyrefly: ignore [unknown-name]
     courses = COURSE_PROGRESS_REPOS.get(session_id, COURSE_PROGRESS_REPOS["demo_session_frontend"])
 
     policy_info = "\n".join([r["text"] for r in rag_results]) if rag_results else "Maintain CGPA >= 8.0 with 0 backlogs for Dream Tier drives."
