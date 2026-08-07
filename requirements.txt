@@ -11,3 +11,4 @@ pydantic
 pytest
 sentence-transformers
 rank-bm25
+pyyaml
