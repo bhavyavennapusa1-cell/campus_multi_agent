@@ -18,12 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
         chatInput.focus();
     }
 
-    // 2. Memory Input Elements Rehydration & Storage Persistence
+    // Memory Input Elements
     const memName = document.getElementById('mem-name');
     const memBranch = document.getElementById('mem-branch');
     const memAttendance = document.getElementById('mem-attendance');
     const memHostel = document.getElementById('mem-hostel');
 
+    // 1. Rehydrate Student Memory Panel from localStorage (fallback to defaults if empty)
     if (memName) {
         const savedName = localStorage.getItem('mem_name');
         if (savedName) memName.value = savedName;
@@ -41,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedHostel) memHostel.value = savedHostel;
     }
 
+    // 2. Persist Student Memory Panel edits to localStorage on input and change
     const saveMemoryToStorage = () => {
         if (memName) localStorage.setItem('mem_name', memName.value);
         if (memBranch) localStorage.setItem('mem_branch', memBranch.value);
@@ -55,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 3. Quick scenario chips click handler
+    // Quick scenario chips click handler
     chips.forEach(chip => {
         chip.addEventListener('click', () => {
             chatInput.value = chip.getAttribute('data-prompt');
@@ -63,9 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 4. Helper for trace status icons
+    // Helper for trace status icons
     const getStatusIcon = (status) => {
-        switch((status || '').toLowerCase()) {
+        switch ((status || '').toLowerCase()) {
             case 'pending': return '<div style="border: 2px solid var(--text-muted); border-radius: 50%; width: 14px; height: 14px;"></div>';
             case 'running': return '<div style="border: 2px solid var(--border-dark); border-top-color: var(--primary-blue); border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite;"></div>';
             case 'done': return '<span style="color: #27ae60; font-weight: bold;">✓</span>';
@@ -74,37 +76,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 5. Typing Indicator management
-    const showTypingIndicator = () => {
-        removeTypingIndicator();
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'message msg-bot typing-indicator';
-        typingDiv.id = 'typing-indicator';
-        typingDiv.innerHTML = '<span style="display:inline-block; width:6px; height:6px; background:var(--text-muted); border-radius:50%; margin:0 2px; animation: spin 1s infinite alternate;"></span><span style="display:inline-block; width:6px; height:6px; background:var(--text-muted); border-radius:50%; margin:0 2px; animation: spin 1s infinite alternate 0.2s;"></span><span style="display:inline-block; width:6px; height:6px; background:var(--text-muted); border-radius:50%; margin:0 2px; animation: spin 1s infinite alternate 0.4s;"></span>';
-        chatHistory.appendChild(typingDiv);
-        chatHistory.scrollTop = chatHistory.scrollHeight;
-    };
-
-    const removeTypingIndicator = () => {
-        const existing = document.getElementById('typing-indicator');
-        if (existing) existing.remove();
-    };
-
-    // 6. Append Message to Chat History
-    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, cards = [], actionContext = "action") => {
+    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false) => {
         const msgDiv = document.createElement('div');
         msgDiv.className = `message msg-${sender}`;
         msgDiv.dataset.context = actionContext;
-        
+
         let contentHtml = `<p>${text}</p>`;
 
-        // Chat card rendering for optional backend `cards` array
+        // Part 5: Chat card rendering for optional backend `cards` array
         if (cards && cards.length > 0) {
             const isScrollStrip = cards.length > 2;
-            const containerStyle = isScrollStrip 
+            const containerStyle = isScrollStrip
                 ? "display: flex; gap: 0.75rem; overflow-x: auto; padding: 0.5rem 0.2rem; margin-top: 0.75rem; scrollbar-width: thin;"
                 : "display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem;";
-            
+
             contentHtml += `<div class="chat-cards-container" style="${containerStyle}">`;
             cards.forEach(card => {
                 let actionsHtml = '';
@@ -162,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatHistory.scrollTop = chatHistory.scrollHeight;
     };
 
-    // 7. Render Traces in Panel
+    // Render Traces in Panel
     const renderTraces = (traces) => {
         traceList.innerHTML = '';
         if (!traces || traces.length === 0) return;
@@ -183,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         traceList.scrollTop = traceList.scrollHeight;
     };
 
-    // 8. Fallback response for offline / timeout state
+    // Fallback response for offline / timeout state
     const getFallbackResponse = (messageText) => {
         const textLower = messageText.toLowerCase();
         let replyText = "Based on institutional regulations, your request has been processed across campus agent pipelines.";
@@ -219,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     };
 
-    // 9. Send Query Handler
+    // Send Query Handler
     const sendQuery = async (messageText) => {
         renderTraces([
             { agent: "orchestrator", action: "intent_parsing", status: "running", message: "Analyzing user input..." },
@@ -236,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 signal: controller.signal,
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     message: messageText,
                     session_id: "demo_session_frontend",
                     profile: {
@@ -254,16 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
             const data = await response.json();
-            appendMessage(
-                data.reply, 
-                'bot', 
-                data.agents_used || [], 
-                data.reasoning_steps || [], 
-                data.requires_confirmation || false,
-                data.cards || [],
-                data.agents_used ? data.agents_used[0] : "action"
-            );
-            renderTraces(data.trace || []);
+            appendMessage(data.reply, 'bot', data.agents_used, data.reasoning_steps, data.requires_confirmation);
+            renderTraces(data.trace);
 
         } catch (error) {
             clearTimeout(timeoutId);
@@ -277,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 fallback.agents_used,
                 fallback.reasoning_steps,
                 fallback.requires_confirmation,
-                [],
                 fallback.agents_used[0]
             );
             renderTraces(fallback.trace);
@@ -300,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// 10. Real Confirm/Cancel Flow Handler
+// Real Confirm/Cancel Flow Handler
 window.handleConfirm = async (isConfirmed, context = "action", btnElement = null) => {
     const actionContainer = btnElement ? btnElement.parentElement : null;
     if (actionContainer) {
@@ -314,15 +290,16 @@ window.handleConfirm = async (isConfirmed, context = "action", btnElement = null
             body: JSON.stringify({ confirmed: isConfirmed, context: context })
         });
 
-        const data = response.ok ? await response.json() : { 
-            message: isConfirmed ? "Action confirmed." : "Action cancelled.", 
-            status: isConfirmed ? "done" : "failed" 
+        const data = response.ok ? await response.json() : {
+            message: isConfirmed ? "Action confirmed." : "Action cancelled.",
+            status: isConfirmed ? "done" : "failed"
         };
 
         if (actionContainer) {
             actionContainer.innerHTML = `<span style="font-weight: 600; font-size: 0.85rem; color: ${isConfirmed ? '#27ae60' : '#c0392b'};">${isConfirmed ? '✅ ' + data.message : '❌ ' + data.message}</span>`;
         }
 
+        // Update trace panel with action confirmation result
         const traceList = document.getElementById('trace-list');
         if (traceList) {
             const confirmItem = document.createElement('div');
@@ -346,7 +323,6 @@ window.handleConfirm = async (isConfirmed, context = "action", btnElement = null
     }
 };
 
-// 11. Card Action Button Handler
 window.handleCardAction = (actionText) => {
     const chatInput = document.getElementById('chat-input');
     const chatForm = document.getElementById('chat-form');
