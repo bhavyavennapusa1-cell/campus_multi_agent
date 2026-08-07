@@ -1,25 +1,56 @@
 {
   "internships": [
     {
+      "company_id": "COMP01",
       "company": "Google",
+      "tier": "Dream Tier",
+      "role": "Software Development Engineer Intern",
       "min_cgpa": 8.0,
-      "min_attendance": 75,
+      "min_attendance": 75.0,
+      "max_backlogs": 0,
       "eligible_branches": ["CSE", "IT", "ECE"],
-      "eligible_years": [3, 4]
+      "eligible_years": [3, 4],
+      "stipend_pm_inr": 100000,
+      "deadline": "2026-08-25"
     },
     {
+      "company_id": "COMP02",
       "company": "Microsoft",
+      "tier": "Dream Tier",
+      "role": "Software Engineering Intern",
       "min_cgpa": 7.5,
-      "min_attendance": 75,
+      "min_attendance": 75.0,
+      "max_backlogs": 0,
       "eligible_branches": ["CSE", "IT"],
-      "eligible_years": [3, 4]
+      "eligible_years": [3, 4],
+      "stipend_pm_inr": 85000,
+      "deadline": "2026-08-28"
     },
     {
+      "company_id": "COMP03",
+      "company": "Salesforce",
+      "tier": "Dream Tier",
+      "role": "MTS Intern",
+      "min_cgpa": 8.0,
+      "min_attendance": 75.0,
+      "max_backlogs": 0,
+      "eligible_branches": ["CSE", "IT"],
+      "eligible_years": [3, 4],
+      "stipend_pm_inr": 90000,
+      "deadline": "2026-09-02"
+    },
+    {
+      "company_id": "COMP05",
       "company": "TCS",
+      "tier": "Mass Tier",
+      "role": "Digital Developer Intern",
       "min_cgpa": 6.5,
-      "min_attendance": 65,
+      "min_attendance": 65.0,
+      "max_backlogs": 2,
       "eligible_branches": ["CSE", "IT", "ECE", "MECH", "CIVIL"],
-      "eligible_years": [3, 4]
+      "eligible_years": [3, 4],
+      "stipend_pm_inr": 25000,
+      "deadline": "2026-09-20"
     }
   ]
 }

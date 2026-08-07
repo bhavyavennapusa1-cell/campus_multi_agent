@@ -1,0 +1,25 @@
+{
+  "faqs": [
+    {
+      "faq_id": "FAQ001",
+      "category": "campus",
+      "question": "What is the Wi-Fi password for campus networks?",
+      "answer": "Connect to 'Vasavi-Student-WiFi' and log in with your Student Portal Roll Number and password. MAC registration is required at the IT Helpdesk.",
+      "tags": ["wifi", "internet", "it", "password"]
+    },
+    {
+      "faq_id": "FAQ002",
+      "category": "campus",
+      "question": "How do I apply for a duplicate Student ID card?",
+      "answer": "Submit an application at the Student Affairs Section along with a copy of the police FIR / lost report and fee payment receipt of INR 200.",
+      "tags": ["id card", "duplicate", "student affairs"]
+    },
+    {
+      "faq_id": "FAQ003",
+      "category": "placement",
+      "question": "Can I apply for Core Tier companies after getting placed in a Mass Tier company?",
+      "answer": "Yes. As per Placement Policy §4.2, students placed in Mass Tier companies are allowed up to 2 attempts for Core or Dream Tier placement drives.",
+      "tags": ["placement", "policy", "multiple offers"]
+    }
+  ]
+}

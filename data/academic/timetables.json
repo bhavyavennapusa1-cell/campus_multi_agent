@@ -1,0 +1,28 @@
+{
+  "timetables": [
+    {
+      "branch": "CSE",
+      "year": 3,
+      "section": "A",
+      "room": "R301",
+      "schedule": [
+        { "day": "Monday", "time": "09:00 AM - 10:00 AM", "course_id": "CS301", "subject": "Design & Analysis of Algorithms", "faculty_id": "FAC101" },
+        { "day": "Monday", "time": "10:00 AM - 11:00 AM", "course_id": "CS302", "subject": "Database Management Systems", "faculty_id": "FAC102" },
+        { "day": "Monday", "time": "11:15 AM - 01:15 PM", "course_id": "CS303", "subject": "Operating Systems Lab", "faculty_id": "FAC101" },
+        { "day": "Tuesday", "time": "09:00 AM - 10:00 AM", "course_id": "CS303", "subject": "Operating Systems", "faculty_id": "FAC101" },
+        { "day": "Tuesday", "time": "10:00 AM - 11:00 AM", "course_id": "CS301", "subject": "Design & Analysis of Algorithms", "faculty_id": "FAC101" },
+        { "day": "Wednesday", "time": "02:00 PM - 04:00 PM", "course_id": "CS302", "subject": "DBMS Project Lab", "faculty_id": "FAC102" }
+      ]
+    },
+    {
+      "branch": "ECE",
+      "year": 3,
+      "section": "A",
+      "room": "R204",
+      "schedule": [
+        { "day": "Monday", "time": "09:00 AM - 10:00 AM", "course_id": "EC201", "subject": "Digital Signal Processing", "faculty_id": "FAC103" },
+        { "day": "Tuesday", "time": "11:15 AM - 01:15 PM", "course_id": "EC201", "subject": "DSP Hardware Lab", "faculty_id": "FAC103" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "events": [
+    {
+      "event_id": "EVT101",
+      "title": "Google Placement & Resume Workshop",
+      "category": "workshop",
+      "date": "2026-08-15",
+      "time": "10:00 AM - 01:00 PM",
+      "venue": "Auditorium Main Hall",
+      "organizer_id": "FAC101",
+      "organizer_name": "Dr. P. V. Sudha (Placement Cell)",
+      "capacity": 250,
+      "registered_count": 180,
+      "registration_status": "open",
+      "team_info": {
+        "min_team_size": 1,
+        "max_team_size": 1,
+        "max_teams": 250
+      },
+      "description": "Comprehensive resume breakdown, LeetCode problem solving strategies, and mock interview tips for Google & Tier 1 drives."
+    },
+    {
+      "event_id": "EVT102",
+      "title": "Axiom 2026 AI/ML Hackathon Prep Session",
+      "category": "hackathon",
+      "date": "2026-08-18",
+      "time": "02:00 PM - 05:00 PM",
+      "venue": "CSE Dept Computer Center Lab 3",
+      "organizer_id": "FAC102",
+      "organizer_name": "Prof. K. Ramakrishna",
+      "capacity": 120,
+      "registered_count": 95,
+      "registration_status": "open",
+      "team_info": {
+        "min_team_size": 2,
+        "max_team_size": 4,
+        "max_teams": 30
+      },
+      "description": "Hands-on session on building multi-agent AI systems, vector databases, and fast prototyping for hackathons."
+    },
+    {
+      "event_id": "EVT103",
+      "title": "Euphoria Annual Campus Cultural Fest",
+      "category": "cultural",
+      "date": "2026-09-05",
+      "time": "09:00 AM - 09:00 PM",
+      "venue": "Open Air Theatre (OAT)",
+      "organizer_id": "FAC108",
+      "organizer_name": "Student Activity Council",
+      "capacity": 1500,
+      "registered_count": 850,
+      "registration_status": "open",
+      "team_info": {
+        "min_team_size": 1,
+        "max_team_size": 10,
+        "max_teams": 100
+      },
+      "description": "Annual flagship cultural festival featuring battle of the bands, dance competitions, fashion shows, and live music performance."
+    }
+  ]
+}

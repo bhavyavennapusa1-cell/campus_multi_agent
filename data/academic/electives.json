@@ -1,0 +1,40 @@
+{
+  "electives": [
+    {
+      "elective_id": "ELE_CS01",
+      "code": "CS321PE",
+      "name": "Artificial Intelligence & Neural Networks",
+      "department": "CSE",
+      "semester": 6,
+      "credits": 3,
+      "prerequisites": ["CS201 Data Structures", "Linear Algebra"],
+      "faculty_id": "FAC101",
+      "max_capacity": 60,
+      "enrolled_count": 48
+    },
+    {
+      "elective_id": "ELE_CS02",
+      "code": "CS322PE",
+      "name": "Cloud Computing Architecture",
+      "department": "CSE",
+      "semester": 6,
+      "credits": 3,
+      "prerequisites": ["CS303 Operating Systems"],
+      "faculty_id": "FAC104",
+      "max_capacity": 60,
+      "enrolled_count": 52
+    },
+    {
+      "elective_id": "ELE_EC01",
+      "code": "EC321PE",
+      "name": "Embedded Systems & IoT Design",
+      "department": "ECE",
+      "semester": 6,
+      "credits": 3,
+      "prerequisites": ["Microprocessors"],
+      "faculty_id": "FAC103",
+      "max_capacity": 45,
+      "enrolled_count": 30
+    }
+  ]
+}
