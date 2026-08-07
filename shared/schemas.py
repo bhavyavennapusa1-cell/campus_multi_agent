@@ -47,8 +47,8 @@ class PlanStep:
 # Every agent must expose functions matching these action names.
 # Person B: implement all of these (start with the easy ones, mock the rest).
 AGENT_ACTIONS = {
-    "academic": ["get_timetable", "get_attendance", "get_exam_schedule"],
-    "placement": ["check_eligibility", "get_internships"],
-    "campus": ["get_hostel_info", "get_events", "file_grievance"],
-    "communication": ["draft_email", "schedule_reminder"],
+    "academic": ["get_timetable", "get_attendance", "get_exam_schedule", "general_synthesis"],
+    "placement": ["check_eligibility", "get_internships", "general_synthesis"],
+    "campus": ["get_hostel_info", "get_events", "file_grievance", "general_synthesis"],
+    "communication": ["draft_email", "schedule_reminder", "general_synthesis"],
 }

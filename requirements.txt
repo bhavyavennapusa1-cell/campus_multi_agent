@@ -1,8 +1,13 @@
 streamlit
 chromadb
 anthropic
+openai
 python-dotenv
 fastapi
 uvicorn
+python-multipart
+httpx
+pydantic
+pytest
 sentence-transformers
 rank-bm25
