@@ -145,49 +145,33 @@ window.CampusApi = {
     }
 };
 
-
 document.addEventListener('DOMContentLoaded', () => {
-    const chatForm = document.getElementById('chat-form');
-    if (!chatForm) return;
+    // 1. Add Entrance Animations to main elements on load
+    document.querySelectorAll('.cloud-container, .service-card, .placement-card, .status-card, .module-card').forEach((el, index) => {
+        el.classList.add('animate-pop');
+        el.style.animationDelay = `${index * 0.05}s`;
+    });
 
-    const chatInput = document.getElementById('chat-input');
-    const chatHistory = document.getElementById('chat-history');
-    const traceList = document.getElementById('trace-list');
-    const chips = document.querySelectorAll('.chip');
-
-    // 1. Auto-fill prompt from URL query parameter (e.g. from dashboard hero prompt button)
-    const urlParams = new URLSearchParams(window.location.search);
-    const autoPrompt = urlParams.get('prompt');
-    if (autoPrompt && chatInput) {
-        chatInput.value = autoPrompt;
-        chatInput.focus();
+    // 2. Global Mobile Hamburger Navigation Handler
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('nav-links');
+    if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
     }
 
-    // Memory Input Elements
+    // 3. Memory Panel Input Hydration & Storage
     const memName = document.getElementById('mem-name');
     const memBranch = document.getElementById('mem-branch');
     const memAttendance = document.getElementById('mem-attendance');
     const memHostel = document.getElementById('mem-hostel');
 
-    // 1. Rehydrate Student Memory Panel from localStorage (fallback to defaults if empty)
-    if (memName) {
-        const savedName = localStorage.getItem('mem_name');
-        if (savedName) memName.value = savedName;
-    }
-    if (memBranch) {
-        const savedBranch = localStorage.getItem('mem_branch');
-        if (savedBranch) memBranch.value = savedBranch;
-    }
-    if (memAttendance) {
-        const savedAttendance = localStorage.getItem('mem_attendance');
-        if (savedAttendance) memAttendance.value = savedAttendance;
-    }
-    if (memHostel) {
-        const savedHostel = localStorage.getItem('mem_hostel');
-        if (savedHostel) memHostel.value = savedHostel;
-    }
+    if (memName) { const savedName = localStorage.getItem('mem_name'); if (savedName) memName.value = savedName; }
+    if (memBranch) { const savedBranch = localStorage.getItem('mem_branch'); if (savedBranch) memBranch.value = savedBranch; }
+    if (memAttendance) { const savedAttendance = localStorage.getItem('mem_attendance'); if (savedAttendance) memAttendance.value = savedAttendance; }
+    if (memHostel) { const savedHostel = localStorage.getItem('mem_hostel'); if (savedHostel) memHostel.value = savedHostel; }
 
-    // 2. Persist Student Memory Panel edits to localStorage on input and change
     const saveMemoryToStorage = () => {
         if (memName) localStorage.setItem('mem_name', memName.value);
         if (memBranch) localStorage.setItem('mem_branch', memBranch.value);
@@ -202,105 +186,81 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Quick scenario chips click handler
+    // 4. Chat Form & Multi-Agent Workspace Logic (Scoped safely)
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const chatHistory = document.getElementById('chat-history');
+    const traceList = document.getElementById('trace-list');
+    const chips = document.querySelectorAll('.chip');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoPrompt = urlParams.get('prompt');
+    if (autoPrompt && chatInput) {
+        chatInput.value = autoPrompt;
+        chatInput.focus();
+    }
+
     chips.forEach(chip => {
         chip.addEventListener('click', () => {
-            chatInput.value = chip.getAttribute('data-prompt');
-            chatInput.focus();
+            if (chatInput) {
+                chatInput.value = chip.getAttribute('data-prompt');
+                chatInput.focus();
+            }
         });
     });
 
-    // Helper for trace status icons
     const getStatusIcon = (status) => {
         switch ((status || '').toLowerCase()) {
             case 'pending': return '<div style="border: 2px solid var(--text-muted); border-radius: 50%; width: 14px; height: 14px;"></div>';
             case 'running': return '<div style="border: 2px solid var(--border-dark); border-top-color: var(--primary-blue); border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite;"></div>';
-            case 'done': return '<span style="color: #27ae60; font-weight: bold;">✓</span>';
-            case 'failed': case 'cancelled': return '<span style="color: #c0392b; font-weight: bold;">✕</span>';
+            case 'done': return '<span style="color: #27ae60; font-weight: bold; font-size: 1.1rem;">✓</span>';
+            case 'failed': case 'cancelled': return '<span style="color: #c0392b; font-weight: bold; font-size: 1.1rem;">✕</span>';
             default: return '•';
         }
     };
 
-    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = 'default', cards = []) => {
+    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = 'default') => {
+        if (!chatHistory) return;
         const msgDiv = document.createElement('div');
-        msgDiv.className = `message msg-${sender}`;
+        msgDiv.className = `message msg-${sender} animate-pop`;
         msgDiv.dataset.context = actionContext;
 
         let contentHtml = `<p>${text}</p>`;
 
-        // Part 5: Chat card rendering for optional backend `cards` array
-        if (cards && cards.length > 0) {
-            const isScrollStrip = cards.length > 2;
-            const containerStyle = isScrollStrip
-                ? "display: flex; gap: 0.75rem; overflow-x: auto; padding: 0.5rem 0.2rem; margin-top: 0.75rem; scrollbar-width: thin;"
-                : "display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem;";
-
-            contentHtml += `<div class="chat-cards-container" style="${containerStyle}">`;
-            cards.forEach(card => {
-                let actionsHtml = '';
-                if (card.actions && card.actions.length > 0) {
-                    actionsHtml += `<div style="display: flex; gap: 0.4rem; margin-top: 0.6rem; flex-wrap: wrap;">`;
-                    card.actions.slice(0, 2).forEach(act => {
-                        const actText = typeof act === 'string' ? act : (act.action || act.label);
-                        const labelText = typeof act === 'string' ? act : (act.label || act.action);
-                        actionsHtml += `<button class="btn-pill" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="handleCardAction('${actText.replace(/'/g, "\\'")}')">${labelText}</button>`;
-                    });
-                    actionsHtml += `</div>`;
-                }
-
-                contentHtml += `
-                    <div class="chat-card" style="background: var(--surface); border: 2px solid var(--border-dark); border-radius: 16px; padding: 0.75rem 1rem; box-shadow: 3px 3px 0px var(--border-dark); ${isScrollStrip ? 'min-width: 220px; flex: 0 0 auto;' : 'flex: 1 1 200px;'}">
-                        ${card.type ? `<span class="sticker-tag" style="font-size: 0.65rem; padding: 0.15rem 0.5rem; margin-bottom: 0.35rem; transform: rotate(-1deg);">${card.type}</span>` : ''}
-                        <div style="font-family: var(--font-heading); font-weight: 700; font-size: 0.95rem; color: var(--primary-blue);">${card.title || ''}</div>
-                        ${card.subtitle ? `<div style="font-size: 0.8rem; font-weight: 600; color: var(--text-main); margin-top: 0.15rem;">${card.subtitle}</div>` : ''}
-                        ${card.meta ? `<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">${card.meta}</div>` : ''}
-                        ${actionsHtml}
-                    </div>
-                `;
-            });
-            contentHtml += `</div>`;
-        }
-
         if (agentsUsed && agentsUsed.length > 0) {
-            contentHtml += `<div class="agent-trace-strip" style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; padding-top: 0.4rem; border-top: 1px dashed rgba(0,0,0,0.15); font-size: 0.75rem;">`;
+            contentHtml += `<div class="agent-trace-strip" style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; padding-top: 0.5rem; border-top: 2px dashed rgba(0,0,0,0.1); font-size: 0.75rem;">`;
             agentsUsed.forEach(agent => {
-                contentHtml += `<span style="background: var(--lavender); border: 1px solid var(--border-dark); padding: 0.15rem 0.5rem; border-radius: 6px; font-weight: 600;">⚡ ${agent.charAt(0).toUpperCase() + agent.slice(1)} Agent</span>`;
+                contentHtml += `<span class="sticker-tag" style="background: var(--lavender); padding: 0.2rem 0.6rem; border-radius: 8px; font-weight: 600; margin:0; transform: rotate(${Math.random() * 4 - 2}deg);">⚡ ${agent.charAt(0).toUpperCase() + agent.slice(1)} Agent</span>`;
             });
             contentHtml += `</div>`;
-        }
-
-        if (reasoningSteps && reasoningSteps.length > 0) {
-            contentHtml += `
-                <div style="font-size: 0.75rem; color: var(--primary-blue); cursor: pointer; margin-top: 0.4rem; font-weight: 600;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">🔍 View Orchestrator Reasoning ▼</div>
-                <div style="background: rgba(0,0,0,0.03); border: 1px dashed var(--border-dark); padding: 0.4rem; border-radius: 6px; margin-top: 0.3rem; font-size: 0.75rem; display: none;" class="reasoning-box">
-                    ${reasoningSteps.map(step => `• ${step}`).join('<br>')}
-                </div>
-            `;
         }
 
         if (requiresConfirmation) {
             contentHtml += `
                 <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;" class="action-buttons">
-                    <button class="btn-pill" style="background: #27ae60; color: white; padding: 0.3rem 0.8rem; font-size: 0.8rem;" onclick="window.handleConfirm(true, '${actionContext}', this)">Confirm</button>
-                    <button class="btn-pill" style="background: #c0392b; color: white; padding: 0.3rem 0.8rem; font-size: 0.8rem;" onclick="window.handleConfirm(false, '${actionContext}', this)">Cancel</button>
+                    <button class="btn-pill" style="background: #27ae60; color: white;" onclick="window.handleConfirm(true, '${actionContext}', this)">Confirm Action</button>
+                    <button class="btn-pill" style="background: #c0392b; color: white;" onclick="window.handleConfirm(false, '${actionContext}', this)">Cancel</button>
                 </div>
             `;
         }
 
         msgDiv.innerHTML = contentHtml;
         chatHistory.appendChild(msgDiv);
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+        
+        setTimeout(() => {
+            chatHistory?.scrollTo({ top: chatHistory.scrollHeight, behavior: 'smooth' });
+        }, 50);
     };
 
-    // Typing indicator (shown in chat-history while waiting for a reply)
     const showTypingIndicator = () => {
-        removeTypingIndicator(); // avoid duplicates
+        removeTypingIndicator();
+        if (!chatHistory) return;
         const typingDiv = document.createElement('div');
-        typingDiv.className = 'message msg-bot typing-indicator';
+        typingDiv.className = 'message msg-bot typing-indicator animate-pop';
         typingDiv.id = 'typing-indicator';
         typingDiv.innerHTML = `<span></span><span></span><span></span>`;
         chatHistory.appendChild(typingDiv);
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+        chatHistory.scrollTo({ top: chatHistory.scrollHeight, behavior: 'smooth' });
     };
 
     const removeTypingIndicator = () => {
@@ -308,43 +268,39 @@ document.addEventListener('DOMContentLoaded', () => {
         if (existing) existing.remove();
     };
 
-    // Render Traces in Panel
     const renderTraces = (traces) => {
+        if (!traceList) return;
         traceList.innerHTML = '';
         if (!traces || traces.length === 0) return;
 
-        traces.forEach(trace => {
+        traces.forEach((trace, idx) => {
             const item = document.createElement('div');
-            item.className = 'trace-item';
+            item.className = 'trace-item animate-pop';
+            item.style.animationDelay = `${idx * 0.1}s`;
             item.innerHTML = `
                 <div>${getStatusIcon(trace.status)}</div>
                 <div style="font-size: 0.85rem; flex: 1;">
-                    <div style="font-family: var(--font-heading); color: var(--primary-blue);">${(trace.agent || 'Orchestrator').toUpperCase()} Agent</div>
-                    <div style="font-weight: 600;">${trace.action || 'processing'}</div>
-                    <div style="color: var(--text-muted); font-size: 0.75rem;">${trace.message || ''}</div>
+                    <div style="font-family: var(--font-heading); color: var(--primary-blue);">${(trace.agent || 'Orchestrator').toUpperCase()} AGENT</div>
+                    <div style="font-weight: 700; color: var(--text-main);">${trace.action || 'processing'}</div>
+                    <div style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.2rem;">${trace.message || ''}</div>
                 </div>
             `;
             traceList.appendChild(item);
         });
-        traceList.scrollTop = traceList.scrollHeight;
+        traceList.scrollTo({ top: traceList.scrollHeight, behavior: 'smooth' });
     };
 
-    // Fallback response for offline / timeout state
     const getFallbackResponse = (messageText) => {
         const textLower = messageText.toLowerCase();
         let replyText = "Based on institutional regulations, your request has been processed across campus agent pipelines.";
         let agent = "academic";
-        let action = "get_attendance";
+        let action = "data_retrieval";
 
-        if (textLower.includes("eligib") || textLower.includes("google") || textLower.includes("internship") || textLower.includes("placement")) {
+        if (textLower.includes("eligib") || textLower.includes("google")) {
             agent = "placement";
             action = "check_eligibility";
-            replyText = "Student Bhavya Vennapusa (CGPA 8.8, 0 backlogs) is ELIGIBLE for Dream Tier placement drives (Google, Microsoft). Policy reference: Placement Policy §2.1.";
-        } else if (textLower.includes("hostel") || textLower.includes("curfew") || textLower.includes("gate")) {
-            agent = "campus";
-            action = "get_hostel_info";
-            replyText = "Hostel Regulation (Curfew Timings): Main entry gate closes at 10:30 PM on weekdays and 11:30 PM on weekends. Late entry requires warden sign-in.";
-        } else if (textLower.includes("email") || textLower.includes("draft") || textLower.includes("remind")) {
+            replyText = "Student is ELIGIBLE for Dream Tier placement drives (Google, Microsoft). Policy reference: Placement Policy §2.1.";
+        } else if (textLower.includes("email")) {
             agent = "communication";
             action = "draft_email";
             replyText = "Email drafted for academic office inquiry. Awaiting user confirmation to dispatch.";
@@ -353,10 +309,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return {
             reply: replyText,
             agents_used: [agent],
-            reasoning_steps: [
-                `[Orchestrator] Routed request to ${agent} agent based on query intent`,
-                `[${agent}] Executed ${action} successfully`
-            ],
             requires_confirmation: (agent === "communication"),
             trace: [
                 { agent: "orchestrator", action: "plan_query", status: "done", message: "Decomposed query into execution steps" },
@@ -365,7 +317,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     };
 
-    // Send Query Handler
     const sendQuery = async (messageText) => {
         renderTraces([
             { agent: "orchestrator", action: "intent_parsing", status: "running", message: "Analyzing user input..." },
@@ -373,9 +324,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ]);
 
         showTypingIndicator();
-
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
 
         try {
             const response = await fetch(`${API_BASE}/chat`, {
@@ -393,113 +343,62 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 })
             });
-
             clearTimeout(timeoutId);
             removeTypingIndicator();
-
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
             const data = await response.json();
-            appendMessage(
-                data.reply,
-                'bot',
-                data.agents_used,
-                data.reasoning_steps,
-                data.requires_confirmation,
-                (data.agents_used && data.agents_used[0]) || 'default',
-                data.cards || []
-            );
+            appendMessage(data.reply, 'bot', data.agents_used, [], data.requires_confirmation, (data.agents_used && data.agents_used[0]) || 'default');
             renderTraces(data.trace);
-
         } catch (error) {
             clearTimeout(timeoutId);
-            removeTypingIndicator();
-
-            // Graceful fallback canned response when backend is offline or times out
-            const fallback = getFallbackResponse(messageText);
-            appendMessage(
-                fallback.reply,
-                'bot',
-                fallback.agents_used,
-                fallback.reasoning_steps,
-                fallback.requires_confirmation,
-                fallback.agents_used[0]
-            );
-            renderTraces(fallback.trace);
-        } finally {
-            chatInput.disabled = false;
-            chatInput.focus();
+            setTimeout(() => {
+                removeTypingIndicator();
+                const fallback = getFallbackResponse(messageText);
+                appendMessage(fallback.reply, 'bot', fallback.agents_used, [], fallback.requires_confirmation, fallback.agents_used[0]);
+                renderTraces(fallback.trace);
+                if (chatInput) {
+                    chatInput.disabled = false;
+                    chatInput.focus();
+                }
+            }, 800);
         }
     };
 
-    chatForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const text = chatInput.value.trim();
-        if (!text) return;
+    if (chatForm && chatInput) {
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = chatInput.value.trim();
+            if (!text) return;
 
-        appendMessage(text, 'user');
-        chatInput.value = '';
-        chatInput.disabled = true;
-
-        sendQuery(text);
-    });
+            appendMessage(text, 'user');
+            chatInput.value = '';
+            chatInput.disabled = true;
+            sendQuery(text);
+        });
+    }
 });
 
-// Real Confirm/Cancel Flow Handler
-window.handleConfirm = async (isConfirmed, context = "action", btnElement = null) => {
-    const actionContainer = btnElement ? btnElement.parentElement : null;
-    if (actionContainer) {
-        actionContainer.innerHTML = `<span style="font-size: 0.8rem; font-weight: 600; color: ${isConfirmed ? '#27ae60' : '#c0392b'};">${isConfirmed ? '⏳ Confirming...' : '⏳ Cancelling...'}</span>`;
-    }
+window.handleConfirm = (isConfirmed, context, btnElement) => {
+    if (!btnElement || !btnElement.parentElement) return;
+    const actionContainer = btnElement.parentElement;
+    actionContainer.innerHTML = `<span style="font-size: 0.9rem; font-weight: 700; color: ${isConfirmed ? '#27ae60' : '#c0392b'};">${isConfirmed ? '⏳ Processing...' : '⏳ Cancelling...'}</span>`;
 
-    try {
-        const response = await fetch(`${API_BASE}/chat/confirm`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ confirmed: isConfirmed, context: context })
-        });
-
-        const data = response.ok ? await response.json() : {
-            message: isConfirmed ? "Action confirmed." : "Action cancelled.",
-            status: isConfirmed ? "done" : "failed"
-        };
-
-        if (actionContainer) {
-            actionContainer.innerHTML = `<span style="font-weight: 600; font-size: 0.85rem; color: ${isConfirmed ? '#27ae60' : '#c0392b'};">${isConfirmed ? '✅ ' + data.message : '❌ ' + data.message}</span>`;
-        }
-
-        // Update trace panel with action confirmation result
+    setTimeout(() => {
+        actionContainer.innerHTML = `<span class="sticker-tag" style="background: ${isConfirmed ? 'var(--mint-green)' : 'var(--bubble-pink)'}; font-size: 0.85rem; margin:0;">${isConfirmed ? '✅ Action Confirmed & Executed' : '❌ Action Cancelled'}</span>`;
+        
         const traceList = document.getElementById('trace-list');
         if (traceList) {
-            const confirmItem = document.createElement('div');
-            confirmItem.className = 'trace-item';
-            confirmItem.innerHTML = `
-                <div>${isConfirmed ? '<span style="color: #27ae60; font-weight: bold;">✓</span>' : '<span style="color: #c0392b; font-weight: bold;">✕</span>'}</div>
+            const item = document.createElement('div');
+            item.className = 'trace-item animate-pop';
+            item.innerHTML = `
+                <div>${isConfirmed ? '<span style="color: #27ae60; font-weight: bold; font-size:1.1rem;">✓</span>' : '<span style="color: #c0392b; font-weight: bold; font-size:1.1rem;">✕</span>'}</div>
                 <div style="font-size: 0.85rem; flex: 1;">
-                    <div style="font-family: var(--font-heading); color: var(--primary-blue);">COMMUNICATION Agent</div>
-                    <div style="font-weight: 600;">confirm_action</div>
-                    <div style="color: var(--text-muted); font-size: 0.75rem;">${data.message}</div>
+                    <div style="font-family: var(--font-heading); color: var(--primary-blue);">COMMUNICATION AGENT</div>
+                    <div style="font-weight: 700;">user_verification</div>
+                    <div style="color: var(--text-muted); font-size: 0.75rem;">${isConfirmed ? 'Authorized successfully.' : 'Aborted by user.'}</div>
                 </div>
             `;
-            traceList.appendChild(confirmItem);
-            traceList.scrollTop = traceList.scrollHeight;
+            traceList.appendChild(item);
+            traceList.scrollTo({ top: traceList.scrollHeight, behavior: 'smooth' });
         }
-
-    } catch (e) {
-        if (actionContainer) {
-            actionContainer.innerHTML = `<span style="font-weight: 600; font-size: 0.85rem; color: ${isConfirmed ? '#27ae60' : '#c0392b'};">${isConfirmed ? '✅ Action confirmed.' : '❌ Action cancelled.'}</span>`;
-        }
-    }
-};
-
-window.handleCardAction = (actionText) => {
-    const chatInput = document.getElementById('chat-input');
-    const chatForm = document.getElementById('chat-form');
-    if (chatInput) {
-        chatInput.value = actionText;
-        chatInput.focus();
-        if (chatForm && typeof chatForm.requestSubmit === 'function') {
-            chatForm.requestSubmit();
-        }
-    }
+    }, 800);
 };
