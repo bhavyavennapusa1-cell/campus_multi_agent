@@ -9,10 +9,10 @@ memory store.
 ## Folder structure
 
 ```
-orchestrator/    Person A - planning + dispatch loop
-agents/          Person B - academic, placement, campus, communication agents
-knowledge/       Person C - RAG (rag.py) and memory (memory.py)
-frontend/        Person D - Streamlit chat UI + live trace panel
+orchestrator/    Uday Veena - planning + dispatch loop
+agents/          Sivani Vadrevu - academic, placement, campus, communication agents
+knowledge/       Bhavya Vennapusa - RAG (rag.py) and memory (memory.py)
+frontend/        Suhani Patel - Streamlit chat UI + live trace panel
 data/            Mock JSON/SQLite data (student records, internships, events)
 shared/          The contract everyone codes against (schemas.py)
 ```
@@ -43,7 +43,7 @@ mock APIs / JSON / SQLite data layer.
 
 ## Team
 
-- Orchestrator & planning:
-- Specialized agents:
-- Knowledge (RAG) & memory:
-- Frontend & demo:
+ - Orchestrator & planning: Uday Veena
+- Specialized agents: Sivani Vadrevu
+- Knowledge (RAG) & memory: Bhavya Vennapusa
+- Frontend & demo: Suhani Patel
