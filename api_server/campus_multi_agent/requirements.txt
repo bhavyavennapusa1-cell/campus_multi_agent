@@ -1,6 +1,6 @@
-streamlit
+fastapi
+uvicorn
+pydantic
 chromadb
 anthropic
 python-dotenv
-fastapi
-uvicorn
