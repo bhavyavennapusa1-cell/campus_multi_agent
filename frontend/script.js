@@ -1,7 +1,149 @@
-// Configurable Backend API URL with local / production fallback
+// Configurable Backend API URL (empty string = relative/same-origin)
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:8000'
     : (window.VITE_API_BASE_URL || window.REACT_APP_API_BASE_URL || window.ENV_API_BASE_URL || '');
+
+// Global API Helper object connecting UI components to backend endpoints
+window.CampusApi = {
+    async chat(messageText, profile = {}) {
+        const res = await fetch(`${API_BASE}/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: messageText,
+                session_id: "demo_session_frontend",
+                profile: profile
+            })
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+    },
+    async confirmAction(confirmed, context) {
+        const res = await fetch(`${API_BASE}/chat/confirm`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ confirmed, context })
+        });
+        return await res.json();
+    },
+    async transcribeAudio(fileBlob) {
+        const formData = new FormData();
+        formData.append("file", fileBlob, "voice_command.wav");
+        const res = await fetch(`${API_BASE}/transcribe`, {
+            method: 'POST',
+            body: formData
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+    },
+    async getPlacementOpportunities(role = "Software Engineer") {
+        const res = await fetch(`${API_BASE}/placement/opportunities?role=${encodeURIComponent(role)}`);
+        return await res.json();
+    },
+    async getEligibleCompanies(sessionId = "demo_session_frontend") {
+        const res = await fetch(`${API_BASE}/placement/eligible-companies?session_id=${encodeURIComponent(sessionId)}`);
+        return await res.json();
+    },
+    async getGithubMetrics(username = "octocat") {
+        const res = await fetch(`${API_BASE}/placement/github?username=${encodeURIComponent(username)}`);
+        return await res.json();
+    },
+    async getAcademicTasks() {
+        const res = await fetch(`${API_BASE}/academic/tasks`);
+        return await res.json();
+    },
+    async createAcademicTask(content, dueString = "Tomorrow") {
+        const res = await fetch(`${API_BASE}/academic/tasks`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content, due_string: dueString })
+        });
+        return await res.json();
+    },
+    async getAcademicTimetable(sessionId = "demo_session_frontend") {
+        const res = await fetch(`${API_BASE}/academic/timetable?session_id=${encodeURIComponent(sessionId)}`);
+        return await res.json();
+    },
+    async getDirections(origin, destination) {
+        const res = await fetch(`${API_BASE}/navigator/directions`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ origin, destination })
+        });
+        return await res.json();
+    },
+    async registerEvent(eventName) {
+        const res = await fetch(`${API_BASE}/events/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ event_name: eventName })
+        });
+        return await res.json();
+    },
+    async getContacts(queryType = "general", subject = "inquiry") {
+        const res = await fetch(`${API_BASE}/communication/contacts?query_type=${encodeURIComponent(queryType)}&subject=${encodeURIComponent(subject)}`);
+        return await res.json();
+    },
+    async getGroups() {
+        const res = await fetch(`${API_BASE}/communication/groups`);
+        return await res.json();
+    },
+    async createGroup(groupName, memberIds = [], groupType = "study", durationHours = 24) {
+        const res = await fetch(`${API_BASE}/communication/groups`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                group_name: groupName,
+                member_ids: memberIds,
+                group_type: groupType,
+                duration_hours: durationHours
+            })
+        });
+        return await res.json();
+    },
+    async draftEmail(recipientEmail, subject, coreMessage) {
+        const res = await fetch(`${API_BASE}/communication/draft-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                recipient_email: recipientEmail,
+                subject: subject,
+                core_message: coreMessage
+            })
+        });
+        return await res.json();
+    },
+    async approveAction(actionId, status = "approved") {
+        const res = await fetch(`${API_BASE}/communication/approve-action`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action_id: actionId, status: status })
+        });
+        return await res.json();
+    },
+    async sendEmail(to, subject, body) {
+        const res = await fetch(`${API_BASE}/communication/email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ to, subject, body })
+        });
+        return await res.json();
+    },
+    async scheduleCalendar(title, startTime) {
+        const res = await fetch(`${API_BASE}/communication/calendar?title=${encodeURIComponent(title)}&start_time=${encodeURIComponent(startTime)}`, {
+            method: 'POST'
+        });
+        return await res.json();
+    },
+    async scheduleReminder(event, minutesBefore = 15) {
+        const res = await fetch(`${API_BASE}/communication/reminder`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ event, minutes_before: minutesBefore })
+        });
+        return await res.json();
+    }
+};
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,6 +154,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatHistory = document.getElementById('chat-history');
     const traceList = document.getElementById('trace-list');
     const chips = document.querySelectorAll('.chip');
+
+    // 1. Auto-fill prompt from URL query parameter (e.g. from dashboard hero prompt button)
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoPrompt = urlParams.get('prompt');
+    if (autoPrompt && chatInput) {
+        chatInput.value = autoPrompt;
+        chatInput.focus();
+    }
 
     // Memory Input Elements
     const memName = document.getElementById('mem-name');
@@ -62,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper for trace status icons
     const getStatusIcon = (status) => {
-        switch((status || '').toLowerCase()) {
+        switch ((status || '').toLowerCase()) {
             case 'pending': return '<div style="border: 2px solid var(--text-muted); border-radius: 50%; width: 14px; height: 14px;"></div>';
             case 'running': return '<div style="border: 2px solid var(--border-dark); border-top-color: var(--primary-blue); border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite;"></div>';
             case 'done': return '<span style="color: #27ae60; font-weight: bold;">✓</span>';
@@ -71,29 +221,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Typing Indicator management
-    const showTypingIndicator = () => {
-        removeTypingIndicator();
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'message msg-bot typing-indicator';
-        typingDiv.id = 'typing-indicator';
-        typingDiv.innerHTML = '<span></span><span></span><span></span>';
-        chatHistory.appendChild(typingDiv);
-        chatHistory.scrollTop = chatHistory.scrollHeight;
-    };
-
-    const removeTypingIndicator = () => {
-        const existing = document.getElementById('typing-indicator');
-        if (existing) existing.remove();
-    };
-
-    // Append Message to Chat History
-    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = "action") => {
+    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = 'default', cards = []) => {
         const msgDiv = document.createElement('div');
         msgDiv.className = `message msg-${sender}`;
         msgDiv.dataset.context = actionContext;
-        
+
         let contentHtml = `<p>${text}</p>`;
+
+        // Part 5: Chat card rendering for optional backend `cards` array
+        if (cards && cards.length > 0) {
+            const isScrollStrip = cards.length > 2;
+            const containerStyle = isScrollStrip
+                ? "display: flex; gap: 0.75rem; overflow-x: auto; padding: 0.5rem 0.2rem; margin-top: 0.75rem; scrollbar-width: thin;"
+                : "display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem;";
+
+            contentHtml += `<div class="chat-cards-container" style="${containerStyle}">`;
+            cards.forEach(card => {
+                let actionsHtml = '';
+                if (card.actions && card.actions.length > 0) {
+                    actionsHtml += `<div style="display: flex; gap: 0.4rem; margin-top: 0.6rem; flex-wrap: wrap;">`;
+                    card.actions.slice(0, 2).forEach(act => {
+                        const actText = typeof act === 'string' ? act : (act.action || act.label);
+                        const labelText = typeof act === 'string' ? act : (act.label || act.action);
+                        actionsHtml += `<button class="btn-pill" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="handleCardAction('${actText.replace(/'/g, "\\'")}')">${labelText}</button>`;
+                    });
+                    actionsHtml += `</div>`;
+                }
+
+                contentHtml += `
+                    <div class="chat-card" style="background: var(--surface); border: 2px solid var(--border-dark); border-radius: 16px; padding: 0.75rem 1rem; box-shadow: 3px 3px 0px var(--border-dark); ${isScrollStrip ? 'min-width: 220px; flex: 0 0 auto;' : 'flex: 1 1 200px;'}">
+                        ${card.type ? `<span class="sticker-tag" style="font-size: 0.65rem; padding: 0.15rem 0.5rem; margin-bottom: 0.35rem; transform: rotate(-1deg);">${card.type}</span>` : ''}
+                        <div style="font-family: var(--font-heading); font-weight: 700; font-size: 0.95rem; color: var(--primary-blue);">${card.title || ''}</div>
+                        ${card.subtitle ? `<div style="font-size: 0.8rem; font-weight: 600; color: var(--text-main); margin-top: 0.15rem;">${card.subtitle}</div>` : ''}
+                        ${card.meta ? `<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">${card.meta}</div>` : ''}
+                        ${actionsHtml}
+                    </div>
+                `;
+            });
+            contentHtml += `</div>`;
+        }
 
         if (agentsUsed && agentsUsed.length > 0) {
             contentHtml += `<div class="agent-trace-strip" style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; padding-top: 0.4rem; border-top: 1px dashed rgba(0,0,0,0.15); font-size: 0.75rem;">`;
@@ -124,6 +290,22 @@ document.addEventListener('DOMContentLoaded', () => {
         msgDiv.innerHTML = contentHtml;
         chatHistory.appendChild(msgDiv);
         chatHistory.scrollTop = chatHistory.scrollHeight;
+    };
+
+    // Typing indicator (shown in chat-history while waiting for a reply)
+    const showTypingIndicator = () => {
+        removeTypingIndicator(); // avoid duplicates
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message msg-bot typing-indicator';
+        typingDiv.id = 'typing-indicator';
+        typingDiv.innerHTML = `<span></span><span></span><span></span>`;
+        chatHistory.appendChild(typingDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    };
+
+    const removeTypingIndicator = () => {
+        const existing = document.getElementById('typing-indicator');
+        if (existing) existing.remove();
     };
 
     // Render Traces in Panel
@@ -200,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 signal: controller.signal,
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     message: messageText,
                     session_id: "demo_session_frontend",
                     profile: {
@@ -219,14 +401,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             appendMessage(
-                data.reply, 
-                'bot', 
-                data.agents_used || [], 
-                data.reasoning_steps || [], 
-                data.requires_confirmation || false,
-                data.agents_used ? data.agents_used[0] : "action"
+                data.reply,
+                'bot',
+                data.agents_used,
+                data.reasoning_steps,
+                data.requires_confirmation,
+                (data.agents_used && data.agents_used[0]) || 'default',
+                data.cards || []
             );
-            renderTraces(data.trace || []);
+            renderTraces(data.trace);
 
         } catch (error) {
             clearTimeout(timeoutId);
@@ -276,9 +459,9 @@ window.handleConfirm = async (isConfirmed, context = "action", btnElement = null
             body: JSON.stringify({ confirmed: isConfirmed, context: context })
         });
 
-        const data = response.ok ? await response.json() : { 
-            message: isConfirmed ? "Action confirmed." : "Action cancelled.", 
-            status: isConfirmed ? "done" : "failed" 
+        const data = response.ok ? await response.json() : {
+            message: isConfirmed ? "Action confirmed." : "Action cancelled.",
+            status: isConfirmed ? "done" : "failed"
         };
 
         if (actionContainer) {
@@ -305,6 +488,18 @@ window.handleConfirm = async (isConfirmed, context = "action", btnElement = null
     } catch (e) {
         if (actionContainer) {
             actionContainer.innerHTML = `<span style="font-weight: 600; font-size: 0.85rem; color: ${isConfirmed ? '#27ae60' : '#c0392b'};">${isConfirmed ? '✅ Action confirmed.' : '❌ Action cancelled.'}</span>`;
+        }
+    }
+};
+
+window.handleCardAction = (actionText) => {
+    const chatInput = document.getElementById('chat-input');
+    const chatForm = document.getElementById('chat-form');
+    if (chatInput) {
+        chatInput.value = actionText;
+        chatInput.focus();
+        if (chatForm && typeof chatForm.requestSubmit === 'function') {
+            chatForm.requestSubmit();
         }
     }
 };

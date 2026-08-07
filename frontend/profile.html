@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus AI | Student Profile</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="chat.css">
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .profile-card-display {
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 1.75rem;
+            box-shadow: 4px 4px 0px var(--border-dark);
+        }
+
+        .info-row {
+            padding: 0.75rem 0;
+            border-bottom: 2px dashed var(--border-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .info-value {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Reused -->
+    <nav class="navbar">
+        <div class="nav-brand">📚 CampusAgenda AI</div>
+        <button class="hamburger" id="hamburger">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="chat.html">Assistant</a>
+            <a href="about.html">Architecture</a>
+        </div>
+    </nav>
+
+    <main class="profile-container">
+        <!-- Hero Header -->
+        <div class="cloud-container" style="padding: 1.75rem; margin-bottom: 2rem;">
+            <div class="sticker-tag" style="background: var(--soft-yellow);">👤 Memory & Identity</div>
+            <h1 style="font-family: var(--font-heading); font-size: 2.3rem; color: var(--primary-blue);">Student Profile</h1>
+            <p style="color: var(--text-muted); max-width: 600px; margin: 0.25rem auto 0;">
+                View persistent memory parameters injected into Orchestrator context and update your student records.
+            </p>
+        </div>
+
+        <div class="profile-grid">
+            <!-- 1. Current Profile State Card -->
+            <div class="profile-card-display">
+                <div class="sticker-tag" style="background: var(--mint-green); margin-bottom: 1rem;">🧠 Active State</div>
+                <h3 style="font-family: var(--font-heading); color: var(--text-main); margin-bottom: 1rem;">Current Memory Values</h3>
+
+                <div class="info-row">
+                    <span class="info-label">Student Name</span>
+                    <span class="info-value" id="display-name">Bhavya Vennapusa</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Branch & Year</span>
+                    <span class="info-value" id="display-branch">CSE - 3rd Year</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Attendance %</span>
+                    <span class="info-value" id="display-attendance" style="color: #27ae60;">88%</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Hostel Block</span>
+                    <span class="info-value" id="display-hostel">Block B</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Career Goal</span>
+                    <span class="info-value" id="display-goal" style="color: var(--primary-blue);">Backend Developer</span>
+                </div>
+            </div>
+
+            <!-- 2. Editable Profile Form Card (Reusing memory-panel & memory-group styling from chat.css) -->
+            <div class="memory-panel" style="height: auto; border-radius: 20px;">
+                <div class="sticker-tag" style="background: var(--bubble-pink); margin-bottom: 0.5rem;">✏️ Edit Profile</div>
+                <div class="memory-title">Update Memory Context</div>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Changes take effect immediately across all multi-agent workflows.</p>
+
+                <form id="profile-edit-form" onsubmit="handleProfileSave(event)">
+                    <!-- TODO: Replace mock with real POST /student/profile -->
+                    <div class="memory-group">
+                        <label for="prof-name">Student Name</label>
+                        <input type="text" id="prof-name" value="Bhavya Vennapusa" required>
+                    </div>
+
+                    <div class="memory-group">
+                        <label for="prof-branch">Branch & Year</label>
+                        <input type="text" id="prof-branch" value="CSE - 3rd Year" required>
+                    </div>
+
+                    <div class="memory-group">
+                        <label for="prof-attendance">Attendance %</label>
+                        <input type="text" id="prof-attendance" value="88%" required>
+                    </div>
+
+                    <div class="memory-group">
+                        <label for="prof-hostel">Hostel Block</label>
+                        <input type="text" id="prof-hostel" value="Block B" required>
+                    </div>
+
+                    <div class="memory-group" style="margin-bottom: 1.25rem;">
+                        <label for="prof-goal">Career Goal</label>
+                        <input type="text" id="prof-goal" value="Backend Developer" required>
+                    </div>
+
+                    <button type="submit" class="btn-pill" style="width: 100%; justify-content: center; font-size: 0.95rem;">Save Profile Changes →</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+
+        // Load saved profile data if present
+        function loadProfileData() {
+            const saved = localStorage.getItem('studentProfile');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    document.getElementById('display-name').textContent = data.name || "Bhavya Vennapusa";
+                    document.getElementById('display-branch').textContent = data.branch || "CSE - 3rd Year";
+                    document.getElementById('display-attendance').textContent = data.attendance || "88%";
+                    document.getElementById('display-hostel').textContent = data.hostel || "Block B";
+                    document.getElementById('display-goal').textContent = data.careerGoal || "Backend Developer";
+
+                    document.getElementById('prof-name').value = data.name || "Bhavya Vennapusa";
+                    document.getElementById('prof-branch').value = data.branch || "CSE - 3rd Year";
+                    document.getElementById('prof-attendance').value = data.attendance || "88%";
+                    document.getElementById('prof-hostel').value = data.hostel || "Block B";
+                    document.getElementById('prof-goal').value = data.careerGoal || "Backend Developer";
+                } catch(e) {}
+            }
+        }
+
+        // Handle profile save
+        function handleProfileSave(e) {
+            e.preventDefault();
+            // TODO: Replace mock with real POST /student/profile
+            const updated = {
+                name: document.getElementById('prof-name').value,
+                branch: document.getElementById('prof-branch').value,
+                attendance: document.getElementById('prof-attendance').value,
+                hostel: document.getElementById('prof-hostel').value,
+                careerGoal: document.getElementById('prof-goal').value
+            };
+            localStorage.setItem('studentProfile', JSON.stringify(updated));
+            loadProfileData();
+            alert("✓ Profile updated successfully!");
+        }
+
+        loadProfileData();
+    </script>
+</body>
+</html>

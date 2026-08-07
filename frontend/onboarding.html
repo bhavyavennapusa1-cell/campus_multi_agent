@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus AI | Student Onboarding</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .onboarding-wrapper {
+            min-height: calc(100vh - 74px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 5%;
+        }
+
+        .onboarding-card {
+            max-width: 520px;
+            width: 100%;
+            padding: 2.5rem 2rem;
+            text-align: center;
+        }
+
+        .step-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-pill {
+            font-size: 0.8rem;
+            padding: 0.35rem 0.9rem;
+            cursor: pointer;
+            pointer-events: none; /* Controlled via step navigation */
+        }
+
+        .step-content {
+            display: none;
+            text-align: left;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-select-wrapper select {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            background: transparent;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Reused -->
+    <nav class="navbar">
+        <div class="nav-brand">📚 CampusAgenda AI</div>
+        <button class="hamburger" id="hamburger">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="chat.html">Assistant</a>
+            <a href="about.html">Architecture</a>
+        </div>
+    </nav>
+
+    <div class="onboarding-wrapper">
+        <div class="cloud-container onboarding-card">
+            <div class="sticker-tag" style="background: var(--soft-yellow); margin-bottom: 1rem;">🚀 Setup Profile</div>
+            <h1 style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--primary-blue); margin-bottom: 0.5rem;">Student Onboarding</h1>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Personalize your multi-agent AI assistant</p>
+
+            <!-- 3-Step Indicators Reusing .btn-pill -->
+            <div class="step-indicators">
+                <button type="button" class="btn-pill step-pill active" id="pill-step-1">Step 1: Identity</button>
+                <button type="button" class="btn-pill step-pill" id="pill-step-2" style="background: var(--surface); color: var(--text-main);">Step 2: Academics</button>
+                <button type="button" class="btn-pill step-pill" id="pill-step-3" style="background: var(--surface); color: var(--text-main);">Step 3: Goals</button>
+            </div>
+
+            <form id="onboarding-form" onsubmit="handleOnboardingSubmit(event)">
+                <!-- Step 1: Name -->
+                <div class="step-content active" id="step-1">
+                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.5rem; color: var(--text-main);">Full Name</label>
+                    <div class="input-wrapper" style="margin-bottom: 1.5rem;">
+                        <span style="font-size: 1.1rem; align-self: center;">👤</span>
+                        <input type="text" id="ob-name" value="Bhavya Vennapusa" placeholder="e.g. Bhavya Vennapusa" required>
+                    </div>
+                    <div style="text-align: right;">
+                        <button type="button" class="btn-blob" onclick="goToStep(2)">Next: Academics →</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Branch & Year -->
+                <div class="step-content" id="step-2">
+                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.5rem; color: var(--text-main);">Branch & Academic Year</label>
+                    <div class="input-wrapper" style="margin-bottom: 1.5rem;">
+                        <span style="font-size: 1.1rem; align-self: center;">🎓</span>
+                        <input type="text" id="ob-branch" value="CSE - 3rd Year" placeholder="e.g. CSE - 3rd Year" required>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <button type="button" class="btn-pill" style="background: var(--surface); color: var(--text-main);" onclick="goToStep(1)">← Back</button>
+                        <button type="button" class="btn-blob" onclick="goToStep(3)">Next: Career Goal →</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Career Goal -->
+                <div class="step-content" id="step-3">
+                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.5rem; color: var(--text-main);">Primary Career Goal</label>
+                    <div class="input-wrapper form-select-wrapper" style="margin-bottom: 1.5rem;">
+                        <span style="font-size: 1.1rem; align-self: center; padding-right: 0.3rem;">🎯</span>
+                        <select id="ob-career-goal" required>
+                            <option value="Backend Developer" selected>Backend Developer</option>
+                            <option value="Frontend Developer">Frontend Developer</option>
+                            <option value="Data Analyst">Data Analyst</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <button type="button" class="btn-pill" style="background: var(--surface); color: var(--text-main);" onclick="goToStep(2)">← Back</button>
+                        <button type="submit" class="btn-blob" style="background: var(--mint-green);">Complete Onboarding ✨</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+
+        let currentStep = 1;
+
+        function goToStep(stepNum) {
+            // Update step content visibility
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step-${stepNum}`).classList.add('active');
+
+            // Update step pill highlights
+            for (let i = 1; i <= 3; i++) {
+                const pill = document.getElementById(`pill-step-${i}`);
+                if (i === stepNum) {
+                    pill.style.background = 'var(--primary-blue)';
+                    pill.style.color = '#ffffff';
+                } else {
+                    pill.style.background = 'var(--surface)';
+                    pill.style.color = 'var(--text-main)';
+                }
+            }
+            currentStep = stepNum;
+        }
+
+        function handleOnboardingSubmit(e) {
+            e.preventDefault();
+            // TODO: Replace with real POST /student/onboarding backend call
+            const studentData = {
+                name: document.getElementById('ob-name').value,
+                branch: document.getElementById('ob-branch').value,
+                careerGoal: document.getElementById('ob-career-goal').value,
+                attendance: "88%",
+                hostel: "Block B"
+            };
+            localStorage.setItem('studentProfile', JSON.stringify(studentData));
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

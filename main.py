@@ -387,12 +387,13 @@ def confirm_action(req: ConfirmRequest):
         }
 
 
-# Mount static frontend files from suhani-dashboard-ui
-FRONTEND_DIR = PROJECT_ROOT / "suhani-dashboard-ui"
+# Mount static frontend files from frontend directory
+FRONTEND_DIR = PROJECT_ROOT / "frontend"
 
 if FRONTEND_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="static")
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
+
 
 
 
