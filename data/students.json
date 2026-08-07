@@ -1,0 +1,12 @@
+{
+  "students": [
+    {
+      "id": "S001",
+      "name": "Demo Student",
+      "year": 3,
+      "branch": "CSE",
+      "attendance_percent": 78,
+      "cgpa": 8.2
+    }
+  ]
+}
