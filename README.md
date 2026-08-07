@@ -43,7 +43,7 @@ mock APIs / JSON / SQLite data layer.
 
 ## Team
 
-- Orchestrator & planning:
-- Specialized agents:
-- Knowledge (RAG) & memory:
-- Frontend & demo:
+ - Orchestrator & planning: Uday Veena
+- Specialized agents: Sivani Vadrevu
+- Knowledge (RAG) & memory: Bhavya Vennapusa
+- Frontend & demo: Suhani Patel
