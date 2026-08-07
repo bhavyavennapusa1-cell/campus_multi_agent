@@ -1,0 +1,215 @@
+/* dashboard.css - Extends style.css without redefining CSS variables */
+
+.dashboard-layout {
+  display: flex;
+  min-height: calc(100vh - 74px);
+  position: relative;
+}
+
+/* --- Left Sidebar --- */
+.sidebar {
+  width: 260px;
+  background: var(--surface);
+  border-right: 3px dashed var(--border-dark);
+  padding: 2rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: sticky;
+  top: 74px;
+  height: calc(100vh - 74px);
+  overflow-y: auto;
+  z-index: 90;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  color: var(--text-main);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.sidebar-item:hover, .sidebar-item.active {
+  background: var(--lavender);
+  border-color: var(--border-dark);
+  box-shadow: 2px 2px 0px var(--border-dark);
+  transform: translateY(-2px);
+  color: var(--text-main);
+}
+
+.sidebar-icon {
+  font-size: 1.25rem;
+}
+
+/* --- Main Dashboard Area --- */
+.dashboard-main {
+  flex: 1;
+  padding: 2rem 5%;
+  overflow-y: auto;
+}
+
+.hero-prompt-card {
+  text-align: left;
+  padding: 2.5rem;
+}
+
+/* --- Status Cards Grid --- */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.status-card {
+  background: var(--surface);
+  border: 3px solid var(--border-dark);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 4px 4px 0px var(--border-dark);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: transform 0.2s;
+}
+
+.status-card:hover {
+  transform: translateY(-3px);
+}
+
+.status-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.status-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  color: var(--primary-blue-dark);
+}
+
+.status-value {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.status-desc {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Utility Pill Button Component */
+.btn-pill {
+  font-family: var(--font-heading);
+  background: var(--primary-blue);
+  color: #ffffff;
+  padding: 0.5rem 1.25rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  border: 2px solid var(--border-dark);
+  cursor: pointer;
+  box-shadow: 2px 2px 0px var(--border-dark);
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+.btn-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0px var(--border-dark);
+  background: var(--primary-blue-dark);
+  color: #ffffff;
+}
+
+.btn-pill:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0px var(--border-dark);
+}
+
+.btn-pill.active {
+  background: var(--primary-blue-dark);
+  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Input Wrapper matching chat.html style */
+.input-wrapper {
+  display: flex;
+  gap: 0.75rem;
+  background: var(--surface);
+  border: 3px solid var(--border-dark);
+  border-radius: 20px;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 3px 3px 0px var(--border-dark);
+}
+
+.input-wrapper input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  background: transparent;
+}
+
+/* Mobile Breakpoint (Matches style.css @media max-width: 900px) */
+@media (max-width: 900px) {
+  .dashboard-layout {
+    flex-direction: column;
+    padding-bottom: 85px;
+  }
+
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    top: auto;
+    width: 100%;
+    height: 75px;
+    flex-direction: row;
+    border-right: none;
+    border-top: 3px dashed var(--border-dark);
+    padding: 0.5rem;
+    gap: 0.25rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    box-shadow: 0px -4px 10px rgba(0,0,0,0.05);
+    background: var(--surface);
+    z-index: 100;
+  }
+
+  .sidebar-item {
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.2rem;
+    padding: 0.4rem;
+    font-size: 0.7rem;
+    text-align: center;
+    min-width: 75px;
+    border-radius: 12px;
+  }
+
+  .sidebar-icon {
+    font-size: 1.1rem;
+  }
+
+  .sidebar-item:hover, .sidebar-item.active {
+    transform: none;
+    box-shadow: none;
+    border-color: transparent;
+    background: var(--bg-gingham);
+  }
+}

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus AI | Placement Agent</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .placement-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+
+        .pill-tabs-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .pill-tab {
+            font-family: var(--font-heading);
+            background: var(--surface);
+            color: var(--text-main);
+            border: 2px solid var(--border-dark);
+            border-radius: 50px;
+            padding: 0.6rem 1.4rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 3px 3px 0px var(--border-dark);
+            transition: all 0.15s ease;
+        }
+
+        .pill-tab:hover {
+            transform: translateY(-2px);
+            background: var(--soft-yellow);
+        }
+
+        .pill-tab.active {
+            background: var(--primary-blue);
+            color: #ffffff;
+            box-shadow: 4px 4px 0px var(--border-dark);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .placement-card {
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 4px 4px 0px var(--border-dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s;
+        }
+
+        .placement-card:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Rounded Progress Bar using sticker-tag style */
+        .progress-bar-container {
+            width: 100%;
+            background: var(--bg-gingham);
+            border: 2px solid var(--border-dark);
+            border-radius: 20px;
+            height: 24px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 2px 2px 0px var(--border-dark);
+            margin: 0.75rem 0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--mint-green);
+            border-right: 2px solid var(--border-dark);
+            transition: width 0.4s ease;
+        }
+
+        .progress-bar-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-heading);
+            font-size: 0.75rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        /* Two Column Layout for Resume/Career */
+        .two-column-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 5px 5px 0px var(--border-dark);
+        }
+
+        @media (max-width: 768px) {
+            .two-column-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Horizontal Stepper for Progress */
+        .stepper-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 2rem 1rem;
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 20px;
+            box-shadow: 4px 4px 0px var(--border-dark);
+        }
+
+        .stepper-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            min-width: 140px;
+            position: relative;
+        }
+
+        .stepper-icon-wrapper {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid var(--border-dark);
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+            box-shadow: 2px 2px 0px var(--border-dark);
+        }
+
+        /* Skeleton loader styles */
+        .skeleton {
+            animation: skeleton-glow 1.2s infinite ease-in-out;
+            background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+            background-size: 200% 100%;
+            border-radius: 12px;
+        }
+
+        @keyframes skeleton-glow {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-card {
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 4px 4px 0px var(--border-dark);
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: var(--surface);
+            border: 3px dashed var(--border-dark);
+            border-radius: 20px;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Reused -->
+    <nav class="navbar">
+        <div class="nav-brand">📚 CampusAgenda AI</div>
+        <button class="hamburger" id="hamburger">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="chat.html">Assistant</a>
+            <a href="about.html">Architecture</a>
+        </div>
+    </nav>
+
+    <main class="placement-container">
+        <!-- Header Cloud Container -->
+        <div class="cloud-container" style="padding: 2rem; margin-bottom: 2rem;">
+            <div class="sticker-tag" style="background: var(--soft-yellow);">🎯 Placement & Career Intelligence</div>
+            <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue);">Placement Agent Hub</h1>
+            <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 1rem;">
+                Track drive eligibility, Coding Practice analytics, required courses, skill gaps, and milestone progress.
+            </p>
+
+            <!-- State Simulator Controls for Reviewers -->
+            <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
+                <button class="btn-pill" style="font-size: 0.75rem; background: var(--mint-green); color: var(--text-main);" onclick="setTabState('normal')">State: Normal Data</button>
+                <button class="btn-pill" style="font-size: 0.75rem; background: var(--bubble-pink); color: var(--text-main);" onclick="setTabState('loading')">State: Loading Skeleton</button>
+                <button class="btn-pill" style="font-size: 0.75rem; background: var(--lavender); color: var(--text-main);" onclick="setTabState('empty')">State: Empty State</button>
+            </div>
+        </div>
+
+        <!-- 5 Pill Sub-Tabs -->
+        <div class="pill-tabs-bar">
+            <button class="pill-tab active" onclick="switchTab('opportunities', this)">Opportunities</button>
+            <!-- Naming rule: "Coding Practice", product labels like LeetCode on card are fine -->
+            <button class="pill-tab" onclick="switchTab('coding', this)">Coding Practice</button>
+            <button class="pill-tab" onclick="switchTab('courses', this)">Courses</button>
+            <button class="pill-tab" onclick="switchTab('resume', this)">Resume/Career</button>
+            <button class="pill-tab" onclick="switchTab('progress', this)">Progress</button>
+        </div>
+
+        <!-- Tab Content Viewport -->
+        <div id="tab-content-viewport">
+            <!-- Dynamic content rendered via JS -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        // Navbar toggle
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+
+        // Current active state ('normal' | 'loading' | 'empty')
+        let currentSimState = 'normal';
+        let currentTabName = 'opportunities';
+
+        // --- ALIGNED DOCUMENTED ENDPOINTS ---
+
+        // TODO: Replace with real GET /placement/opportunities
+        const mockOpportunities = [
+            { title: "Backend Systems Engineer Intern", company: "Google", location: "Hyderabad / Remote", deadline: "Aug 15, 2026", matchScore: 95, applyUrl: "https://careers.google.com" },
+            { title: "Distributed Systems Apprentice", company: "Microsoft", location: "Bengaluru", deadline: "Aug 20, 2026", matchScore: 88, applyUrl: "https://careers.microsoft.com" },
+            { title: "AI Platform Engineer Trainee", company: "Atlassian", location: "Remote", deadline: "Aug 25, 2026", matchScore: 82, applyUrl: "https://careers.atlassian.com" },
+            { title: "Cloud Backend Developer", company: "Amazon AWS", location: "Hyderabad", deadline: "Sept 01, 2026", matchScore: 78, applyUrl: "https://amazon.jobs" }
+        ];
+
+        // TODO: Replace with real GET /placement/coding and GET /placement/github
+        const mockCoding = [
+            { platformName: "LeetCode", problemsSolved: 342, rating: "1850 (Knight)", profileUrl: "https://leetcode.com" },
+            { platformName: "CodeChef", problemsSolved: 195, rating: "1740 (4★)", profileUrl: "https://codechef.com" },
+            { platformName: "HackerRank", problemsSolved: 210, rating: "5 Stars (Problem Solving)", profileUrl: "https://hackerrank.com" },
+            { platformName: "GitHub Repositories", problemsSolved: 18, rating: "420 Commits This Year", profileUrl: "https://github.com" }
+        ];
+
+        // TODO: Replace with real GET /placement/courses
+        const mockCourses = [
+            { title: "Distributed Systems & Microservices", platform: "Coursera / Stanford", progressPercent: 75, url: "https://coursera.org" },
+            { title: "Advanced Go & Concurrency Patterns", platform: "Udemy", progressPercent: 90, url: "https://udemy.com" },
+            { title: "Database Internals & SQL Tuning", platform: "edX / MIT", progressPercent: 45, url: "https://edx.org" }
+        ];
+
+        // TODO: Replace with real GET /placement/progress and GET /placement/github
+        const mockResumeCareer = {
+            skillGaps: [
+                "Kubernetes & Container Orchestration",
+                "gRPC Protocol Buffers Integration",
+                "Distributed Caching (Redis/Memcached)",
+                "System Design Architecture Diagrams"
+            ],
+            recommendedNext: [
+                "Complete 2 Distributed Systems microservice projects",
+                "Schedule 3 Mock System Design interviews",
+                "Optimize GitHub README and add API documentation"
+            ]
+        };
+
+        // TODO: Replace with real GET /placement/progress
+        const mockProgress = [
+            { step: "Resume Built & Verified", status: "done", detail: "ATS Score 88/100" },
+            { step: "DSA & Coding Prep", status: "done", detail: "300+ Problems Solved" },
+            { step: "Mock Interviews", status: "running", detail: "Round 2 scheduled tomorrow" },
+            { step: "Company Applications", status: "running", detail: "4 Drives Active" },
+            { step: "Final Offer Evaluation", status: "pending", detail: "Awaiting HR Round" }
+        ];
+
+        // Helper function for progress status icons matching script.js getStatusIcon pattern
+        function getStatusIconHtml(status) {
+            switch(status.toLowerCase()) {
+                case 'done': 
+                    return '<span style="color: #27ae60; font-weight: bold; font-size: 1.2rem;">✓</span>';
+                case 'running': 
+                    return '<div style="border: 3px solid var(--border-dark); border-top-color: var(--primary-blue); border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite;"></div>';
+                case 'pending': 
+                default:
+                    return '<div style="border: 2px solid var(--text-muted); border-radius: 50%; width: 16px; height: 16px;"></div>';
+            }
+        }
+
+        // Render Loading Skeleton State
+        function renderSkeleton() {
+            return `
+                <div class="cards-grid">
+                    <div class="skeleton-card">
+                        <div class="skeleton" style="width: 40%; height: 24px;"></div>
+                        <div class="skeleton" style="width: 80%; height: 28px;"></div>
+                        <div class="skeleton" style="width: 60%; height: 20px;"></div>
+                    </div>
+                    <div class="skeleton-card">
+                        <div class="skeleton" style="width: 40%; height: 24px;"></div>
+                        <div class="skeleton" style="width: 80%; height: 28px;"></div>
+                        <div class="skeleton" style="width: 60%; height: 20px;"></div>
+                    </div>
+                    <div class="skeleton-card">
+                        <div class="skeleton" style="width: 40%; height: 24px;"></div>
+                        <div class="skeleton" style="width: 80%; height: 28px;"></div>
+                        <div class="skeleton" style="width: 60%; height: 20px;"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Empty State
+        function renderEmptyState(tabName) {
+            return `
+                <div class="empty-state">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📭</div>
+                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">No ${tabName} Found</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">
+                        There are currently no items available in this category. Check back later or trigger an AI refresh.
+                    </p>
+                </div>
+            `;
+        }
+
+        // Render Specific Tab Content
+        function renderTab(tabName) {
+            const viewport = document.getElementById('tab-content-viewport');
+            
+            if (currentSimState === 'loading') {
+                viewport.innerHTML = renderSkeleton();
+                return;
+            }
+
+            if (currentSimState === 'empty') {
+                viewport.innerHTML = renderEmptyState(tabName);
+                return;
+            }
+
+            switch(tabName) {
+                case 'opportunities': {
+                    // Opportunities Tab
+                    // TODO: Replace with GET /placement/opportunities
+                    const data = mockOpportunities;
+                    if (!data || data.length === 0) { viewport.innerHTML = renderEmptyState('Opportunities'); return; }
+                    
+                    let html = `<div class="cards-grid">`;
+                    data.forEach(item => {
+                        html += `
+                            <div class="placement-card">
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                                        <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.8rem; margin: 0;">🏢 ${item.company}</span>
+                                        <span class="sticker-tag" style="background: var(--mint-green); font-size: 0.85rem; margin: 0; transform: rotate(1deg);">⚡ ${item.matchScore}% Match</span>
+                                    </div>
+                                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue); margin-bottom: 0.3rem;">${item.title}</h3>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted);">📍 Location: ${item.location}</p>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted);">⏰ Deadline: ${item.deadline}</p>
+                                </div>
+                                <div style="margin-top: 1.25rem;">
+                                    <a href="${item.applyUrl}" target="_blank" class="btn-pill" style="width: 100%; justify-content: center;">Apply Now →</a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                    viewport.innerHTML = html;
+                    break;
+                }
+                case 'coding': {
+                    // Coding Practice Tab (GET /placement/coding & GET /placement/github)
+                    const data = mockCoding;
+                    if (!data || data.length === 0) { viewport.innerHTML = renderEmptyState('Coding Profiles'); return; }
+
+                    let html = `<div class="cards-grid">`;
+                    data.forEach(item => {
+                        html += `
+                            <div class="placement-card">
+                                <div>
+                                    <div class="sticker-tag" style="background: var(--bubble-pink); margin-bottom: 0.75rem;">💻 ${item.platformName}</div>
+                                    <h3 style="font-family: var(--font-heading); color: var(--text-main);">${item.platformName} Profile</h3>
+                                    <div style="margin-top: 0.75rem; font-size: 0.95rem;">
+                                        <div><strong>Activity Metric:</strong> ${item.problemsSolved}</div>
+                                        <div style="margin-top: 0.25rem;"><strong>Rating/Status:</strong> ${item.rating}</div>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 1.25rem;">
+                                    <a href="${item.profileUrl}" target="_blank" rel="noopener noreferrer" class="btn-pill" style="width: 100%; justify-content: center; background: var(--primary-blue);">View Profile ↗</a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                    viewport.innerHTML = html;
+                    break;
+                }
+                case 'courses': {
+                    // Courses Tab (GET /placement/courses)
+                    const data = mockCourses;
+                    if (!data || data.length === 0) { viewport.innerHTML = renderEmptyState('Courses'); return; }
+
+                    let html = `<div class="cards-grid">`;
+                    data.forEach(item => {
+                        html += `
+                            <div class="placement-card">
+                                <div>
+                                    <span class="sticker-tag" style="background: var(--lavender); margin-bottom: 0.5rem;">📖 ${item.platform}</span>
+                                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue-dark);">${item.title}</h3>
+                                    <div style="margin-top: 1rem;">
+                                        <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: flex; justify-content: space-between;">
+                                            <span>Progress</span>
+                                            <span>${item.progressPercent}%</span>
+                                        </div>
+                                        <div class="progress-bar-container">
+                                            <div class="progress-bar-fill" style="width: ${item.progressPercent}%;"></div>
+                                            <div class="progress-bar-text">${item.progressPercent}% Completed</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 1.25rem;">
+                                    <a href="${item.url}" target="_blank" class="btn-pill" style="width: 100%; justify-content: center;">Continue Course →</a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                    viewport.innerHTML = html;
+                    break;
+                }
+                case 'resume': {
+                    // Resume/Career Tab
+                    const data = mockResumeCareer;
+                    if (!data || (!data.skillGaps && !data.recommendedNext)) { viewport.innerHTML = renderEmptyState('Resume Data'); return; }
+
+                    let html = `
+                        <div class="two-column-card">
+                            <div>
+                                <div class="sticker-tag" style="background: var(--bubble-pink); margin-bottom: 1rem;">⚠️ Identified Skill Gaps</div>
+                                <h3 style="font-family: var(--font-heading); color: var(--text-main); margin-bottom: 0.75rem;">Skills to Build</h3>
+                                <ul style="list-style: none; padding: 0;">
+                                    ${data.skillGaps.map(gap => `
+                                        <li style="background: var(--bg-gingham); border: 2px solid var(--border-dark); border-radius: 12px; padding: 0.6rem 0.9rem; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                                            <span style="color: #c0392b;">•</span> ${gap}
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="sticker-tag" style="background: var(--mint-green); margin-bottom: 1rem;">💡 Recommended Next Steps</div>
+                                <h3 style="font-family: var(--font-heading); color: var(--text-main); margin-bottom: 0.75rem;">Action Plan</h3>
+                                <ul style="list-style: none; padding: 0;">
+                                    ${data.recommendedNext.map(rec => `
+                                        <li style="background: var(--surface); border: 2px solid var(--border-dark); border-radius: 12px; padding: 0.6rem 0.9rem; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; box-shadow: 2px 2px 0px var(--border-dark);">
+                                            <span style="color: #27ae60;">✓</span> ${rec}
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                    viewport.innerHTML = html;
+                    break;
+                }
+                case 'progress': {
+                    // Progress Tab (GET /placement/progress)
+                    const data = mockProgress;
+                    if (!data || data.length === 0) { viewport.innerHTML = renderEmptyState('Progress Milestones'); return; }
+
+                    let html = `
+                        <div class="stepper-container">
+                            ${data.map((item, idx) => `
+                                <div class="stepper-step">
+                                    <div class="stepper-icon-wrapper">
+                                        ${getStatusIconHtml(item.status)}
+                                    </div>
+                                    <div style="font-family: var(--font-heading); font-size: 0.9rem; color: var(--primary-blue); font-weight: 700;">Step ${idx + 1}</div>
+                                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); margin-top: 0.2rem;">${item.step}</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem;">${item.detail}</div>
+                                </div>
+                            `).join('<div style="width: 30px; height: 3px; background: var(--border-dark); margin-top: -2.5rem;"></div>')}
+                        </div>
+                    `;
+                    viewport.innerHTML = html;
+                    break;
+                }
+            }
+        }
+
+        function switchTab(tabName, el) {
+            currentTabName = tabName;
+            document.querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            renderTab(tabName);
+        }
+
+        function setTabState(state) {
+            currentSimState = state;
+            renderTab(currentTabName);
+        }
+
+        renderTab('opportunities');
+    </script>
+</body>
+</html>

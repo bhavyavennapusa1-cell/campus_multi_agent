@@ -7,6 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const traceList = document.getElementById('trace-list');
     const chips = document.querySelectorAll('.chip');
 
+    // Auto-fill prompt from URL query parameter (e.g. from dashboard hero prompt button)
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoPrompt = urlParams.get('prompt');
+    if (autoPrompt && chatInput) {
+        chatInput.value = autoPrompt;
+        chatInput.focus();
+    }
+
     chips.forEach(chip => {
         chip.addEventListener('click', () => {
             chatInput.value = chip.getAttribute('data-prompt');
@@ -24,11 +32,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false) => {
+    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, cards = []) => {
         const msgDiv = document.createElement('div');
         msgDiv.className = `message msg-${sender}`;
         
         let contentHtml = `<p>${text}</p>`;
+
+        // Part 5: Chat card rendering for optional backend `cards` array
+        if (cards && cards.length > 0) {
+            const isScrollStrip = cards.length > 2;
+            const containerStyle = isScrollStrip 
+                ? "display: flex; gap: 0.75rem; overflow-x: auto; padding: 0.5rem 0.2rem; margin-top: 0.75rem; scrollbar-width: thin;"
+                : "display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem;";
+            
+            contentHtml += `<div class="chat-cards-container" style="${containerStyle}">`;
+            cards.forEach(card => {
+                let actionsHtml = '';
+                if (card.actions && card.actions.length > 0) {
+                    actionsHtml += `<div style="display: flex; gap: 0.4rem; margin-top: 0.6rem; flex-wrap: wrap;">`;
+                    card.actions.slice(0, 2).forEach(act => {
+                        const actText = typeof act === 'string' ? act : (act.action || act.label);
+                        const labelText = typeof act === 'string' ? act : (act.label || act.action);
+                        actionsHtml += `<button class="btn-pill" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;" onclick="handleCardAction('${actText.replace(/'/g, "\\'")}')">${labelText}</button>`;
+                    });
+                    actionsHtml += `</div>`;
+                }
+
+                contentHtml += `
+                    <div class="chat-card" style="background: var(--surface); border: 2px solid var(--border-dark); border-radius: 16px; padding: 0.75rem 1rem; box-shadow: 3px 3px 0px var(--border-dark); ${isScrollStrip ? 'min-width: 220px; flex: 0 0 auto;' : 'flex: 1 1 200px;'}">
+                        ${card.type ? `<span class="sticker-tag" style="font-size: 0.65rem; padding: 0.15rem 0.5rem; margin-bottom: 0.35rem; transform: rotate(-1deg);">${card.type}</span>` : ''}
+                        <div style="font-family: var(--font-heading); font-weight: 700; font-size: 0.95rem; color: var(--primary-blue);">${card.title || ''}</div>
+                        ${card.subtitle ? `<div style="font-size: 0.8rem; font-weight: 600; color: var(--text-main); margin-top: 0.15rem;">${card.subtitle}</div>` : ''}
+                        ${card.meta ? `<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">${card.meta}</div>` : ''}
+                        ${actionsHtml}
+                    </div>
+                `;
+            });
+            contentHtml += `</div>`;
+        }
 
         if (agentsUsed && agentsUsed.length > 0) {
             contentHtml += `<div class="agent-trace-strip" style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; padding-top: 0.4rem; border-top: 1px dashed rgba(0,0,0,0.1); font-size: 0.75rem;">`;
@@ -105,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Backend offline');
 
             const data = await response.json();
-            appendMessage(data.reply, 'bot', data.agents_used, data.reasoning_steps, data.requires_confirmation);
+            appendMessage(data.reply, 'bot', data.agents_used, data.reasoning_steps, data.requires_confirmation, data.cards);
             renderTraces(data.trace);
 
         } catch (error) {
@@ -136,4 +177,16 @@ window.handleConfirm = (isConfirmed) => {
     msg.className = 'message msg-user';
     msg.textContent = isConfirmed ? "Confirmed action." : "Cancelled action.";
     chatHistory.appendChild(msg);
+};
+
+window.handleCardAction = (actionText) => {
+    const chatInput = document.getElementById('chat-input');
+    const chatForm = document.getElementById('chat-form');
+    if (chatInput) {
+        chatInput.value = actionText;
+        chatInput.focus();
+        if (chatForm && typeof chatForm.requestSubmit === 'function') {
+            chatForm.requestSubmit();
+        }
+    }
 };
