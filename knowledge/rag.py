@@ -1,65 +1,96 @@
-"""
-Person C owns this file.
-Uses ChromaDB to embed and search the markdown docs in knowledge/docs/.
-Run build_index() once at startup (or once ever - it persists to disk).
-"""
-
-from pathlib import Path
+import os
+import glob
+# pyrefly: ignore [missing-import]
 import chromadb
+# pyrefly: ignore [missing-import]
 from chromadb.utils import embedding_functions
 
-DOCS_DIR = Path(__file__).resolve().parent / "docs"
-DB_DIR = Path(__file__).resolve().parent / "chroma_db"
+# Initialize persistent local DB path
+CHROMA_DATA_PATH = os.path.join(os.path.dirname(__file__), "chroma_db")
+DOCS_DIR = os.path.join(os.path.dirname(__file__), "docs")
 
-embedding_fn = embedding_functions.DefaultEmbeddingFunction()
+# Initialize SentenceTransformer embedding function (Fixes standard Chroma download/hash issue)
+embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
+    model_name="all-MiniLM-L6-v2"
+)
 
-client = chromadb.PersistentClient(path=str(DB_DIR))
-collection = client.get_or_create_collection(
+# Initialize Chroma Client
+chroma_client = chromadb.PersistentClient(path=CHROMA_DATA_PATH)
+collection = chroma_client.get_or_create_collection(
     name="campus_knowledge",
-    embedding_function=embedding_fn,
+    embedding_function=embedding_fn
 )
 
 
 def build_index():
-    """Run this once to load all docs into the vector store. Safe to re-run."""
-    existing_ids = set(collection.get()["ids"])
+    """Reads all markdown files in knowledge/docs/ and indexes them into ChromaDB."""
+    md_files = glob.glob(os.path.join(DOCS_DIR, "*.md"))
+    
+    if not md_files:
+        print("No markdown documents found in knowledge/docs/")
+        return
 
-    for doc_path in DOCS_DIR.glob("*.md"):
-        text = doc_path.read_text()
-        # naive chunking: split on blank lines (paragraphs) - good enough for a hackathon
-        chunks = [c.strip() for c in text.split("\n\n") if c.strip()]
+    documents = []
+    metadatas = []
+    ids = []
 
-        for i, chunk in enumerate(chunks):
-            chunk_id = f"{doc_path.stem}-{i}"
-            if chunk_id in existing_ids:
-                continue
-            collection.add(
-                ids=[chunk_id],
-                documents=[chunk],
-                metadatas=[{"source": doc_path.name}],
-            )
+    doc_id = 0
+    for file_path in md_files:
+        filename = os.path.basename(file_path)
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
 
-    print(f"Index built. {collection.count()} chunks total.")
+        # Simple section-based chunking by paragraph/heading
+        chunks = [c.strip() for c in content.split("\n\n") if c.strip()]
+        
+        for idx, chunk in enumerate(chunks):
+            documents.append(chunk)
+            metadatas.append({"source": filename, "chunk_id": idx})
+            ids.append(f"{filename}_{idx}_{doc_id}")
+            doc_id += 1
+
+    if documents:
+        # Upsert documents into collection
+        collection.upsert(
+            documents=documents,
+            metadatas=metadatas,
+            ids=ids
+        )
+        print(f"Successfully indexed {len(documents)} chunks from {len(md_files)} documents.")
 
 
-def retrieve(query: str, k: int = 3) -> list[dict]:
+def retrieve(query: str, k: int = 3) -> list:
     """
-    Returns top-k chunks: [{"text": ..., "source": ...}, ...]
-    Agents call this and attach the source filename as the citation
-    in their AgentResponse.
+    Searches the knowledge base for relevant chunks.
+    Returns a list of dicts with content and source citations.
     """
-    results = collection.query(query_texts=[query], n_results=k)
+    results = collection.query(
+        query_texts=[query],
+        n_results=k
+    )
 
-    if not results["documents"] or not results["documents"][0]:
-        return []
+    retrieved_chunks = []
+    if results and results.get("documents"):
+        docs = results["documents"][0]
+        metas = results["metadatas"][0]
+        
+        for doc, meta in zip(docs, metas):
+            retrieved_chunks.append({
+                "text": doc,
+                "source": meta.get("source", "Unknown Document")
+            })
 
-    return [
-        {"text": doc, "source": meta["source"]}
-        for doc, meta in zip(results["documents"][0], results["metadatas"][0])
-    ]
+    return retrieved_chunks
 
 
 if __name__ == "__main__":
+    print("Building ChromaDB Index...")
     build_index()
-    # quick manual test
-    print(retrieve("what happens if my attendance is low"))
+    
+    print("\n--- Testing Retrieval ---")
+    test_query = "What is the minimum attendance required for exam?"
+    results = retrieve(test_query, k=2)
+    
+    for i, res in enumerate(results, 1):
+        print(f"\nResult {i} (Source: {res['source']}):")
+        print(f"{res['text']}")
