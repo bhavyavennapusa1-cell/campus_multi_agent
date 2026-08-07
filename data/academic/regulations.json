@@ -1,0 +1,35 @@
+{
+  "academic_regulations": {
+    "regulation_code": "R22-AUTONOMOUS",
+    "attendance_policy": {
+      "mandatory_minimum_pct": 75.0,
+      "condonation_min_pct": 65.0,
+      "condonation_max_pct": 74.9,
+      "condonation_fee_inr": 1000,
+      "medical_certificate_required": true,
+      "detention_threshold_pct": 65.0,
+      "detention_rule": "Students below 65.0% aggregate attendance are strictly detained and must repeat the semester."
+    },
+    "examination_policy": {
+      "cie_weightage_pct": 30.0,
+      "see_weightage_pct": 70.0,
+      "min_see_marks_pct": 40.0,
+      "min_overall_aggregate_pct": 40.0,
+      "revaluation_fee_per_subject_inr": 500,
+      "supplementary_exam_fee_per_subject_inr": 300
+    },
+    "backlog_retake_policy": {
+      "max_active_backlogs_for_promotion_to_year_4": 4,
+      "clearing_attempts_per_subject": 3
+    },
+    "grading_scale": [
+      { "grade": "O", "description": "Outstanding", "marks_range": "90-100", "grade_points": 10 },
+      { "grade": "A+", "description": "Excellent", "marks_range": "80-89", "grade_points": 9 },
+      { "grade": "A", "description": "Very Good", "marks_range": "70-79", "grade_points": 8 },
+      { "grade": "B+", "description": "Good", "marks_range": "60-69", "grade_points": 7 },
+      { "grade": "B", "description": "Above Average", "marks_range": "50-59", "grade_points": 6 },
+      { "grade": "C", "description": "Average / Pass", "marks_range": "40-49", "grade_points": 5 },
+      { "grade": "F", "description": "Fail", "marks_range": "<40", "grade_points": 0 }
+    ]
+  }
+}

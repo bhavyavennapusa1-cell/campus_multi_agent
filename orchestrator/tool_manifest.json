@@ -1,0 +1,156 @@
+{
+  "tools": [
+    {
+      "name": "get_relevant_contacts",
+      "agent": "communication",
+      "description": "Retrieves contact info for classmates, faculty, HOD, or subject teachers via ContactsRepo interface.",
+      "parameters": {
+        "student_id": "string",
+        "query_type": "string (classmates|faculty|hod|subject_teacher)",
+        "subject": "string (optional)"
+      }
+    },
+    {
+      "name": "create_chat_group",
+      "agent": "communication",
+      "description": "Creates a temporary or permanent group in the local chat_groups/group_members operational tables.",
+      "parameters": {
+        "group_name": "string",
+        "member_ids": "list[string]",
+        "group_type": "string (temporary|permanent)",
+        "duration_hours": "int (optional)"
+      }
+    },
+    {
+      "name": "draft_official_email",
+      "agent": "communication",
+      "description": "Formats an official email using student profile context. Returns draft + requires_user_approval: true. Never sends directly.",
+      "parameters": {
+        "recipient_email": "string",
+        "subject": "string",
+        "core_message": "string"
+      }
+    },
+    {
+      "name": "send_email",
+      "agent": "communication",
+      "description": "Sends an email using Gmail API upon human approval.",
+      "parameters": {
+        "to": "string",
+        "subject": "string",
+        "body": "string"
+      }
+    },
+    {
+      "name": "schedule_appointment",
+      "agent": "communication",
+      "description": "Schedules an appointment using Google Calendar API.",
+      "parameters": {
+        "title": "string",
+        "start_time": "string",
+        "end_time": "string",
+        "attendees": "list[string]"
+      }
+    },
+    {
+      "name": "update_appointment",
+      "agent": "communication",
+      "description": "Updates an existing appointment in Google Calendar.",
+      "parameters": {
+        "appointment_id": "string",
+        "updates": "dict"
+      }
+    },
+    {
+      "name": "cancel_appointment",
+      "agent": "communication",
+      "description": "Cancels an existing appointment in Google Calendar.",
+      "parameters": {
+        "appointment_id": "string"
+      }
+    },
+    {
+      "name": "schedule_reminder",
+      "agent": "communication",
+      "description": "Schedules a reminder for campus events or tasks.",
+      "parameters": {
+        "event": "string",
+        "minutes_before": "int"
+      }
+    },
+    {
+      "name": "get_github_profile",
+      "agent": "placement",
+      "description": "Retrieves GitHub profile info (repos, contributions, languages) via GitHub API.",
+      "parameters": {
+        "username": "string"
+      }
+    },
+    {
+      "name": "find_opportunities",
+      "agent": "placement",
+      "description": "Finds eligible job/internship opportunities matching student profile via Jobs API.",
+      "parameters": {
+        "role": "string",
+        "min_stipend": "string"
+      }
+    },
+    {
+      "name": "get_all_eligible_companies",
+      "agent": "placement",
+      "description": "Retrieves all eligible placement companies based on CGPA and backlog criteria.",
+      "parameters": {}
+    },
+    {
+      "name": "create_task",
+      "agent": "academic",
+      "description": "Creates a task in Todoist.",
+      "parameters": {
+        "content": "string",
+        "due_string": "string"
+      }
+    },
+    {
+      "name": "get_tasks",
+      "agent": "academic",
+      "description": "Fetches current tasks from Todoist.",
+      "parameters": {}
+    },
+    {
+      "name": "create_study_plan",
+      "agent": "academic",
+      "description": "Generates a study plan for an upcoming exam and materializes it into Todoist tasks + Google Calendar events.",
+      "parameters": {
+        "subject": "string",
+        "days_remaining": "int"
+      }
+    },
+    {
+      "name": "get_directions",
+      "agent": "navigator",
+      "description": "Gets routing/directions using Google Maps API supplementing on-campus dataset.",
+      "parameters": {
+        "origin": "string",
+        "destination": "string"
+      }
+    },
+    {
+      "name": "find_nearby_facilities",
+      "agent": "navigator",
+      "description": "Finds nearby facilities using Google Maps API.",
+      "parameters": {
+        "facility_type": "string"
+      }
+    },
+    {
+      "name": "add_event_to_calendar",
+      "agent": "events",
+      "description": "Adds a registered campus event to Google Calendar.",
+      "parameters": {
+        "event_id": "string",
+        "event_name": "string",
+        "date_str": "string"
+      }
+    }
+  ]
+}

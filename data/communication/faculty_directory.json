@@ -1,0 +1,64 @@
+{
+  "faculty": [
+    {
+      "faculty_id": "FAC100",
+      "name": "Dr. T. Adilakshmi",
+      "department": "CSE",
+      "designation": "Professor & Head of Department (HOD)",
+      "email": "hod.cse@vasavi.ac.in",
+      "office_location": "Vasonomics Building, Room V301",
+      "subjects_taught": ["Software Engineering", "Object Oriented Analysis"],
+      "consultation_hours": "Mon, Wed 03:00 PM - 04:30 PM"
+    },
+    {
+      "faculty_id": "FAC101",
+      "name": "Dr. P. V. Sudha",
+      "department": "CSE",
+      "designation": "Associate Professor & Student Mentor",
+      "email": "pv.sudha@vasavi.ac.in",
+      "office_location": "Vasonomics Building, Room V305",
+      "subjects_taught": ["Design & Analysis of Algorithms", "Operating Systems"],
+      "consultation_hours": "Tue, Thu 02:00 PM - 04:00 PM"
+    },
+    {
+      "faculty_id": "FAC102",
+      "name": "Prof. K. Ramakrishna",
+      "department": "CSE",
+      "designation": "Assistant Professor",
+      "email": "k.ramakrishna@vasavi.ac.in",
+      "office_location": "Vasonomics Building, Room V308",
+      "subjects_taught": ["Database Management Systems", "Advanced Data Structures"],
+      "consultation_hours": "Mon, Fri 11:00 AM - 12:30 PM"
+    },
+    {
+      "faculty_id": "FAC103",
+      "name": "Dr. N. Srinivas",
+      "department": "ECE",
+      "designation": "Associate Professor",
+      "email": "n.srinivas@vasavi.ac.in",
+      "office_location": "Ramanujan Block, Room R202",
+      "subjects_taught": ["Digital Signal Processing", "VLSI Design"],
+      "consultation_hours": "Wed, Fri 02:00 PM - 03:30 PM"
+    },
+    {
+      "faculty_id": "FAC104",
+      "name": "Dr. M. Sridevi",
+      "department": "IT",
+      "designation": "Professor",
+      "email": "m.sridevi@vasavi.ac.in",
+      "office_location": "IT Block, Room IT201",
+      "subjects_taught": ["Web Technologies", "Cloud Computing"],
+      "consultation_hours": "Tue, Thu 10:00 AM - 11:30 AM"
+    },
+    {
+      "faculty_id": "FAC105",
+      "name": "Dr. E. Sreenivasa Rao",
+      "department": "ECE",
+      "designation": "Professor & HOD ECE",
+      "email": "hod.ece@vasavi.ac.in",
+      "office_location": "Ramanujan Block, Room R201",
+      "subjects_taught": ["Signals & Systems"],
+      "consultation_hours": "Mon, Thu 03:00 PM - 04:30 PM"
+    }
+  ]
+}

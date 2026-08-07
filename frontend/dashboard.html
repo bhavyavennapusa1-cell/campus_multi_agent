@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus AI | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        /* Today's Priorities Checklist - Simple checkable list items */
+        .priorities-list {
+            list-style: none;
+            padding: 0;
+            margin: 0.75rem 0 1.5rem;
+        }
+
+        .priority-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.4rem 0;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+        }
+
+        .priority-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-blue);
+        }
+
+        /* AI Recommendation Box */
+        .ai-recommendation-box {
+            background: var(--soft-yellow);
+            border: 2px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 0.85rem 1.25rem;
+            box-shadow: 3px 3px 0px var(--border-dark);
+            font-family: var(--font-heading);
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        /* Upcoming Horizontal/Grid Row */
+        .upcoming-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge-bubble {
+            background: var(--bubble-pink);
+            color: var(--text-main);
+            border: 1px solid var(--border-dark);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 0.4rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Navigation (Reused exactly as-is) -->
+    <nav class="navbar">
+        <div class="nav-brand">📚 CampusAgenda AI</div>
+        <button class="hamburger" id="hamburger">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="chat.html">Assistant</a>
+            <a href="about.html">Architecture</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-layout">
+        <!-- Left Sidebar / Mobile Bottom Tab Bar -->
+        <aside class="sidebar">
+            <a href="chat.html" class="sidebar-item">
+                <span class="sidebar-icon">💬</span>
+                <span>AI Chat</span>
+            </a>
+            <a href="placement.html" class="sidebar-item">
+                <span class="sidebar-icon">💼</span>
+                <span>Placement</span>
+            </a>
+            <a href="academic.html" class="sidebar-item">
+                <span class="sidebar-icon">🎓</span>
+                <span>Academic</span>
+            </a>
+            <a href="campus-navigator.html" class="sidebar-item">
+                <span class="sidebar-icon">🗺️</span>
+                <span>Campus Navigator</span>
+            </a>
+            <a href="events.html" class="sidebar-item">
+                <span class="sidebar-icon">🎉</span>
+                <span>Events</span>
+            </a>
+            <a href="student-services.html" class="sidebar-item">
+                <span class="sidebar-icon">🏢</span>
+                <span>Student Services</span>
+            </a>
+            <a href="communication.html" class="sidebar-item">
+                <span class="sidebar-icon">✉️</span>
+                <span>Communication</span>
+            </a>
+            <a href="profile.html" class="sidebar-item">
+                <span class="sidebar-icon">👤</span>
+                <span>Profile</span>
+            </a>
+            <a href="notifications.html" class="sidebar-item">
+                <span class="sidebar-icon">🔔</span>
+                <span>Notifications</span>
+                <span class="badge-bubble">3</span>
+            </a>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="dashboard-main">
+            <!-- Hero Card with Welcome Message & Quick Journey -->
+            <div class="cloud-container hero-prompt-card">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <!-- 1. Welcome Message -->
+                    <!-- TODO: Replace mock name with real fetch('/student/dashboard') data -->
+                    <h1 id="welcome-message"
+                        style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--primary-blue);">
+                        Good morning, Bhavya Vennapusa 👋
+                    </h1>
+                    <span class="sticker-tag" style="background: var(--bubble-pink); margin: 0;">🚀 Career & Learning
+                        Path</span>
+                </div>
+
+                <p style="color: var(--text-muted); margin-bottom: 1.25rem; max-width: 650px;">
+                    Trigger our multi-agent network to curate roadmap electives, check internship eligibility, and
+                    generate targeted prep schedules instantly.
+                </p>
+
+                <!-- 2. AI Recommendation Box -->
+                <!-- TODO: Replace with real fetch('/student/dashboard') recommendation string -->
+                <div class="ai-recommendation-box">
+                    <span>💡</span>
+                    <span><strong>AI Recommendation:</strong> You may want to focus on SQL & Distributed Systems
+                        concurrency this week.</span>
+                </div>
+
+                <!-- 3. Today's Priorities Checklist (Simple fast glance list) -->
+                <!-- TODO: Replace with real fetch('/student/dashboard') tasks array -->
+                <div style="margin-bottom: 1.5rem;">
+                    <div
+                        style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-main); font-weight: 700;">
+                        📋 Today's Priorities
+                    </div>
+                    <ul class="priorities-list" id="priorities-list">
+                        <li class="priority-item">
+                            <input type="checkbox" id="p-1">
+                            <label for="p-1">Complete Distributed Systems concurrency lab exercise</label>
+                        </li>
+                        <li class="priority-item">
+                            <input type="checkbox" id="p-2" checked>
+                            <label for="p-2" style="text-decoration: line-through; opacity: 0.7;">Submit Google
+                                Internship eligibility verification document</label>
+                        </li>
+                        <li class="priority-item">
+                            <input type="checkbox" id="p-3">
+                            <label for="p-3">Review SQL indexing & query optimization notes</label>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 4. Upcoming Items Section (3 items with 📚🎪💼 icons & sticker tags) -->
+                <!-- TODO: Replace with real fetch('/student/dashboard') upcoming items -->
+                <div style="margin-bottom: 1.75rem;">
+                    <div
+                        style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.6rem;">
+                        ⏰ Upcoming Highlights
+                    </div>
+                    <div class="upcoming-row">
+                        <span class="sticker-tag" style="background: var(--mint-green); margin: 0; font-size: 0.85rem;">
+                            📚 Exam: Systems Midterm in 4 Days
+                        </span>
+                        <span class="sticker-tag"
+                            style="background: var(--soft-yellow); margin: 0; font-size: 0.85rem;">
+                            🎪 Event: AgentX Hackathon Tomorrow, 10 AM
+                        </span>
+                        <span class="sticker-tag" style="background: var(--lavender); margin: 0; font-size: 0.85rem;">
+                            💼 Placement: Google Drive Deadline Aug 15
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Example Prompt Button linking to chat.html -->
+                <a href="chat.html?prompt=I%20want%20to%20become%20a%20backend%20developer"
+                    class="btn-blob route-to-chat" data-prompt="I want to become a backend developer">
+                    I want to become a backend developer →
+                </a>
+            </div>
+
+            <!-- Small Status Cards Section -->
+            <div class="status-grid">
+                <!-- Status Card 1: Upcoming Exam Countdown -->
+                <div class="status-card" id="card-exam">
+                    <!-- TODO: replace with real fetch('/student/dashboard') -->
+                    <div class="status-card-header">
+                        <span class="sticker-tag"
+                            style="background: var(--mint-green); margin: 0; transform: rotate(2deg);">Academics</span>
+                        <span class="status-icon">📝</span>
+                    </div>
+                    <h4 class="status-title">Upcoming Exam</h4>
+                    <div class="status-value">4 Days Left</div>
+                    <p class="status-desc">Distributed Systems & Cloud Architecture Midterm</p>
+                    <a href="academic.html" class="btn-pill"
+                        style="margin-top: 1rem; align-self: flex-start; font-size: 0.8rem; padding: 0.3rem 0.8rem;">Organize
+                        Plan →</a>
+                </div>
+
+                <!-- Status Card 2: Next Event -->
+                <div class="status-card" id="card-event">
+                    <!-- TODO: replace with real fetch('/student/dashboard') -->
+                    <div class="status-card-header">
+                        <span class="sticker-tag"
+                            style="background: var(--soft-yellow); margin: 0; transform: rotate(-3deg);">Upcoming
+                            Event</span>
+                        <span class="status-icon">⚡</span>
+                    </div>
+                    <h4 class="status-title">Hackathon Registration</h4>
+                    <div class="status-value">Tomorrow, 10:00 AM</div>
+                    <p class="status-desc">AgentX National Hackathon 2026 Opening Keynote & Team Formation</p>
+                    <a href="events.html" class="btn-pill"
+                        style="margin-top: 1rem; align-self: flex-start; font-size: 0.8rem; padding: 0.3rem 0.8rem;">View
+                        Events →</a>
+                </div>
+
+                <!-- Status Card 3: Unread Announcements -->
+                <div class="status-card" id="card-announcements">
+                    <!-- TODO: replace with real fetch('/student/dashboard') -->
+                    <div class="status-card-header">
+                        <span class="sticker-tag"
+                            style="background: var(--lavender); margin: 0; transform: rotate(1deg);">Inbox</span>
+                        <span class="status-icon">📫</span>
+                    </div>
+                    <h4 class="status-title">Unread Announcements</h4>
+                    <div class="status-value">3 New Notices</div>
+                    <p class="status-desc">Google Backend Internship Eligibility verified; Library book return due.</p>
+                    <a href="notifications.html" class="btn-pill"
+                        style="margin-top: 1rem; align-self: flex-start; font-size: 0.8rem; padding: 0.3rem 0.8rem;">Check
+                        Updates →</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a
+                href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank"
+                style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        // Responsive Mobile Navbar Toggle
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+
+        // Hydrate Student Name if saved in localStorage
+        const savedProfile = localStorage.getItem('studentProfile');
+        if (savedProfile) {
+            try {
+                const data = JSON.parse(savedProfile);
+                if (data.name) {
+                    document.getElementById('welcome-message').textContent = `Good morning, ${data.name} 👋`;
+                }
+            } catch (e) { }
+        }
+
+        // Prompt button event binding to safely handle routing
+        document.querySelectorAll('.route-to-chat').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const promptText = btn.getAttribute('data-prompt');
+                window.location.href = `chat.html?prompt=${encodeURIComponent(promptText)}`;
+            });
+        });
+
+        // TODO: replace with real fetch('/student/dashboard') to hydrate status cards dynamically
+        async function fetchDashboardStatus() {
+            /*
+             * Real implementation:
+             * const data = await fetch('/student/dashboard').then(r => r.json());
+             * document.getElementById('welcome-message').textContent = `Good morning, ${data.studentName} 👋`;
+             * // Hydrate priorities, AI recommendation, upcoming items and status cards
+             */
+        }
+    </script>
+</body>
+
+</html>

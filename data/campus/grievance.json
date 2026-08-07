@@ -1,0 +1,27 @@
+{
+  "grievance_framework": {
+    "categories": [
+      {
+        "category_id": "GRV_ACAD",
+        "name": "Academic & Evaluation",
+        "sla_days": 3,
+        "coordinator": "Dean Academics (dean.acad@vasavi.ac.in)",
+        "escalation_flow": ["Subject Teacher", "HOD", "Dean Academics", "Principal"]
+      },
+      {
+        "category_id": "GRV_HOSTEL",
+        "name": "Hostel Maintenance & Mess Quality",
+        "sla_days": 2,
+        "coordinator": "Chief Warden (chiefwarden@vasavi.ac.in)",
+        "escalation_flow": ["Block Warden", "Chief Warden", "Campus Estate Officer"]
+      },
+      {
+        "category_id": "GRV_INFRA",
+        "name": "IT & Wi-Fi Network Infrastructure",
+        "sla_days": 1,
+        "coordinator": "IT Infrastructure Cell (helpdesk.it@vasavi.ac.in)",
+        "escalation_flow": ["Network Administrator", "Head of IT Center"]
+      }
+    ]
+  }
+}
