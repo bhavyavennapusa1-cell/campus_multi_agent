@@ -52,6 +52,7 @@ ACTION_AGENT_MAP = {
     "get_attendance": "academic",
     "get_timetable": "academic",
     "get_exam_schedule": "academic",
+    "course_info": "academic",
     "create_task": "academic",
     "get_tasks": "academic",
     "update_task": "academic",
@@ -102,9 +103,10 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
 
     has_placement_kw = any(k in req_lower for k in ["eligib", "placement", "dream", "company", "google", "microsoft", "salesforce", "oracle", "cognizant", "tcs", "internship", "job"])
     has_action_kw = any(k in req_lower for k in ["register", "workshop", "calendar", "remind", "reminder", "event", "schedule"])
-    has_exam_kw = any(k in req_lower for k in ["exam", "regs", "regulations", "grade", "marks", "dbms", "subject"])
+    has_exam_kw = any(k in req_lower for k in ["exam", "regs", "regulations", "grade", "marks", "dbms", "subject", "timetable"])
     has_attend_kw = any(k in req_lower for k in ["attend", "attendance", "absent", "condon", "detain", "shortage"])
     has_comm_kw = any(k in req_lower for k in ["email", "draft", "mail", "notify", "inform", "message", "contact"])
+    has_contact_kw = any(k in req_lower for k in ["mentor", "hod", "classmate", "classmates", "peer", "group", "advisor"])
     has_nav_kw = any(k in req_lower for k in ["navigate", "direction", "where is", "map", "distance", "location", "way to", "building", "library"])
 
     steps = []
@@ -112,12 +114,18 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
 
     # Check multi-domain queries
     if has_placement_kw:
-        company = "Google" if "google" in req_lower else ("Microsoft" if "microsoft" in req_lower else "Dream Tier")
+        company = "Google" if "google" in req_lower else ("Microsoft" if "microsoft" in req_lower else ("Oracle India" if "oracle" in req_lower else "Dream Tier"))
         steps.append(PlanStep(id=step_id, agent="placement", action="check_eligibility", params={"company": company, "query": clean_req}))
         step_id += 1
 
-    if has_exam_kw or "dbms" in req_lower:
-        if "plan" in req_lower or "study" in req_lower or "dbms" in req_lower:
+    if has_contact_kw:
+        steps.append(PlanStep(id=step_id, agent="communication", action="get_relevant_contacts", params={"query": clean_req, "query_type": clean_req}))
+        step_id += 1
+
+    if (has_exam_kw or "dbms" in req_lower) and not has_contact_kw:
+        if "timetable" in req_lower:
+            steps.append(PlanStep(id=step_id, agent="academic", action="get_timetable", params={"query": clean_req}))
+        elif "plan" in req_lower or "study" in req_lower or "dbms" in req_lower:
             steps.append(PlanStep(id=step_id, agent="academic", action="create_study_plan", params={"subject": "DBMS", "days_remaining": 10}))
         else:
             steps.append(PlanStep(id=step_id, agent="academic", action="get_exam_schedule", params={"query": clean_req}))
@@ -130,7 +138,7 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
         steps.append(PlanStep(id=step_id, agent="navigator", action="get_directions", params={"destination": clean_req}))
         step_id += 1
 
-    if has_comm_kw or (has_action_kw and has_placement_kw):
+    if (has_comm_kw and not has_contact_kw) or (has_action_kw and has_placement_kw):
         if "reminder" in req_lower or "remind" in req_lower:
             steps.append(PlanStep(id=step_id, agent="communication", action="schedule_reminder", params={"event": clean_req}))
         else:
@@ -142,8 +150,14 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
         step_id += 1
 
     if not steps:
-        # Default fallback to academic synthesis
-        steps.append(PlanStep(id=1, agent="academic", action="general_synthesis", params={"query": user_request}))
+        # Clarification step when no keyword pattern matches
+        q_text = "I'm not sure which campus service you need. Could you please clarify if your question is about academic courses/timetables, placement/internships, campus navigation, or faculty/student communications?"
+        steps.append(PlanStep(
+            id=1,
+            agent="academic",
+            action="general_synthesis",
+            params={"query": user_request, "clarification_needed": True, "clarification_question": q_text}
+        ))
 
     return steps[:5]
 
@@ -193,7 +207,9 @@ Return your plan as structured actions: [{{"agent": <name>, "action": <specific 
     anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
 
     if anthropic_key:
+        logger.info("ANTHROPIC_API_KEY detected. LLM planner is ACTIVE.")
         try:
+            # pyrefly: ignore [missing-import]
             import anthropic
             client = anthropic.Anthropic(api_key=anthropic_key, timeout=3.5)
             response = client.messages.create(
@@ -211,7 +227,12 @@ Return your plan as structured actions: [{{"agent": <name>, "action": <specific 
             elif "```" in raw_text:
                 raw_text = raw_text.split("```")[1].strip()
 
-            parsed = json.loads(raw_text)
+            try:
+                parsed = json.loads(raw_text)
+            except json.JSONDecodeError as parse_err:
+                logger.error(f"LLM planner parse error (JSONDecodeError): {parse_err}. Raw output: {raw_text[:200]}")
+                raise
+
             actions_list = parsed if isinstance(parsed, list) else parsed.get("steps", parsed.get("actions", []))
 
             steps = []
@@ -247,7 +268,17 @@ Return your plan as structured actions: [{{"agent": <name>, "action": <specific 
             if steps:
                 return steps[:5]
         except Exception as e:
-            logger.warning(f"LLM planner failed or timed out: {e}. Falling back to keyword planner.")
+            err_type = type(e).__name__
+            if "AuthenticationError" in err_type or "auth" in str(e).lower():
+                logger.warning(f"LLM planner authentication failure ({err_type}: {e}). Falling back to keyword planner.")
+            elif "Timeout" in err_type or "timeout" in str(e).lower():
+                logger.warning(f"LLM planner timeout ({err_type}: {e}). Falling back to keyword planner.")
+            elif "JSONDecodeError" in err_type or "parse" in str(e).lower():
+                logger.warning(f"LLM planner response parse error ({err_type}: {e}). Falling back to keyword planner.")
+            else:
+                logger.warning(f"LLM planner exception ({err_type}: {e}). Falling back to keyword planner.")
+    else:
+        logger.info("ANTHROPIC_API_KEY not found: Running in keyword-matching fallback-only mode.")
 
     # Fallback path if LLM unavailable or failed
     fallback_steps = keyword_plan(clean_req, user_request)
@@ -370,6 +401,7 @@ Instructions:
 
     if anthropic_key:
         try:
+            # pyrefly: ignore [missing-import]
             import anthropic
             client = anthropic.Anthropic(api_key=anthropic_key, timeout=4.0)
             response = client.messages.create(

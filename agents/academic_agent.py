@@ -18,6 +18,11 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from shared.schemas import AgentResponse
+from shared.data_store import (
+    get_timetable as ds_get_timetable,
+    get_collection,
+    get_by_id
+)
 from knowledge.rag import retrieve, format_citation
 from knowledge.memory import get_profile, create_session
 
@@ -90,7 +95,31 @@ def get_attendance(params: dict) -> AgentResponse:
 
 def get_timetable(params: dict) -> AgentResponse:
     profile = resolve_profile(params)
+    branch = profile.get("branch", "CSE").split("-")[0].strip()
+    year = profile.get("year", 3)
+    section = profile.get("section", "A")
 
+    tt_record = ds_get_timetable(branch, year, section)
+
+    if tt_record and tt_record.get("schedule"):
+        schedule_items = tt_record.get("schedule", [])
+        formatted_list = [f"{item.get('day')} {item.get('time')}: {item.get('subject')} ({item.get('course_id')})" for item in schedule_items]
+        return AgentResponse(
+            status="success",
+            data={
+                "student": profile["name"],
+                "branch": branch,
+                "year": year,
+                "section": section,
+                "room": tt_record.get("room", "R301"),
+                "schedule": schedule_items,
+                "source": "timetables.json"
+            },
+            message=f"Timetable for {profile['name']} ({branch} Year {year} Sec {section}, Room {tt_record.get('room', 'R301')}):\n" + "\n".join(formatted_list),
+            citation=None
+        )
+
+    # Fallback to mock if no structured timetable entry matches
     return AgentResponse(
         status="success",
         data={
@@ -139,10 +168,34 @@ def get_exam_schedule(params: dict) -> AgentResponse:
     top_rag = rag_results[0] if rag_results else None
     citation = format_citation(top_rag) if top_rag else None
 
+    # Combine structured exam_schedules.json with EXAM_DATABASE
+    structured_exams = get_collection("exam_schedules")
+    all_exams = []
+
+    if structured_exams:
+        for se in structured_exams:
+            c_code = "DBMS" if se.get("course_id") == "CS302" else se.get("course_id")
+            all_exams.append({
+                "subject": se.get("course_name"),
+                "code": c_code,
+                "exam_type": se.get("exam_type"),
+                "date": se.get("date"),
+                "time": se.get("time"),
+                "venue": se.get("venue"),
+                "max_marks": se.get("max_marks"),
+                "passing_min_marks": se.get("passing_min_marks")
+            })
+
+    # Merge EXAM_DATABASE fallbacks for subjects not in structured_exams
+    for de in EXAM_DATABASE:
+        if not any(e["subject"].lower() == de["subject"].lower() or e["code"].lower() == de["code"].lower() for e in all_exams):
+            all_exams.append(de)
+
     if matched_std_subject:
         filtered_exams = [
-            e for e in EXAM_DATABASE 
-            if e["subject"].lower() == matched_std_subject.lower() or e["code"].lower() == matched_std_subject.lower()
+            e for e in all_exams 
+            if e["subject"].lower() == matched_std_subject.lower()
+            or e["code"].lower() == matched_std_subject.lower()
         ]
         if filtered_exams:
             target_exam = filtered_exams[0]
@@ -154,7 +207,7 @@ def get_exam_schedule(params: dict) -> AgentResponse:
                     "exams": filtered_exams,
                     "matched_subject": matched_std_subject,
                     "rules": top_rag["text"] if top_rag else "",
-                    "source": "mock"
+                    "source": "exam_schedules.json"
                 },
                 message=msg,
                 citation=citation
@@ -166,7 +219,7 @@ def get_exam_schedule(params: dict) -> AgentResponse:
                     "student": profile["name"],
                     "exams": [],
                     "matched_subject": matched_std_subject,
-                    "source": "mock"
+                    "source": "exam_schedules.json"
                 },
                 message=f"No exam schedule found for requested subject '{matched_std_subject}'.",
                 citation=citation
@@ -179,7 +232,7 @@ def get_exam_schedule(params: dict) -> AgentResponse:
             data={
                 "student": profile["name"],
                 "exams": [],
-                "source": "mock"
+                "source": "exam_schedules.json"
             },
             message="No exam schedule found for the requested subject.",
             citation=citation
@@ -189,11 +242,58 @@ def get_exam_schedule(params: dict) -> AgentResponse:
         status="success",
         data={
             "student": profile["name"],
-            "exams": EXAM_DATABASE,
+            "exams": all_exams,
             "rules": top_rag["text"] if top_rag else "",
-            "source": "mock"
+            "source": "exam_schedules.json"
         },
-        message=f"Exam schedule for {profile['name']}: DBMS, OS, and DS exams found.",
+        message=f"Exam schedule for {profile['name']}: {len(all_exams)} exams found.",
+        citation=citation
+    )
+
+
+def course_info(params: dict) -> AgentResponse:
+    profile = resolve_profile(params)
+    raw_query = str(params.get("course_id") or params.get("subject") or params.get("query") or "").strip()
+
+    courses = get_collection("courses")
+    matched_courses = []
+
+    if raw_query:
+        target = raw_query.lower()
+        for c in courses:
+            if (
+                c.get("course_id", "").lower() == target
+                or c.get("code", "").lower() == target
+                or target in c.get("name", "").lower()
+            ):
+                matched_courses.append(c)
+
+    if not matched_courses:
+        branch = profile.get("branch", "CSE").split("-")[0].strip().upper()
+        matched_courses = [c for c in courses if c.get("department", "").upper() == branch]
+
+    rag_results = retrieve(raw_query or "course syllabus prerequisites credits", k=1, category="academic")
+    top_rag = rag_results[0] if rag_results else None
+    citation = format_citation(top_rag) if top_rag else None
+
+    if matched_courses:
+        c = matched_courses[0]
+        msg = f"Course Details for {c.get('name')} ({c.get('course_id')} / {c.get('code')}): Department {c.get('department')}, Credits: {c.get('credits')}, Syllabus: {', '.join(c.get('syllabus_outline', []))}."
+        return AgentResponse(
+            status="success",
+            data={
+                "student": profile["name"],
+                "courses": matched_courses,
+                "source": "courses.json"
+            },
+            message=msg,
+            citation=citation
+        )
+
+    return AgentResponse(
+        status="success",
+        data={"courses": [], "source": "academic"},
+        message="No matching course details found.",
         citation=citation
     )
 
@@ -394,6 +494,7 @@ ACTIONS = {
     "get_attendance": get_attendance,
     "get_timetable": get_timetable,
     "get_exam_schedule": get_exam_schedule,
+    "course_info": course_info,
     "create_task": create_task,
     "get_tasks": get_tasks,
     "update_task": update_task,

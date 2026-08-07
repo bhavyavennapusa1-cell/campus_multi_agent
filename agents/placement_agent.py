@@ -15,6 +15,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from shared.schemas import AgentResponse
+from shared.data_store import get_company, get_collection, get_by_id
 from knowledge.rag import retrieve, format_citation
 from knowledge.memory import get_profile, create_session
 
@@ -55,73 +56,148 @@ def resolve_profile(params: dict) -> dict:
 def check_eligibility(params: dict) -> AgentResponse:
     profile = resolve_profile(params)
 
-
-    company = params.get("company", "Dream Tier").strip()
-    company_lower = company.lower()
-
-    if any(d in company_lower for d in ["dream", "google", "microsoft", "salesforce"]):
-        target_tier = "Dream Tier"
-        min_cgpa = 8.0
-        max_backlogs = 0
-    elif any(c in company_lower for c in ["core", "oracle", "cognizant"]):
-        target_tier = "Core Tier"
-        min_cgpa = 7.0
-        max_backlogs = 1
-    else:
-        target_tier = "Mass / Pool Tier"
-        min_cgpa = 6.0
-        max_backlogs = 2
-
-    query = f"placement eligibility for {company} {target_tier} CGPA backlog rules"
-    rag_results = retrieve(query, k=1, category="placement")
-    top_rag = rag_results[0] if rag_results else None
-    citation = format_citation(top_rag) if top_rag else None
+    raw_company = params.get("company", "Dream Tier").strip()
+    company_record = get_company(raw_company)
 
     name = profile["name"]
     cgpa = profile["cgpa"]
     backlogs = profile["backlog_count"]
+    branch = profile.get("branch", "CSE").split("-")[0].strip().upper()
+    try:
+        year = int(profile.get("year", 3))
+    except (ValueError, TypeError):
+        year = 3
+    attendance_pct = profile.get("attendance_pct", 88.0)
 
-    cgpa_ok = cgpa >= min_cgpa
-    backlogs_ok = backlogs <= max_backlogs
-    is_eligible = cgpa_ok and backlogs_ok
+    query = f"placement eligibility for {raw_company} CGPA backlog rules"
+    rag_results = retrieve(query, k=1, category="placement")
+    top_rag = rag_results[0] if rag_results else None
+    citation = format_citation(top_rag) if top_rag else None
 
-    reasons = []
-    if not cgpa_ok:
-        reasons.append(f"CGPA {cgpa} < required {min_cgpa}")
-    if not backlogs_ok:
-        reasons.append(f"Backlogs {backlogs} > max allowed {max_backlogs}")
+    if company_record:
+        c_name = company_record.get("company_name", raw_company)
+        tier = company_record.get("tier", "Placement Drive")
+        min_cgpa = company_record.get("min_cgpa", 0.0)
+        min_att = company_record.get("min_attendance", 0.0)
+        max_backlogs = company_record.get("max_backlogs", 0)
+        elig_branches = [b.upper() for b in company_record.get("eligible_branches", [])]
+        elig_years = company_record.get("eligible_years", [])
 
-    if is_eligible:
-        msg = f"YES: Student {name} (CGPA {cgpa}, {backlogs} backlogs) is ELIGIBLE for {company} ({target_tier})."
+        cgpa_ok = cgpa >= min_cgpa
+        att_ok = attendance_pct >= min_att
+        backlogs_ok = backlogs <= max_backlogs
+        branch_ok = not elig_branches or (branch in elig_branches)
+        year_ok = not elig_years or (year in elig_years)
+
+        is_eligible = cgpa_ok and att_ok and backlogs_ok and branch_ok and year_ok
+
+        reasons = []
+        if not cgpa_ok:
+            reasons.append(f"CGPA {cgpa} < required {min_cgpa}")
+        if not att_ok:
+            reasons.append(f"Attendance {attendance_pct}% < required {min_att}%")
+        if not backlogs_ok:
+            reasons.append(f"Backlogs {backlogs} > max allowed {max_backlogs}")
+        if not branch_ok:
+            reasons.append(f"Branch {branch} not in eligible list ({', '.join(elig_branches)})")
+        if not year_ok:
+            reasons.append(f"Year {year} not in eligible list ({elig_years})")
+
+        if is_eligible:
+            msg = f"YES: Student {name} (CGPA {cgpa}, Attendance {attendance_pct}%, {backlogs} backlogs, {branch} Year {year}) is ELIGIBLE for {c_name} ({tier}). Role: {company_record.get('role', 'N/A')}, CTC/Stipend: ₹{company_record.get('ctc_lpa', company_record.get('stipend_pm_inr', 'N/A'))}."
+        else:
+            msg = f"NO: Student {name} (CGPA {cgpa}, Attendance {attendance_pct}%, {backlogs} backlogs, {branch} Year {year}) is NOT ELIGIBLE for {c_name} ({tier}) [{', '.join(reasons)}]."
+
+        return AgentResponse(
+            status="success",
+            data={
+                "eligible": is_eligible,
+                "student_name": name,
+                "cgpa": cgpa,
+                "attendance_pct": attendance_pct,
+                "backlog_count": backlogs,
+                "target_tier": tier,
+                "company": c_name,
+                "company_record": company_record,
+                "reasons": reasons,
+                "policy_summary": top_rag["text"] if top_rag else "",
+                "source": "companies.json"
+            },
+            message=msg,
+            citation=citation
+        )
     else:
-        msg = f"NO: Student {name} (CGPA {cgpa}, {backlogs} backlogs) is NOT ELIGIBLE for {company} ({target_tier}) [{', '.join(reasons)}]."
+        # Fallback tier logic if company is not found in database
+        company_lower = raw_company.lower()
+        if any(d in company_lower for d in ["dream", "google", "microsoft", "salesforce"]):
+            target_tier = "Dream Tier"
+            min_cgpa = 8.0
+            max_backlogs = 0
+        elif any(c in company_lower for c in ["core", "oracle", "cognizant"]):
+            target_tier = "Core Tier"
+            min_cgpa = 7.0
+            max_backlogs = 1
+        else:
+            target_tier = "Mass / Pool Tier"
+            min_cgpa = 6.0
+            max_backlogs = 2
 
-    return AgentResponse(
-        status="success",
-        data={
-            "eligible": is_eligible,
-            "student_name": name,
-            "cgpa": cgpa,
-            "backlog_count": backlogs,
-            "target_tier": target_tier,
-            "company": company,
-            "reasons": reasons,
-            "policy_summary": top_rag["text"] if top_rag else "",
-            "source": "mock"
-        },
-        message=msg,
-        citation=citation
-    )
+        cgpa_ok = cgpa >= min_cgpa
+        backlogs_ok = backlogs <= max_backlogs
+        is_eligible = cgpa_ok and backlogs_ok
+
+        reasons = []
+        if not cgpa_ok:
+            reasons.append(f"CGPA {cgpa} < required {min_cgpa}")
+        if not backlogs_ok:
+            reasons.append(f"Backlogs {backlogs} > max allowed {max_backlogs}")
+
+        note = f"(Note: Company '{raw_company}' not found in database; using standard tier rules.)"
+
+        if is_eligible:
+            msg = f"YES: Student {name} (CGPA {cgpa}, {backlogs} backlogs) is ELIGIBLE for {raw_company} ({target_tier}). {note}"
+        else:
+            msg = f"NO: Student {name} (CGPA {cgpa}, {backlogs} backlogs) is NOT ELIGIBLE for {raw_company} ({target_tier}) [{', '.join(reasons)}]. {note}"
+
+        return AgentResponse(
+            status="success",
+            data={
+                "eligible": is_eligible,
+                "student_name": name,
+                "cgpa": cgpa,
+                "backlog_count": backlogs,
+                "target_tier": target_tier,
+                "company": raw_company,
+                "reasons": reasons,
+                "policy_summary": top_rag["text"] if top_rag else "",
+                "source": "fallback_tier"
+            },
+            message=msg,
+            citation=citation
+        )
 
 
 def get_internships(params: dict) -> AgentResponse:
     profile = resolve_profile(params)
-
+    structured_internships = get_collection("internships")
 
     query = params.get("query", "software engineering internship eligibility companies")
     rag_results = retrieve(query, k=1, category="placement")
     top_rag = rag_results[0] if rag_results else None
     citation = format_citation(top_rag) if top_rag else None
+
+    if structured_internships:
+        return AgentResponse(
+            status="success",
+            data={
+                "student": profile["name"],
+                "branch": profile["branch"],
+                "internships": structured_internships,
+                "source": "internships.json"
+            },
+            message=f"Found {len(structured_internships)} open internship drives for {profile['name']} ({profile['branch']}).",
+            citation=citation
+        )
 
     return AgentResponse(
         status="success",
@@ -217,16 +293,29 @@ def find_opportunities(params: dict) -> AgentResponse:
         except Exception:
             pass
 
-    # Graceful Fallback Mock
-    mock_opps = [
-        {"role": "Frontend Developer Intern", "company": "Amazon", "deadline": "2026-08-30", "eligibility": "CGPA >= 7.5, 0 Backlogs"},
-        {"role": "AI Engineer Intern", "company": "Swiggy", "deadline": "2026-09-05", "eligibility": "CGPA >= 8.0, 0 Backlogs"},
-        {"role": "Backend Analyst", "company": "Deloitte", "deadline": "2026-09-12", "eligibility": "CGPA >= 6.5, <= 1 Backlog"}
-    ]
+    companies = get_collection("companies")
+    all_opps = []
+    for c in companies:
+        all_opps.append({
+            "role": c.get("role"),
+            "company": c.get("company_name"),
+            "tier": c.get("tier"),
+            "deadline": c.get("deadline"),
+            "eligibility": f"CGPA >= {c.get('min_cgpa')}, {c.get('max_backlogs')} Backlogs, Attendance >= {c.get('min_attendance')}%",
+            "stipend_ctc": c.get("ctc_lpa") or c.get("stipend_pm_inr")
+        })
+
+    if not all_opps:
+        all_opps = [
+            {"role": "Frontend Developer Intern", "company": "Amazon", "deadline": "2026-08-30", "eligibility": "CGPA >= 7.5, 0 Backlogs"},
+            {"role": "AI Engineer Intern", "company": "Swiggy", "deadline": "2026-09-05", "eligibility": "CGPA >= 8.0, 0 Backlogs"},
+            {"role": "Backend Analyst", "company": "Deloitte", "deadline": "2026-09-12", "eligibility": "CGPA >= 6.5, <= 1 Backlog"}
+        ]
+
     return AgentResponse(
         status="success",
-        data={"opportunities": mock_opps, "source": "mock"},
-        message=f"Retrieved placement opportunities for {role} (3 open positions).",
+        data={"opportunities": all_opps, "source": "mock"},
+        message=f"Retrieved placement opportunities for {role} ({len(all_opps)} open positions).",
         citation=None
     )
 
@@ -236,14 +325,42 @@ def get_all_eligible_companies(params: dict) -> AgentResponse:
 
     cgpa = profile["cgpa"]
     backlogs = profile["backlog_count"]
+    branch = profile.get("branch", "CSE").split("-")[0].strip().upper()
+    try:
+        year = int(profile.get("year", 3))
+    except (ValueError, TypeError):
+        year = 3
+    attendance_pct = profile.get("attendance_pct", 88.0)
 
-    eligible = []
-    if cgpa >= 8.0 and backlogs == 0:
-        eligible.extend(["Google India", "Microsoft", "Salesforce", "Atlassian"])
-    if cgpa >= 7.0 and backlogs <= 1:
-        eligible.extend(["Oracle India", "Cognizant", "Infosys Power Programmer"])
-    if cgpa >= 6.0:
-        eligible.extend(["TCS Digital", "Wipro Turbo"])
+    companies = get_collection("companies")
+    eligible_records = []
+    eligible_names = []
+
+    for c in companies:
+        min_cgpa = c.get("min_cgpa", 0.0)
+        min_att = c.get("min_attendance", 0.0)
+        max_backlogs = c.get("max_backlogs", 0)
+        elig_branches = [b.upper() for b in c.get("eligible_branches", [])]
+        elig_years = c.get("eligible_years", [])
+
+        if (
+            cgpa >= min_cgpa
+            and attendance_pct >= min_att
+            and backlogs <= max_backlogs
+            and (not elig_branches or branch in elig_branches)
+            and (not elig_years or year in elig_years)
+        ):
+            eligible_records.append(c)
+            eligible_names.append(c.get("company_name"))
+
+    if not eligible_names:
+        # Fallback if no companies matched
+        if cgpa >= 8.0 and backlogs == 0:
+            eligible_names.extend(["Google India", "Microsoft", "Salesforce", "Atlassian"])
+        elif cgpa >= 7.0 and backlogs <= 1:
+            eligible_names.extend(["Oracle India", "Cognizant", "Infosys Power Programmer"])
+        else:
+            eligible_names.extend(["TCS Digital", "Wipro Turbo"])
 
     return AgentResponse(
         status="success",
@@ -251,10 +368,11 @@ def get_all_eligible_companies(params: dict) -> AgentResponse:
             "student": profile["name"],
             "cgpa": cgpa,
             "backlog_count": backlogs,
-            "eligible_companies": eligible,
-            "source": "mock"
+            "eligible_companies": eligible_names,
+            "company_details": eligible_records,
+            "source": "companies.json"
         },
-        message=f"Student {profile['name']} is eligible for {len(eligible)} companies including {', '.join(eligible[:3])}.",
+        message=f"Student {profile['name']} is eligible for {len(eligible_names)} companies including {', '.join(eligible_names[:3])}.",
         citation=None
     )
 

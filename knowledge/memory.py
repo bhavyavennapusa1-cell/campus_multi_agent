@@ -76,6 +76,11 @@ def init_db():
         existing_cols = {row["name"] for row in cursor.fetchall()}
 
         new_columns = {
+            "student_id": "TEXT DEFAULT 'STU001'",
+            "semester": "INTEGER DEFAULT 6",
+            "section": "TEXT DEFAULT 'A'",
+            "mentor_id": "TEXT DEFAULT 'FAC101'",
+            "hod_id": "TEXT DEFAULT 'FAC100'",
             "career_goal": "TEXT DEFAULT 'Software Engineer at Tier-1 Tech Company'",
             "skills": "TEXT DEFAULT '[\"Python\", \"Java\", \"Data Structures\", \"SQL\"]'",
             "academic_interests": "TEXT DEFAULT '[\"Artificial Intelligence\", \"Distributed Systems\"]'",
@@ -175,28 +180,70 @@ def normalize_profile_dict(overrides: dict) -> dict:
 
 
 def create_session(session_id: str, profile_overrides: dict = None) -> dict:
-    """Creates or resets a session with a realistic (or overridden) student profile."""
+    """Creates or resets a session with a student profile seeded from data/students.json when available."""
+    from shared.data_store import get_student
     now_iso = datetime.now(timezone.utc).isoformat()
     
-    default_profile = {
-        "session_id": session_id,
-        "name": random.choice(SAMPLE_NAMES),
-        "year": 3,
-        "branch": "CSE",
-        "cgpa": round(random.uniform(7.5, 9.5), 1),
-        "backlog_count": 0,
-        "attendance_pct": round(random.uniform(78.0, 92.0), 1),
-        "hostel_block": "Block-B",
-        "placement_status": "not_placed",
-        "last_updated": now_iso,
-        "career_goal": "Software Engineer at Tier-1 Tech Company",
-        "skills": json.dumps(["Python", "Java", "Data Structures", "SQL"]),
-        "academic_interests": json.dumps(["Artificial Intelligence", "Distributed Systems"]),
-        "courses_in_progress": json.dumps(["CS301", "CS302", "CS303"]),
-        "current_projects": json.dumps(["Smart Campus Multi-Agent System"]),
-        "events_interested_in": json.dumps(["Axiom AI Hackathon", "Google Resume Workshop"]),
-        "learning_goals": json.dumps(["Master System Design", "Build LLM Agent Workflows"])
-    }
+    # Check if student_id or student name is provided in overrides or session_id
+    lookup_id = None
+    if profile_overrides:
+        lookup_id = profile_overrides.get("student_id") or profile_overrides.get("name")
+    if not lookup_id and session_id:
+        lookup_id = session_id
+
+    matched_student = get_student(lookup_id) if lookup_id else None
+
+    if matched_student:
+        default_profile = {
+            "session_id": session_id,
+            "student_id": matched_student.get("student_id", "STU001"),
+            "name": matched_student.get("name", "Bhavya Vennapusa"),
+            "year": matched_student.get("year", 3),
+            "semester": matched_student.get("semester", 6),
+            "branch": matched_student.get("branch", "CSE"),
+            "section": matched_student.get("section", "A"),
+            "cgpa": matched_student.get("cgpa", 8.8),
+            "backlog_count": matched_student.get("backlog_count", 0),
+            "attendance_pct": matched_student.get("attendance_pct", 88.0),
+            "hostel_block": matched_student.get("hostel_block", "Block-B"),
+            "placement_status": matched_student.get("placement_status", "not_placed"),
+            "mentor_id": matched_student.get("mentor_id", "FAC101"),
+            "hod_id": matched_student.get("hod_id", "FAC100"),
+            "last_updated": now_iso,
+            "career_goal": "Software Engineer at Tier-1 Tech Company",
+            "skills": json.dumps(["Python", "Java", "Data Structures", "SQL"]),
+            "academic_interests": json.dumps(["Artificial Intelligence", "Distributed Systems"]),
+            "courses_in_progress": json.dumps(["CS301", "CS302", "CS303"]),
+            "current_projects": json.dumps(["Smart Campus Multi-Agent System"]),
+            "events_interested_in": json.dumps(["Axiom AI Hackathon", "Google Resume Workshop"]),
+            "learning_goals": json.dumps(["Master System Design", "Build LLM Agent Workflows"])
+        }
+    else:
+        # Fallback to random profile creation when no student_id / matching student is available
+        default_profile = {
+            "session_id": session_id,
+            "student_id": "STU001",
+            "name": random.choice(SAMPLE_NAMES),
+            "year": 3,
+            "semester": 6,
+            "section": "A",
+            "branch": "CSE",
+            "cgpa": round(random.uniform(7.5, 9.5), 1),
+            "backlog_count": 0,
+            "attendance_pct": round(random.uniform(78.0, 92.0), 1),
+            "hostel_block": "Block-B",
+            "placement_status": "not_placed",
+            "mentor_id": "FAC101",
+            "hod_id": "FAC100",
+            "last_updated": now_iso,
+            "career_goal": "Software Engineer at Tier-1 Tech Company",
+            "skills": json.dumps(["Python", "Java", "Data Structures", "SQL"]),
+            "academic_interests": json.dumps(["Artificial Intelligence", "Distributed Systems"]),
+            "courses_in_progress": json.dumps(["CS301", "CS302", "CS303"]),
+            "current_projects": json.dumps(["Smart Campus Multi-Agent System"]),
+            "events_interested_in": json.dumps(["Axiom AI Hackathon", "Google Resume Workshop"]),
+            "learning_goals": json.dumps(["Master System Design", "Build LLM Agent Workflows"])
+        }
 
     if profile_overrides:
         norm_overrides = normalize_profile_dict(profile_overrides)
@@ -212,21 +259,26 @@ def create_session(session_id: str, profile_overrides: dict = None) -> dict:
         cursor = conn.cursor()
         cursor.execute("""
             INSERT OR REPLACE INTO student_profile (
-                session_id, name, year, branch, cgpa, backlog_count,
-                attendance_pct, hostel_block, placement_status, last_updated,
+                session_id, student_id, name, year, semester, branch, section, cgpa, backlog_count,
+                attendance_pct, hostel_block, placement_status, mentor_id, hod_id, last_updated,
                 career_goal, skills, academic_interests, courses_in_progress,
                 current_projects, events_interested_in, learning_goals
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """, (
             default_profile["session_id"],
+            default_profile.get("student_id", "STU001"),
             default_profile["name"],
             default_profile["year"],
+            default_profile.get("semester", 6),
             default_profile["branch"],
+            default_profile.get("section", "A"),
             default_profile["cgpa"],
             default_profile["backlog_count"],
             default_profile["attendance_pct"],
             default_profile["hostel_block"],
             default_profile["placement_status"],
+            default_profile.get("mentor_id", "FAC101"),
+            default_profile.get("hod_id", "FAC100"),
             default_profile["last_updated"],
             default_profile["career_goal"],
             default_profile["skills"],

@@ -492,8 +492,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-});
-
 window.handleConfirm = (isConfirmed, context, btnElement) => {
     if (!btnElement || !btnElement.parentElement) return;
     const actionContainer = btnElement.parentElement;

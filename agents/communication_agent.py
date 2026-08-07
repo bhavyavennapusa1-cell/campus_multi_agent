@@ -19,43 +19,149 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from shared.schemas import AgentResponse
+from shared.data_store import (
+    get_faculty,
+    get_student,
+    get_student_directory_record,
+    get_collection,
+    get_by_id
+)
 from knowledge.rag import retrieve, format_citation
 from knowledge.memory import get_profile, create_session
 
 # --- Feature 3: Contacts Data Boundary ---
 class ContactsRepo:
-    def get_by_query(self, student_id: str, query_type: str, subject: Optional[str] = None) -> list[dict]:
+    def get_by_query(self, student_id: str, query_type: str, subject: Optional[str] = None, profile: Optional[dict] = None) -> list[dict]:
         raise NotImplementedError
 
 
-class InMemoryContactsRepo(ContactsRepo):
-    """Stubbed ContactsRepo until Bhavya's master contacts dataset is wired up."""
-    def __init__(self):
-        self._contacts = [
-            {"contact_id": "c_001", "name": "Dr. K. V. Sharma", "role": "HOD", "department": "CSE", "email": "hod_cse@vasavi.ac.in", "subject": "Department Admin"},
-            {"contact_id": "c_002", "name": "Prof. Ananya Rao", "role": "faculty", "department": "CSE", "email": "ananya.rao@vasavi.ac.in", "subject": "DBMS"},
-            {"contact_id": "c_003", "name": "Dr. R. K. Verma", "role": "faculty", "department": "CSE", "email": "rk.verma@vasavi.ac.in", "subject": "Operating Systems"},
-            {"contact_id": "c_004", "name": "Rahul Sharma", "role": "classmate", "department": "CSE", "email": "rahul.s@student.vasavi.ac.in", "subject": "Class Representative"},
-            {"contact_id": "c_005", "name": "Snehita Reddy", "role": "classmate", "department": "CSE", "email": "snehita.r@student.vasavi.ac.in", "subject": "Study Partner"},
-        ]
+class StructuredContactsRepo(ContactsRepo):
+    """ContactsRepo connected to structured JSON datasets under data/communication/."""
 
-    def get_by_query(self, student_id: str, query_type: str, subject: Optional[str] = None) -> list[dict]:
-        qt = query_type.lower()
-        if qt == "classmates":
-            return [c for c in self._contacts if c["role"] == "classmate"]
-        elif qt == "faculty":
-            return [c for c in self._contacts if c["role"] == "faculty"]
-        elif qt == "hod":
-            return [c for c in self._contacts if c["role"] == "HOD"]
-        elif qt in ("subject_teacher", "teacher"):
-            if subject:
-                matches = [c for c in self._contacts if c["role"] == "faculty" and subject.lower() in c.get("subject", "").lower()]
-                if matches:
-                    return matches
-            return [c for c in self._contacts if c["role"] == "faculty"]
-        return self._contacts
+    def get_by_query(self, student_id: str, query_type: str, subject: Optional[str] = None, profile: Optional[dict] = None) -> list[dict]:
+        qt = query_type.lower().strip() if query_type else "faculty"
 
-contacts_repo_instance = InMemoryContactsRepo()
+        # Resolve student directory record
+        student_rec = get_student_directory_record(student_id) or (get_student(student_id) if student_id else None)
+        if not student_rec and profile:
+            target_name = profile.get("student_id") or profile.get("name")
+            student_rec = get_student_directory_record(target_name) or get_student(target_name)
+
+        mentor_id = (student_rec and student_rec.get("mentor_id")) or (profile and profile.get("mentor_id")) or "FAC101"
+        hod_id = (student_rec and student_rec.get("hod_id")) or (profile and profile.get("hod_id")) or "FAC100"
+        branch = (student_rec and student_rec.get("branch")) or (profile and str(profile.get("branch", "CSE")).split("-")[0].strip().upper()) or "CSE"
+        year = (student_rec and student_rec.get("year")) or (profile and profile.get("year", 3)) or 3
+        section = (student_rec and student_rec.get("section")) or (profile and profile.get("section", "A")) or "A"
+
+        faculty_list = get_collection("faculty")
+        students_dir = get_collection("student_directory")
+        classrooms = get_collection("classrooms")
+        project_groups = get_collection("project_groups")
+
+        if "mentor" in qt:
+            fac = get_faculty(mentor_id)
+            if fac:
+                return [{
+                    "contact_id": fac.get("faculty_id"),
+                    "name": fac.get("name"),
+                    "role": "Mentor",
+                    "designation": fac.get("designation"),
+                    "department": fac.get("department"),
+                    "email": fac.get("email"),
+                    "office": fac.get("office_location"),
+                    "consultation_hours": fac.get("consultation_hours"),
+                    "subjects": fac.get("subjects_taught", [])
+                }]
+            return [{"name": (student_rec and student_rec.get("mentor_name")) or "Dr. P. V. Sudha", "role": "Mentor", "email": "pv.sudha@vasavi.ac.in"}]
+
+        if "hod" in qt:
+            fac = get_faculty(hod_id)
+            if fac:
+                return [{
+                    "contact_id": fac.get("faculty_id"),
+                    "name": fac.get("name"),
+                    "role": "HOD",
+                    "designation": fac.get("designation"),
+                    "department": fac.get("department"),
+                    "email": fac.get("email"),
+                    "office": fac.get("office_location"),
+                    "consultation_hours": fac.get("consultation_hours")
+                }]
+            return [{"name": (student_rec and student_rec.get("hod_name")) or "Dr. T. Adilakshmi", "role": "HOD", "email": "hod.cse@vasavi.ac.in"}]
+
+        if "classmate" in qt or "section" in qt:
+            matched_classmates = []
+            for s in students_dir:
+                if (
+                    str(s.get("branch", "")).upper() == str(branch).upper()
+                    and int(s.get("year", 0)) == int(year)
+                    and str(s.get("section", "")).upper() == str(section).upper()
+                ):
+                    matched_classmates.append({
+                        "contact_id": s.get("student_id"),
+                        "name": s.get("name"),
+                        "role": "Classmate",
+                        "email": s.get("email"),
+                        "section": f"{s.get('branch')} {s.get('year')}-{s.get('section')}"
+                    })
+            if matched_classmates:
+                return matched_classmates
+
+            # Fallback query students roster
+            all_students = get_collection("students")
+            for s in all_students:
+                if (
+                    str(s.get("branch", "")).upper() == str(branch).upper()
+                    and int(s.get("year", 0)) == int(year)
+                    and str(s.get("section", "")).upper() == str(section).upper()
+                ):
+                    matched_classmates.append({
+                        "contact_id": s.get("student_id"),
+                        "name": s.get("name"),
+                        "role": "Classmate",
+                        "email": s.get("email"),
+                        "section": f"{s.get('branch')} {s.get('year')}-{s.get('section')}"
+                    })
+            return matched_classmates if matched_classmates else [
+                {"name": "Rahul Sharma", "role": "Classmate", "email": "rahul.s@vasavi.ac.in"},
+                {"name": "Karthik Nair", "role": "Classmate", "email": "karthik.n@vasavi.ac.in"}
+            ]
+
+        if "group" in qt or "project" in qt or "capstone" in qt:
+            matching_groups = []
+            stu_id_target = (student_rec and student_rec.get("student_id")) or "STU001"
+            for g in project_groups:
+                members = g.get("members", [])
+                if any(m.get("student_id") == stu_id_target or m.get("name") == student_id for m in members):
+                    matching_groups.append({
+                        "group_id": g.get("group_id"),
+                        "title": g.get("title"),
+                        "mentor": g.get("mentor_name"),
+                        "role": "Project Group",
+                        "members": members
+                    })
+            if matching_groups:
+                return matching_groups
+            return project_groups if project_groups else []
+
+        if qt in ("subject_teacher", "teacher", "faculty") or subject:
+            results = []
+            for fac in faculty_list:
+                subjects = [s.lower() for s in fac.get("subjects_taught", [])]
+                f_copy = dict(fac)
+                f_copy["role"] = "faculty"
+                if subject and any(subject.lower() in s for s in subjects):
+                    results.append(f_copy)
+                elif not subject and fac.get("department", "").upper() == str(branch).upper():
+                    results.append(f_copy)
+            if results:
+                return results
+            return [dict(fac, role="faculty") for fac in faculty_list]
+
+        return [dict(fac, role="faculty") if isinstance(fac, dict) and "role" not in fac else fac for fac in faculty_list]
+
+
+contacts_repo_instance = StructuredContactsRepo()
 
 
 # --- Feature 3: Agent-Scoped Operational SQLite Tables ---
@@ -110,15 +216,40 @@ def resolve_profile(params: dict) -> dict:
 def get_relevant_contacts(params: dict) -> AgentResponse:
     profile = resolve_profile(params)
 
-
-    query_type = params.get("query_type", "faculty")
+    raw_query = str(params.get("query_type") or params.get("query") or "faculty").lower()
     subject = params.get("subject")
+    student_id = profile.get("student_id") or profile.get("name", "STU001")
+
+    query_type = raw_query
+    if "mentor" in raw_query or "advisor" in raw_query:
+        query_type = "mentor"
+    elif "hod" in raw_query or "head" in raw_query:
+        query_type = "hod"
+    elif "classmate" in raw_query or "peer" in raw_query or "section" in raw_query:
+        query_type = "classmates"
+    elif "group" in raw_query or "project" in raw_query or "capstone" in raw_query:
+        query_type = "project_group"
 
     contacts = contacts_repo_instance.get_by_query(
-        student_id=profile["name"],
+        student_id=student_id,
         query_type=query_type,
-        subject=subject
+        subject=subject,
+        profile=profile
     )
+
+    if query_type == "mentor" and contacts:
+        c = contacts[0]
+        msg = f"Your academic mentor is {c['name']} ({c.get('email', '')}, Office: {c.get('office', 'N/A')}, Consultation: {c.get('consultation_hours', 'N/A')})."
+    elif query_type == "hod" and contacts:
+        c = contacts[0]
+        msg = f"Your Head of Department (HOD) is {c['name']} ({c.get('email', '')}, Office: {c.get('office', 'N/A')})."
+    elif query_type == "classmates" and contacts:
+        names = [c['name'] for c in contacts]
+        msg = f"Found {len(contacts)} classmates in your section ({profile.get('branch', 'CSE')} Year {profile.get('year', 3)} Section {profile.get('section', 'A')}): {', '.join(names)}."
+    elif query_type == "project_group" and contacts:
+        msg = f"Found {len(contacts)} project group details for {profile['name']}."
+    else:
+        msg = f"Retrieved {len(contacts)} {query_type} contacts."
 
     return AgentResponse(
         status="success",
@@ -126,9 +257,9 @@ def get_relevant_contacts(params: dict) -> AgentResponse:
             "query_type": query_type,
             "subject": subject,
             "contacts": contacts,
-            "source": "mock"
+            "source": "faculty_directory.json / student_directory.json / groups.json"
         },
-        message=f"Retrieved {len(contacts)} {query_type} contacts.",
+        message=msg,
         citation=None
     )
 
