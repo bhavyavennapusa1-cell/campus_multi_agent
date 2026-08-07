@@ -17,9 +17,20 @@ from knowledge.rag import retrieve, format_citation
 from knowledge.memory import get_profile, create_session
 
 
-def get_events(params: dict) -> AgentResponse:
+def resolve_profile(params: dict) -> dict:
+    prof = params.get("profile")
     session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    if not prof:
+        prof = get_profile(session_id) or create_session(session_id)
+    else:
+        prof = dict(prof)
+        if "name" not in prof:
+            prof["name"] = "Student"
+    return prof
+
+
+def get_events(params: dict) -> AgentResponse:
+    profile = resolve_profile(params)
 
     query = params.get("query", "upcoming technical hackathons fests cultural Axiom Euphoria Mantra")
     rag_results = retrieve(query, k=1, category="campus")
@@ -43,9 +54,9 @@ def get_events(params: dict) -> AgentResponse:
 
 
 def register_event(params: dict) -> AgentResponse:
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
     event_name = params.get("event_name") or params.get("event_id") or "AgentX Hackathon 2026"
+
 
     # Auto sync to Google Calendar upon registration
     cal_res = add_event_to_calendar({
@@ -105,9 +116,9 @@ def add_event_to_calendar(params: dict) -> AgentResponse:
 
 
 def general_synthesis(params: dict) -> AgentResponse:
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
     query = params.get("query", "upcoming events workshops registration")
+
 
     rag_results = retrieve(query, k=2, category="campus")
     top_rag = rag_results[0] if rag_results else None

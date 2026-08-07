@@ -138,6 +138,42 @@ def get_retrieval_logs(session_id: str = None, limit: int = 10) -> list[dict]:
 init_db()
 
 
+def normalize_profile_dict(overrides: dict) -> dict:
+    """Normalizes frontend profile keys (branch_year, attendance, hostel) into standard DB columns."""
+    if not overrides:
+        return {}
+    norm = dict(overrides)
+
+    if "branch_year" in norm and "branch" not in norm:
+        norm["branch"] = norm.pop("branch_year")
+    elif "branch" in norm and "branch_year" in norm:
+        norm["branch"] = norm["branch_year"]
+
+    if "attendance" in norm and "attendance_pct" not in norm:
+        val = norm.pop("attendance")
+        if isinstance(val, str):
+            val = val.replace("%", "").strip()
+            try:
+                norm["attendance_pct"] = float(val)
+            except ValueError:
+                norm["attendance_pct"] = 88.0
+        elif isinstance(val, (int, float)):
+            norm["attendance_pct"] = float(val)
+    elif "attendance_pct" in norm:
+        val = norm["attendance_pct"]
+        if isinstance(val, str):
+            val = val.replace("%", "").strip()
+            try:
+                norm["attendance_pct"] = float(val)
+            except ValueError:
+                norm["attendance_pct"] = 88.0
+
+    if "hostel" in norm and "hostel_block" not in norm:
+        norm["hostel_block"] = norm.pop("hostel")
+
+    return norm
+
+
 def create_session(session_id: str, profile_overrides: dict = None) -> dict:
     """Creates or resets a session with a realistic (or overridden) student profile."""
     now_iso = datetime.now(timezone.utc).isoformat()
@@ -163,7 +199,8 @@ def create_session(session_id: str, profile_overrides: dict = None) -> dict:
     }
 
     if profile_overrides:
-        for k, v in profile_overrides.items():
+        norm_overrides = normalize_profile_dict(profile_overrides)
+        for k, v in norm_overrides.items():
             if isinstance(v, (list, dict)):
                 default_profile[k] = json.dumps(v)
             else:
@@ -204,6 +241,7 @@ def create_session(session_id: str, profile_overrides: dict = None) -> dict:
     return get_student_memory(session_id)
 
 
+
 def get_profile(session_id: str) -> dict | None:
     """Returns the student profile for a given session, or None if not found."""
     with get_db_connection() as conn:
@@ -240,17 +278,20 @@ def update_student_profile(session_id: str, profile_updates: dict) -> dict:
     Updates specific student memory fields (serializing lists to JSON) and sets last_updated.
     """
     existing = get_profile(session_id)
+    norm_updates = normalize_profile_dict(profile_updates)
     if not existing:
-        create_session(session_id)
+        create_session(session_id, norm_updates)
+        return get_student_memory(session_id)
 
     now_iso = datetime.now(timezone.utc).isoformat()
     fields = {"last_updated": now_iso}
 
-    for k, v in profile_updates.items():
+    for k, v in norm_updates.items():
         if isinstance(v, (list, dict)):
             fields[k] = json.dumps(v)
         else:
             fields[k] = v
+
 
     set_clauses = [f"{k} = ?" for k in fields.keys()]
     values = list(fields.values()) + [session_id]

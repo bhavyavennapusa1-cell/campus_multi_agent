@@ -90,9 +90,26 @@ init_db()
 PENDING_ACTIONS = {}
 
 
-def get_relevant_contacts(params: dict) -> AgentResponse:
+def resolve_profile(params: dict) -> dict:
+
+    prof = params.get("profile")
     session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    if not prof:
+        prof = get_profile(session_id) or create_session(session_id)
+    else:
+        prof = dict(prof)
+        if "name" not in prof:
+            prof["name"] = "Student"
+        if "branch" not in prof:
+            prof["branch"] = prof.get("branch_year", "CSE - 3rd Year")
+        if "year" not in prof:
+            prof["year"] = 3
+    return prof
+
+
+def get_relevant_contacts(params: dict) -> AgentResponse:
+    profile = resolve_profile(params)
+
 
     query_type = params.get("query_type", "faculty")
     subject = params.get("subject")
@@ -164,8 +181,9 @@ def draft_official_email(params: dict) -> AgentResponse:
     Feature 3: Formats an official email using student profile context.
     Returns draft with requires_user_approval: True. NEVER sends directly.
     """
+    profile = resolve_profile(params)
     session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+
 
     recipient_email = params.get("recipient_email") or params.get("to") or "academic_office@vasavi.ac.in"
     subject = params.get("subject", f"Official Inquiry from {profile['name']}")
@@ -240,8 +258,7 @@ def send_email(params: dict) -> AgentResponse:
 
 
 def schedule_reminder(params: dict) -> AgentResponse:
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
 
     event = params.get("event", "Campus Event")
     minutes_before = params.get("minutes_before", 60)
@@ -291,9 +308,9 @@ def cancel_appointment(params: dict) -> AgentResponse:
 
 
 def general_synthesis(params: dict) -> AgentResponse:
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
     query = params.get("query", "communication channels faculty contact email guidelines")
+
 
     rag_results = retrieve(query, k=2, category="campus")
     top_rag = rag_results[0] if rag_results else None

@@ -25,9 +25,11 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 try:
-    from orchestrator.orchestrator import run
+    from orchestrator.orchestrator import run, synthesize_response
 except ImportError:
     run = None
+    synthesize_response = None
+
 
 from agents import (
     academic_agent,
@@ -187,10 +189,11 @@ def chat(req: ChatRequest):
     """Primary multi-agent reasoning chat endpoint."""
     message_text = req.message
     session_id = req.session_id
+    profile = req.profile
 
     if run:
         try:
-            steps = run(message_text, session_id=session_id)
+            steps = run(message_text, session_id=session_id, profile=profile)
             agents_used = list(dict.fromkeys(s.agent for s in steps))
             reasoning_steps = [f"[{s.agent}] Action '{s.action}' -> {s.status}" for s in steps]
             requires_confirmation = any(
@@ -207,9 +210,12 @@ def chat(req: ChatRequest):
                 for s in steps
             ]
 
-            reply = " ".join(s.result.message for s in steps if s.result and s.result.message)
-            if not reply:
-                reply = f"Processed request via {', '.join(agents_used)} agent pipeline."
+            if synthesize_response:
+                reply = synthesize_response(message_text, steps, profile=profile)
+            else:
+                reply = " ".join(s.result.message for s in steps if s.result and s.result.message)
+                if not reply:
+                    reply = f"Processed request via {', '.join(agents_used)} agent pipeline."
 
             return {
                 "reply": reply,
@@ -220,6 +226,7 @@ def chat(req: ChatRequest):
             }
         except Exception as e:
             pass
+
 
     # Keyword Orchestrator Fallback
     return {

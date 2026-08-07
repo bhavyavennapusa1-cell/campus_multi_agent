@@ -23,9 +23,33 @@ from knowledge.memory import get_profile, create_session
 TODOIST_MOCK_STORAGE = []
 
 
-def get_attendance(params: dict) -> AgentResponse:
+def resolve_profile(params: dict) -> dict:
+    prof = params.get("profile")
     session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    if not prof:
+        prof = get_profile(session_id) or create_session(session_id)
+    else:
+        prof = dict(prof)
+        if "name" not in prof:
+            prof["name"] = "Student"
+        if "branch" not in prof:
+            prof["branch"] = prof.get("branch_year", "CSE - 3rd Year")
+        if "year" not in prof:
+            prof["year"] = 3
+        if "attendance_pct" not in prof:
+            val = str(prof.get("attendance", 88)).replace("%", "").strip()
+            try:
+                prof["attendance_pct"] = float(val)
+            except ValueError:
+                prof["attendance_pct"] = 88.0
+        if "hostel_block" not in prof:
+            prof["hostel_block"] = prof.get("hostel", "Block B")
+    return prof
+
+
+def get_attendance(params: dict) -> AgentResponse:
+    profile = resolve_profile(params)
+
 
     query = params.get("query", "minimum attendance percentage required condonation detention threshold")
     rag_results = retrieve(query, k=1, category="academic")
@@ -63,8 +87,7 @@ def get_attendance(params: dict) -> AgentResponse:
 
 
 def get_timetable(params: dict) -> AgentResponse:
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
 
     return AgentResponse(
         status="success",
@@ -74,14 +97,14 @@ def get_timetable(params: dict) -> AgentResponse:
             "today": ["09:00 AM Data Structures", "11:00 AM Operating Systems", "02:00 PM AI Lab"],
             "source": "mock"
         },
-        message=f"Timetable for {profile['name']} ({profile['branch']} Year {profile['year']}) retrieved.",
+        message=f"Timetable for {profile['name']} ({profile['branch']}) retrieved.",
         citation=None
     )
 
 
 def get_exam_schedule(params: dict) -> AgentResponse:
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
+
 
     query = params.get("query", "examination regulations passing marks grading scale CIE SEE")
     rag_results = retrieve(query, k=1, category="academic")
@@ -266,9 +289,9 @@ def general_synthesis(params: dict) -> AgentResponse:
     Requirement 2: General/Synthesis action for open-ended academic queries.
     Retrieves context from knowledge/rag.py across academic category and profile memory.
     """
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
     query = params.get("query", "academic performance summary attendance condonation exam prep")
+
 
     rag_results = retrieve(query, k=2, category="academic")
     top_rag = rag_results[0] if rag_results else None

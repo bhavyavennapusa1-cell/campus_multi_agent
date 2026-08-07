@@ -16,9 +16,22 @@ from knowledge.rag import retrieve, format_citation
 from knowledge.memory import get_profile, create_session
 
 
-def get_hostel_info(params: dict) -> AgentResponse:
+def resolve_profile(params: dict) -> dict:
+    prof = params.get("profile")
     session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    if not prof:
+        prof = get_profile(session_id) or create_session(session_id)
+    else:
+        prof = dict(prof)
+        if "name" not in prof:
+            prof["name"] = "Student"
+        if "hostel_block" not in prof:
+            prof["hostel_block"] = prof.get("hostel", "Block B")
+    return prof
+
+
+def get_hostel_info(params: dict) -> AgentResponse:
+    profile = resolve_profile(params)
 
     query = params.get("query", "hostel curfew gate closing timings late entry outpass rules")
     rag_results = retrieve(query, k=1, category="campus")
@@ -42,8 +55,7 @@ def get_hostel_info(params: dict) -> AgentResponse:
 
 
 def get_events(params: dict) -> AgentResponse:
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
 
     query = params.get("query", "upcoming technical hackathons fests cultural Axiom Euphoria Mantra")
     rag_results = retrieve(query, k=1, category="campus")
@@ -67,8 +79,7 @@ def get_events(params: dict) -> AgentResponse:
 
 
 def file_grievance(params: dict) -> AgentResponse:
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
 
     grievance_text = params.get("text", "General grievance submission")
     query = params.get("query", "grievance redressal SOP categories SLA submission")
@@ -90,9 +101,9 @@ def file_grievance(params: dict) -> AgentResponse:
 
 
 def general_synthesis(params: dict) -> AgentResponse:
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
     query = params.get("query", "campus rules hostel grievances events general guidance")
+
 
     rag_results = retrieve(query, k=2, category="campus")
     top_rag = rag_results[0] if rag_results else None

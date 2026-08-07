@@ -34,11 +34,27 @@ COURSE_PROGRESS_REPOS = {
 }
 
 
-def check_eligibility(params: dict) -> AgentResponse:
+def resolve_profile(params: dict) -> dict:
+    prof = params.get("profile")
     session_id = params.get("session_id", "default")
-    profile = get_profile(session_id)
-    if not profile:
-        profile = create_session(session_id)
+    if not prof:
+        prof = get_profile(session_id) or create_session(session_id)
+    else:
+        prof = dict(prof)
+        if "name" not in prof:
+            prof["name"] = "Student"
+        if "branch" not in prof:
+            prof["branch"] = prof.get("branch_year", "CSE - 3rd Year")
+        if "cgpa" not in prof:
+            prof["cgpa"] = 8.5
+        if "backlog_count" not in prof:
+            prof["backlog_count"] = 0
+    return prof
+
+
+def check_eligibility(params: dict) -> AgentResponse:
+    profile = resolve_profile(params)
+
 
     company = params.get("company", "Dream Tier").strip()
     company_lower = company.lower()
@@ -99,10 +115,8 @@ def check_eligibility(params: dict) -> AgentResponse:
 
 
 def get_internships(params: dict) -> AgentResponse:
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id)
-    if not profile:
-        profile = create_session(session_id)
+    profile = resolve_profile(params)
+
 
     query = params.get("query", "software engineering internship eligibility companies")
     rag_results = retrieve(query, k=1, category="placement")
@@ -218,8 +232,7 @@ def find_opportunities(params: dict) -> AgentResponse:
 
 
 def get_all_eligible_companies(params: dict) -> AgentResponse:
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
 
     cgpa = profile["cgpa"]
     backlogs = profile["backlog_count"]
@@ -252,8 +265,8 @@ def general_synthesis(params: dict) -> AgentResponse:
     Retrieves context from knowledge/rag.py across placement category and profile memory,
     composing a grounded answer.
     """
-    session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    profile = resolve_profile(params)
+
     query = params.get("query", "placement preparation roadmap and eligibility advice")
 
     rag_results = retrieve(query, k=2, category="placement")

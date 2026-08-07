@@ -110,10 +110,22 @@ def find_nearby_facilities(params: dict) -> AgentResponse:
     )
 
 
-def general_synthesis(params: dict) -> AgentResponse:
+def resolve_profile(params: dict) -> dict:
+    prof = params.get("profile")
     session_id = params.get("session_id", "default")
-    profile = get_profile(session_id) or create_session(session_id)
+    if not prof:
+        prof = get_profile(session_id) or create_session(session_id)
+    else:
+        prof = dict(prof)
+        if "name" not in prof:
+            prof["name"] = "Student"
+    return prof
+
+
+def general_synthesis(params: dict) -> AgentResponse:
+    profile = resolve_profile(params)
     query = params.get("query", "campus navigation building locations facilities")
+
 
     rag_results = retrieve(query, k=2, category="campus")
     top_rag = rag_results[0] if rag_results else None
