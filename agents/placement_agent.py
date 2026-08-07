@@ -1,56 +1,109 @@
 """
-Person B owns this file too.
-This one has real logic already (eligibility checking) - use it as the
-template for filling in campus_agent.py and communication_agent.py.
+Placement Agent for Smart Campus Multi-Agent System.
+Evaluates student placement eligibility and internship opportunities using RAG & Memory.
 """
 
-import json
 from pathlib import Path
 import sys
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+# Set project root in sys.path
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from shared.schemas import AgentResponse
-
-BASE = Path(__file__).resolve().parent.parent / "data"
-
-with open(BASE / "students.json") as f:
-    STUDENTS = {s["id"]: s for s in json.load(f)["students"]}
-
-with open(BASE / "internships.json") as f:
-    INTERNSHIPS = {i["company"].lower(): i for i in json.load(f)["internships"]}
+from knowledge.rag import retrieve, format_citation
+from knowledge.memory import get_profile, create_session
 
 
 def check_eligibility(params: dict) -> AgentResponse:
-    student_id = params.get("student_id", "S001")
-    company = params.get("company", "").lower()
+    session_id = params.get("session_id", "default")
+    profile = get_profile(session_id)
+    if not profile:
+        profile = create_session(session_id)
 
-    student = STUDENTS.get(student_id)
-    posting = INTERNSHIPS.get(company)
+    company = params.get("company", "Dream Tier").strip()
+    company_lower = company.lower()
 
-    if not student:
-        return AgentResponse(status="error", message=f"No student found with id {student_id}")
-    if not posting:
-        return AgentResponse(status="error", message=f"No internship posting found for {company}")
+    # Determine tier category criteria
+    if any(d in company_lower for d in ["dream", "google", "microsoft", "salesforce"]):
+        target_tier = "Dream Tier"
+        min_cgpa = 8.0
+        max_backlogs = 0
+    elif any(c in company_lower for c in ["core", "oracle", "cognizant"]):
+        target_tier = "Core Tier"
+        min_cgpa = 7.0
+        max_backlogs = 1
+    else:
+        target_tier = "Mass / Pool Tier"
+        min_cgpa = 6.0
+        max_backlogs = 2
 
-    eligible = (
-        student["cgpa"] >= posting["min_cgpa"]
-        and student["attendance_percent"] >= posting["min_attendance"]
-        and student["branch"] in posting["eligible_branches"]
-        and student["year"] in posting["eligible_years"]
-    )
+    # Call RAG for authoritative policy context
+    query = f"placement eligibility for {company} {target_tier} CGPA backlog rules"
+    rag_results = retrieve(query, k=1, category="placement")
+    top_rag = rag_results[0] if rag_results else None
+    citation = format_citation(top_rag) if top_rag else None
+
+    name = profile["name"]
+    cgpa = profile["cgpa"]
+    backlogs = profile["backlog_count"]
+
+    cgpa_ok = cgpa >= min_cgpa
+    backlogs_ok = backlogs <= max_backlogs
+    is_eligible = cgpa_ok and backlogs_ok
+
+    reasons = []
+    if not cgpa_ok:
+        reasons.append(f"CGPA {cgpa} < required {min_cgpa}")
+    if not backlogs_ok:
+        reasons.append(f"Backlogs {backlogs} > max allowed {max_backlogs}")
+
+    if is_eligible:
+        msg = f"YES: Student {name} (CGPA {cgpa}, {backlogs} backlogs) is ELIGIBLE for {company} ({target_tier})."
+    else:
+        msg = f"NO: Student {name} (CGPA {cgpa}, {backlogs} backlogs) is NOT ELIGIBLE for {company} ({target_tier}) [{', '.join(reasons)}]."
 
     return AgentResponse(
         status="success",
-        data={"eligible": eligible, "company": company, "reasons": posting},
-        message=f"{'Eligible' if eligible else 'Not eligible'} for {company}",
+        data={
+            "eligible": is_eligible,
+            "student_name": name,
+            "cgpa": cgpa,
+            "backlog_count": backlogs,
+            "target_tier": target_tier,
+            "company": company,
+            "reasons": reasons,
+            "policy_summary": top_rag["text"] if top_rag else ""
+        },
+        message=msg,
+        citation=citation
     )
 
 
 def get_internships(params: dict) -> AgentResponse:
+    session_id = params.get("session_id", "default")
+    profile = get_profile(session_id)
+    if not profile:
+        profile = create_session(session_id)
+
+    query = params.get("query", "software engineering internship eligibility companies")
+    rag_results = retrieve(query, k=1, category="placement")
+    top_rag = rag_results[0] if rag_results else None
+    citation = format_citation(top_rag) if top_rag else None
+
     return AgentResponse(
         status="success",
-        data={"internships": list(INTERNSHIPS.values())},
-        message=f"Found {len(INTERNSHIPS)} open internships",
+        data={
+            "student": profile["name"],
+            "branch": profile["branch"],
+            "internships": [
+                {"company": "Google India", "role": "SWE Intern", "stipend": "1.2 Lakh/pm"},
+                {"company": "Microsoft", "role": "L1 Software Intern", "stipend": "1.0 Lakh/pm"}
+            ]
+        },
+        message=f"Found open software engineering internships for {profile['name']} ({profile['branch']}).",
+        citation=citation
     )
 
 
@@ -64,3 +117,4 @@ def handle(action: str, params: dict) -> AgentResponse:
     if action not in ACTIONS:
         return AgentResponse(status="error", message=f"Unknown placement action: {action}")
     return ACTIONS[action](params)
+
