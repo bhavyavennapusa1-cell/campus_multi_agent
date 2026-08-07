@@ -1,4 +1,5 @@
 """
+<<<<<<< HEAD
 Academic Agent for Smart Campus Multi-Agent System.
 Handles student attendance checks, exam schedules, and academic policy queries using RAG & Memory.
 """
@@ -53,10 +54,43 @@ def get_attendance(params: dict) -> AgentResponse:
         },
         message=f"{status_str} Policy detail: {policy_text[:120]}...",
         citation=citation
+=======
+Person B owns this file.
+Each function takes params (a dict) and returns an AgentResponse.
+Load data/students.json once at the top so you're not re-reading the file
+on every call.
+"""
+
+import json
+from pathlib import Path
+import sys
+
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from shared.schemas import AgentResponse
+
+DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "students.json"
+
+with open(DATA_PATH) as f:
+    STUDENTS = {s["id"]: s for s in json.load(f)["students"]}
+
+
+def get_attendance(params: dict) -> AgentResponse:
+    student_id = params.get("student_id", "S001")  # default demo student
+    student = STUDENTS.get(student_id)
+
+    if not student:
+        return AgentResponse(status="error", message=f"No student found with id {student_id}")
+
+    return AgentResponse(
+        status="success",
+        data={"attendance_percent": student["attendance_percent"]},
+        message=f"Attendance is {student['attendance_percent']}%",
+>>>>>>> frontend
     )
 
 
 def get_timetable(params: dict) -> AgentResponse:
+<<<<<<< HEAD
     session_id = params.get("session_id", "default")
     profile = get_profile(session_id)
     if not profile:
@@ -71,10 +105,18 @@ def get_timetable(params: dict) -> AgentResponse:
         },
         message=f"Timetable for {profile['name']} ({profile['branch']} Year {profile['year']}) retrieved.",
         citation=None
+=======
+    # TODO Person B: replace with real mock timetable data (add data/timetable.json)
+    return AgentResponse(
+        status="success",
+        data={"today": ["9:00 Data Structures", "11:00 Operating Systems", "2:00 AI Lab"]},
+        message="Today's classes retrieved",
+>>>>>>> frontend
     )
 
 
 def get_exam_schedule(params: dict) -> AgentResponse:
+<<<<<<< HEAD
     session_id = params.get("session_id", "default")
     profile = get_profile(session_id)
     if not profile:
@@ -100,6 +142,17 @@ def get_exam_schedule(params: dict) -> AgentResponse:
     )
 
 
+=======
+    # TODO Person B: replace with real mock exam data
+    return AgentResponse(
+        status="success",
+        data={"exams": [{"subject": "Operating Systems", "date": "2026-08-20"}]},
+        message="Exam schedule retrieved",
+    )
+
+
+# Router - the orchestrator calls this, doesn't need to know function names directly
+>>>>>>> frontend
 ACTIONS = {
     "get_attendance": get_attendance,
     "get_timetable": get_timetable,
