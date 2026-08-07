@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus AI | Workspace</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">📚 CampusAgenda AI</div>
+        <button class="hamburger" id="hamburger">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="chat.html" class="active">Assistant</a>
+            <a href="about.html">Architecture</a>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <!-- 1. Student Memory Panel -->
+        <aside class="memory-panel">
+            <div class="memory-title">🧠 Student Memory State</div>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">Injected into orchestrator context to maintain persistent memory.</p>
+            <div class="memory-group">
+                <label>Student Name</label>
+                <input type="text" id="mem-name" value="Bhavya Vennapusa">
+            </div>
+            <div class="memory-group">
+                <label>Branch & Year</label>
+                <input type="text" id="mem-branch" value="CSE - 3rd Year">
+            </div>
+            <div class="memory-group">
+                <label>Attendance %</label>
+                <input type="text" id="mem-attendance" value="88%">
+            </div>
+            <div class="memory-group">
+                <label>Hostel Block</label>
+                <input type="text" id="mem-hostel" value="Block B">
+            </div>
+        </aside>
+
+        <!-- 2. Chat Section with Speech Bubbles & Pill Chips -->
+        <main class="chat-section">
+            <div class="chat-header">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="background: var(--mint-green); border: 2px solid var(--border-dark); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">AI</div>
+                    <h3 style="font-family: var(--font-heading); font-size: 1rem;">Multi-Agent Orchestrator</h3>
+                </div>
+                <span style="font-size: 0.75rem; color: #27ae60; font-weight: 600;">● Active</span>
+            </div>
+
+            <div class="chat-history" id="chat-history">
+                <div class="message msg-bot">
+                    Hi there! Select one of the quick scenario chips below or type your custom query.
+                </div>
+            </div>
+
+            <!-- Quick-Prompt Chips (Pill Shaped) -->
+            <div class="quick-chips">
+                <div class="chip" data-prompt="Am I eligible for the Google internship? If yes, register me and calendar it.">💼 Google Internship & Register</div>
+                <div class="chip" data-prompt="Summarize examination regulations and check my attendance eligibility.">📚 Exam Regs & Attendance</div>
+                <div class="chip" data-prompt="Show today's classes and recommend upcoming AI workshops.">🎉 Today's Classes & Events</div>
+            </div>
+
+            <div class="chat-input-area">
+                <form id="chat-form" class="input-wrapper">
+                    <input type="text" id="chat-input" placeholder="Type your multi-step request..." autocomplete="off" required>
+                    <button type="submit" class="btn-pill" style="padding: 0.4rem 1.25rem; font-size: 0.9rem;">Send</button>
+                </form>
+            </div>
+        </main>
+
+        <!-- 3. Live Agent Trace Panel -->
+        <aside class="trace-section">
+            <div class="trace-header">
+                📋 Live Agent Trace
+            </div>
+            <div class="trace-list" id="trace-list">
+                <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 3rem;">
+                    Awaiting orchestrator plan execution...
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
