@@ -92,10 +92,40 @@ def file_grievance(params: dict) -> AgentResponse:
     )
 
 
+def general_synthesis(params: dict) -> AgentResponse:
+    session_id = params.get("session_id", "default")
+    profile = get_profile(session_id)
+    if not profile:
+        profile = create_session(session_id)
+
+    query = params.get("query", "campus life hostel regulations events grievance SOP guidelines")
+    rag_results = retrieve(query, k=2, category="campus")
+    top_rag = rag_results[0] if rag_results else None
+    citation = format_citation(top_rag) if top_rag else None
+
+    context_str = "\n".join([r.get("text", "") for r in rag_results])
+    summary = (
+        f"Campus Overview for {profile['name']} (Hostel: {profile['hostel_block']}): "
+        f"Campus rules & facilities summary: {context_str[:250]}..."
+    )
+
+    return AgentResponse(
+        status="success",
+        data={
+            "profile": profile,
+            "rag_documents": rag_results,
+            "synthesis": summary
+        },
+        message=summary,
+        citation=citation
+    )
+
+
 ACTIONS = {
     "get_hostel_info": get_hostel_info,
     "get_events": get_events,
     "file_grievance": file_grievance,
+    "general_synthesis": general_synthesis,
 }
 
 

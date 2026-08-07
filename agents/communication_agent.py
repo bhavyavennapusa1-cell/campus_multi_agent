@@ -61,9 +61,33 @@ def schedule_reminder(params: dict) -> AgentResponse:
     )
 
 
+def general_synthesis(params: dict) -> AgentResponse:
+    session_id = params.get("session_id", "default")
+    profile = get_profile(session_id)
+    if not profile:
+        profile = create_session(session_id)
+
+    query = params.get("query", "communication channels email reminders notification policy")
+    summary = (
+        f"Communication Summary for {profile['name']} ({profile['branch']}): "
+        f"Automated email drafting, reminder scheduling, and official communication channels are active."
+    )
+
+    return AgentResponse(
+        status="success",
+        data={
+            "profile": profile,
+            "synthesis": summary
+        },
+        message=summary,
+        citation=None
+    )
+
+
 ACTIONS = {
     "draft_email": draft_email,
     "schedule_reminder": schedule_reminder,
+    "general_synthesis": general_synthesis,
 }
 
 
