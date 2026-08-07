@@ -151,3 +151,28 @@ ul { list-style: none; }
   .nav-links.active { display: flex; }
   .hamburger { display: block; }
 }
+
+/* Fixed Background Widgets Container */
+.fixed-background-widgets {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.widget-sticker {
+  position: absolute;
+  pointer-events: none;
+  animation: floatDoodle 6s ease-in-out infinite alternate;
+}
+
+@keyframes floatDoodle {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+

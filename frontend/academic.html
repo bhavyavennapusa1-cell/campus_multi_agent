@@ -187,6 +187,55 @@
     </style>
 </head>
 <body>
+    <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
+    <div class="fixed-background-widgets">
+        <!-- Left Side Spread -->
+        <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+        </svg>
+        <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+        </svg>
+        <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+            <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
+            <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
+        </svg>
+        <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+            <rect x="10" y="10" width="80" height="80" rx="4"/>
+            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+        </svg>
+
+        <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
+        <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+        </svg>
+        <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+        </svg>
+        <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+            <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
+        </svg>
+
+        <!-- Right Side Spread -->
+        <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+        </svg>
+        <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+        </svg>
+        <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+        </svg>
+        <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+            <rect x="10" y="10" width="80" height="80" rx="4"/>
+            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+        </svg>
+        <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+            <rect x="10" y="10" width="80" height="80" rx="4"/>
+            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+        </svg>
+    </div>
+
     <!-- Navbar Reused -->
     <nav class="navbar">
         <div class="nav-brand">📚 CampusAgenda AI</div>
@@ -196,10 +245,10 @@
             <a href="dashboard.html">Dashboard</a>
             <a href="chat.html">Assistant</a>
         </div>
-
     </nav>
 
-    <main class="academic-hub-container">
+    <main class="academic-hub-container" style="position: relative; z-index: 10;">
+
         <!-- Hero Header -->
         <div class="cloud-container" style="padding: 2rem; margin-bottom: 2rem;">
             <div class="sticker-tag" style="background: var(--mint-green);">🎓 Academic Intelligence Hub</div>
