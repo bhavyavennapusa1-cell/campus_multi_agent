@@ -1,10 +1,24 @@
-# Vasavi College of Engineering - Campus & Hostel Rules
+---
+doc_id: DOC_HOSTEL_001
+title: Residence Hall and Hostel Regulations
+category: campus
+version: "2.2"
+effective_date: "2026-06-01"
+last_updated: "2026-08-01"
+related_docs: ["DOC_CAMP_GRV_006", "DOC_CAMP_SRV_007"]
+---
 
-## Curfew and Outing Hours
-1. In-time: All hostel residents must return to the hostel premises by 8:30 PM on weekdays and 9:00 PM on weekends (latest gate entry threshold 9:30 PM weekdays, 11:00 PM weekends with sign-in at warden's office).
-2. Outpass: Night outpass requests must be submitted through the portal 24 hours in advance and require parent confirmation via SMS.
+# Residence Hall and Hostel Regulations
 
-## Visitor and Maintenance Regulations
-1. Guest Policy: Guests are not permitted in hostel rooms after 8:00 PM. Day visitors must register at reception and carry a visitor pass at all times.
-2. Maintenance Requests: Room maintenance issues should be submitted through the hostel portal or directly to the floor warden, typically resolved within 48 hours.
+## 1. Curfew Timings and Gate Control
+- Weekdays (Monday to Friday): Hostel main entry gate closes strictly at 22:30 (10:30 PM).
+- Weekends (Saturday & Sunday): Entry gate closes at 23:30 (11:30 PM).
+- Late Entry Penalty: Returning after curfew requires written warden sign-in. Three late entries in a month trigger guardian notification and a fine of INR 500.
 
+## 2. Visitor Regulations & Overnight Stays
+- Visitor Hours: Visitors (parents/guardians only) are allowed in the hostel reception lounge from 16:00 to 18:30 on weekdays.
+- Overnight Stay: No external guests or day-scholar students are permitted overnight in hostel rooms under any circumstances. Violation results in a INR 2,000 fine per resident.
+
+## 3. Mess Rules & Outpass Process
+- Mess Hours: Breakfast (07:30-09:00), Lunch (12:15-13:45), Snacks (16:30-17:30), Dinner (19:30-21:15).
+- Weekend Outpass: Online outpass application must be submitted 24 hours prior to departure via the student portal and approved by the Block Warden.

@@ -1,0 +1,37 @@
+{
+  "scholarships": [
+    {
+      "scholarship_id": "SCH201",
+      "name": "State Post-Matric Tuition Fee Reimbursement (Jagananna / Telangana EPass)",
+      "eligibility_criteria": "SC/ST/BC/EBC category students with annual family income below INR 2.0 Lakhs.",
+      "min_cgpa": 6.0,
+      "income_limit_lpa": 2.0,
+      "amount_inr": 35000,
+      "deadline": "2026-10-15",
+      "provider": "State Welfare Department",
+      "documents_required": ["Income Certificate", "Caste Certificate", "Aadhaar Card", "Bank Passbook", "EAMCET Allotment Order"]
+    },
+    {
+      "scholarship_id": "SCH202",
+      "name": "Merit-cum-Means Excellence Scholarship",
+      "eligibility_criteria": "Top 5% students in academic performance with CGPA >= 8.5.",
+      "min_cgpa": 8.5,
+      "income_limit_lpa": 5.0,
+      "amount_inr": 50000,
+      "deadline": "2026-09-30",
+      "provider": "Institutional Endowment Fund",
+      "documents_required": ["Grade Sheets", "Income Tax Return / Income Certificate", "Recommendation Letter from HOD"]
+    },
+    {
+      "scholarship_id": "SCH203",
+      "name": "Pragati Scholarship for Girl Students (AICTE)",
+      "eligibility_criteria": "Female students admitted to 1st/2nd year degree programs.",
+      "min_cgpa": 7.0,
+      "income_limit_lpa": 8.0,
+      "amount_inr": 50000,
+      "deadline": "2026-11-01",
+      "provider": "AICTE Govt of India",
+      "documents_required": ["Bonafide Student Certificate", "Aadhaar", "Bank Account Details"]
+    }
+  ]
+}

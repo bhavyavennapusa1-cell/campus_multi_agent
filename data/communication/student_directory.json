@@ -1,0 +1,69 @@
+{
+  "students": [
+    {
+      "student_id": "STU001",
+      "name": "Bhavya Vennapusa",
+      "branch": "CSE",
+      "year": 3,
+      "semester": 6,
+      "section": "A",
+      "email": "bhavya.v@vasavi.ac.in",
+      "mentor_id": "FAC101",
+      "mentor_name": "Dr. P. V. Sudha",
+      "hod_id": "FAC100",
+      "hod_name": "Dr. T. Adilakshmi"
+    },
+    {
+      "student_id": "STU002",
+      "name": "Rahul Sharma",
+      "branch": "CSE",
+      "year": 3,
+      "semester": 6,
+      "section": "A",
+      "email": "rahul.s@vasavi.ac.in",
+      "mentor_id": "FAC101",
+      "mentor_name": "Dr. P. V. Sudha",
+      "hod_id": "FAC100",
+      "hod_name": "Dr. T. Adilakshmi"
+    },
+    {
+      "student_id": "STU003",
+      "name": "Ananya Rao",
+      "branch": "CSE",
+      "year": 4,
+      "semester": 8,
+      "section": "B",
+      "email": "ananya.r@vasavi.ac.in",
+      "mentor_id": "FAC102",
+      "mentor_name": "Prof. K. Ramakrishna",
+      "hod_id": "FAC100",
+      "hod_name": "Dr. T. Adilakshmi"
+    },
+    {
+      "student_id": "STU004",
+      "name": "Siddharth Verma",
+      "branch": "ECE",
+      "year": 3,
+      "semester": 6,
+      "section": "A",
+      "email": "siddharth.v@vasavi.ac.in",
+      "mentor_id": "FAC103",
+      "mentor_name": "Dr. N. Srinivas",
+      "hod_id": "FAC105",
+      "hod_name": "Dr. E. Sreenivasa Rao"
+    },
+    {
+      "student_id": "STU005",
+      "name": "Priya Reddy",
+      "branch": "IT",
+      "year": 2,
+      "semester": 4,
+      "section": "A",
+      "email": "priya.r@vasavi.ac.in",
+      "mentor_id": "FAC104",
+      "mentor_name": "Dr. M. Sridevi",
+      "hod_id": "FAC100",
+      "hod_name": "Dr. T. Adilakshmi"
+    }
+  ]
+}

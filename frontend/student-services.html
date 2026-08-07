@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus AI | Student Services</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .services-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .service-card {
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 4px 4px 0px var(--border-dark);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 5px 5px 0px var(--border-dark);
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .service-icon {
+            font-size: 1.8rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--border-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface);
+            box-shadow: 2px 2px 0px var(--border-dark);
+        }
+
+        /* Inline Expandable Section */
+        .expandable-section {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px dashed var(--border-dark);
+            animation: expandDown 0.2s ease-out;
+        }
+
+        .expandable-section.open {
+            display: block;
+        }
+
+        @keyframes expandDown {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .grievance-form-card {
+            background: var(--bg-gingham);
+            border: 2px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Reused -->
+    <nav class="navbar">
+        <div class="nav-brand">📚 CampusAgenda AI</div>
+        <button class="hamburger" id="hamburger">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="chat.html">Assistant</a>
+            <a href="about.html">Architecture</a>
+        </div>
+    </nav>
+
+    <main class="services-container">
+        <!-- Hero Header -->
+        <div class="cloud-container" style="padding: 2rem; margin-bottom: 2rem;">
+            <div class="sticker-tag" style="background: var(--lavender);">🏢 Facilities & Support</div>
+            <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue);">Student Services</h1>
+            <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0;">
+                Access campus housing, library catalogs, merit scholarships, shuttle routes, grievance ticketing, and student FAQs.
+            </p>
+        </div>
+
+        <!-- 6 Service Cards Grid -->
+        <div class="services-grid">
+            <!-- 1. Hostel Service Card -->
+            <div class="service-card" onclick="toggleService('hostel')">
+                <div class="service-header">
+                    <div class="service-icon" style="background: var(--mint-green);">🏠</div>
+                    <div>
+                        <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Hostel & Housing</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Room allocation, mess menu & maintenance</p>
+                    </div>
+                </div>
+                <!-- TODO: Replace inline mock with GET /services/hostel -->
+                <div class="expandable-section" id="section-hostel">
+                    <div style="font-size: 0.85rem; color: var(--text-main);">
+                        <div><strong>Assigned Block:</strong> Block B, Room 304</div>
+                        <div style="margin-top: 0.3rem;"><strong>Mess Supervisor:</strong> Mr. Rajesh Kumar</div>
+                        <div style="margin-top: 0.3rem;"><strong>Mess Menu Today:</strong> Paneer Butter Masala, Chapati, Dal & Rice</div>
+                        <div style="margin-top: 0.6rem;">
+                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); alert('Maintenance request logged for Block B!')">Log Room Maintenance Request →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Library Service Card -->
+            <div class="service-card" onclick="toggleService('library')">
+                <div class="service-header">
+                    <div class="service-icon" style="background: var(--soft-yellow);">📚</div>
+                    <div>
+                        <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Library & Digital Resources</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Book borrowing, IEEE papers & study cubicles</p>
+                    </div>
+                </div>
+                <!-- TODO: Replace inline mock with GET /services/library -->
+                <div class="expandable-section" id="section-library">
+                    <div style="font-size: 0.85rem; color: var(--text-main);">
+                        <div><strong>Books Issued:</strong> 2 Active ("Designing Data-Intensive Applications", "Operating Systems Internals")</div>
+                        <div style="margin-top: 0.3rem;"><strong>Due Date:</strong> Aug 18, 2026</div>
+                        <div style="margin-top: 0.6rem;">
+                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); alert('Book renewal request submitted!')">Renew Book Loan 📖</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Scholarships Service Card -->
+            <div class="service-card" onclick="toggleService('scholarships')">
+                <div class="service-header">
+                    <div class="service-icon" style="background: var(--bubble-pink);">🎓</div>
+                    <div>
+                        <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Scholarships & Grants</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Merit assistance, fee waivers & stipends</p>
+                    </div>
+                </div>
+                <!-- TODO: Replace inline mock with GET /services/scholarships -->
+                <div class="expandable-section" id="section-scholarships">
+                    <div style="font-size: 0.85rem; color: var(--text-main);">
+                        <div><strong>Active Grant:</strong> National Merit Tech Fellowship (Approved)</div>
+                        <div style="margin-top: 0.3rem;"><strong>Stipend Amount:</strong> ₹15,000 / Semester</div>
+                        <div style="margin-top: 0.6rem;">
+                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); alert('Downloading Scholarship Grant Certificate...')">Download Certificate 📄</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Transport Service Card -->
+            <div class="service-card" onclick="toggleService('transport')">
+                <div class="service-header">
+                    <div class="service-icon" style="background: var(--lavender);">🚌</div>
+                    <div>
+                        <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Campus Transport & Shuttle</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Shuttle schedules, pass renewals & routes</p>
+                    </div>
+                </div>
+                <!-- TODO: Replace inline mock with GET /services/transport -->
+                <div class="expandable-section" id="section-transport">
+                    <div style="font-size: 0.85rem; color: var(--text-main);">
+                        <div><strong>Route 4 Shuttle:</strong> City Station ↔ Main Gate</div>
+                        <div style="margin-top: 0.3rem;"><strong>Next Departure:</strong> 05:30 PM (Main Gate Bay 2)</div>
+                        <div style="margin-top: 0.6rem;">
+                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); alert('Live Shuttle Location: 2.1 km away')">Track Live Bus 📍</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Grievances Service Card (with Raise Grievance Form) -->
+            <div class="service-card" onclick="toggleService('grievances')">
+                <div class="service-header">
+                    <div class="service-icon" style="background: #fadbd8;">📝</div>
+                    <div>
+                        <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Grievances & Helpdesk</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Raise support tickets & track resolution</p>
+                    </div>
+                </div>
+                <div class="expandable-section" id="section-grievances">
+                    <div style="font-size: 0.85rem; color: var(--text-main);">
+                        <p>Submit formal complaints or maintenance tickets directly to campus authorities.</p>
+                        <button class="btn-pill" style="margin-top: 0.5rem; font-size: 0.75rem;" onclick="event.stopPropagation(); showGrievanceForm()">+ Raise Grievance</button>
+
+                        <!-- Grievance Form & Ticket Confirmation -->
+                        <div class="grievance-form-card" id="grievance-form-container" style="display: none;" onclick="event.stopPropagation()">
+                            <form onsubmit="handleGrievanceSubmit(event)">
+                                <div style="margin-bottom: 0.5rem;">
+                                    <label style="font-family: var(--font-heading); font-size: 0.8rem;">Subject</label>
+                                    <input type="text" id="g-subject" placeholder="e.g. WiFi connectivity issue in Block B" required style="width: 100%; border: 2px solid var(--border-dark); border-radius: 8px; padding: 0.3rem 0.5rem; font-size: 0.8rem;">
+                                </div>
+                                <div style="margin-bottom: 0.75rem;">
+                                    <label style="font-family: var(--font-heading); font-size: 0.8rem;">Description</label>
+                                    <textarea id="g-desc" placeholder="Describe the issue..." required style="width: 100%; border: 2px solid var(--border-dark); border-radius: 8px; padding: 0.3rem 0.5rem; font-size: 0.8rem; height: 50px;"></textarea>
+                                </div>
+                                <button type="submit" class="btn-pill" style="font-size: 0.75rem; background: var(--mint-green); color: var(--text-main);">Submit Ticket</button>
+                            </form>
+                        </div>
+
+                        <div id="grievance-ticket-result" style="margin-top: 0.75rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Campus FAQ Service Card -->
+            <div class="service-card" onclick="toggleService('faq')">
+                <div class="service-header">
+                    <div class="service-icon" style="background: var(--soft-yellow);">❓</div>
+                    <div>
+                        <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Campus FAQ & Help</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Quick answers for common campus queries</p>
+                    </div>
+                </div>
+                <!-- TODO: Replace inline mock with GET /services/faq -->
+                <div class="expandable-section" id="section-faq">
+                    <div style="font-size: 0.85rem; color: var(--text-main);">
+                        <div><strong>Q: How do I get an ID replacement?</strong></div>
+                        <div style="color: var(--text-muted); margin-bottom: 0.5rem;">A: Visit Admin Block Room 102 with copy of FIR or lost declaration.</div>
+
+                        <div><strong>Q: What is the campus curfew time?</strong></div>
+                        <div style="color: var(--text-muted);">A: 10:30 PM for main campus gates unless late pass is issued.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+
+        function toggleService(serviceId) {
+            const section = document.getElementById(`section-${serviceId}`);
+            if (section) {
+                section.classList.toggle('open');
+            }
+        }
+
+        function showGrievanceForm() {
+            const form = document.getElementById('grievance-form-container');
+            if (form) form.style.display = 'block';
+        }
+
+        // TODO: Replace with real POST /services/grievance
+        function handleGrievanceSubmit(e) {
+            e.preventDefault();
+            const subj = document.getElementById('g-subject').value;
+            const desc = document.getElementById('g-desc').value;
+
+            // Generate mock ticket confirmation card
+            const ticketId = "GRV-" + Math.floor(1000 + Math.random() * 9000);
+            const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const resultContainer = document.getElementById('grievance-ticket-result');
+            resultContainer.innerHTML = `
+                <div style="background: var(--surface); border: 2px solid var(--border-dark); border-radius: 12px; padding: 0.75rem; box-shadow: 2px 2px 0px var(--border-dark);">
+                    <div class="sticker-tag" style="background: var(--mint-green); font-size: 0.7rem; margin-bottom: 0.3rem;">✓ Ticket Created</div>
+                    <div style="font-family: var(--font-heading); font-size: 0.9rem; color: var(--primary-blue);">Ticket ID: ${ticketId}</div>
+                    <div style="font-size: 0.8rem; font-weight: 600;">Subject: ${subj}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Status: <span style="color: #27ae60; font-weight: 700;">Open</span> | Last Updated: ${nowStr}</div>
+                </div>
+            `;
+
+            document.getElementById('grievance-form-container').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

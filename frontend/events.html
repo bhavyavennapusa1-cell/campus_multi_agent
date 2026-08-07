@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus AI | Campus Events</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .events-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+
+        .category-pills-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .category-pill {
+            font-family: var(--font-heading);
+            background: var(--surface);
+            color: var(--text-main);
+            border: 2px solid var(--border-dark);
+            border-radius: 50px;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 2px 2px 0px var(--border-dark);
+            transition: all 0.15s ease;
+        }
+
+        .category-pill:hover {
+            transform: translateY(-2px);
+            background: var(--soft-yellow);
+        }
+
+        .category-pill.active {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 3px 3px 0px var(--border-dark);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .event-card {
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 4px 4px 0px var(--border-dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s;
+        }
+
+        .event-card:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Reused -->
+    <nav class="navbar">
+        <div class="nav-brand">📚 CampusAgenda AI</div>
+        <button class="hamburger" id="hamburger">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="chat.html">Assistant</a>
+            <a href="about.html">Architecture</a>
+        </div>
+    </nav>
+
+    <main class="events-container">
+        <!-- Hero Header -->
+        <div class="cloud-container" style="padding: 2rem; margin-bottom: 2rem;">
+            <div class="sticker-tag" style="background: var(--bubble-pink);">🎪 Campus Life & Workshops</div>
+            <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue);">Events & Hackathons</h1>
+            <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0;">
+                Discover upcoming technical workshops, hackathons, club meetups, and coding competitions.
+            </p>
+        </div>
+
+        <!-- Filter Pills by Type -->
+        <div class="category-pills-bar">
+            <button class="category-pill active" onclick="filterEvents('All', this)">All Events</button>
+            <button class="category-pill" onclick="filterEvents('hackathon', this)">Hackathons</button>
+            <button class="category-pill" onclick="filterEvents('workshop', this)">Workshops</button>
+            <button class="category-pill" onclick="filterEvents('competition', this)">Competitions</button>
+            <button class="category-pill" onclick="filterEvents('club', this)">Club Meets</button>
+        </div>
+
+        <!-- Events Cards Grid -->
+        <div class="cards-grid" id="events-grid">
+            <!-- Dynamic Event Cards rendered here -->
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+
+        // Track local mock registration states
+        const registeredEventIds = new Set();
+
+        // TODO: replace with real GET /events
+        const MOCK_EVENTS = [
+            {
+                id: "ev-1",
+                name: "AgentX National AI Hackathon 2026",
+                date: "Aug 08, 2026",
+                time: "10:00 AM - 06:00 PM",
+                venue: "Main Campus Auditorium",
+                organizer: "AI Student Society & Google AGY Team",
+                seatsAvailable: 45,
+                type: "hackathon"
+            },
+            {
+                id: "ev-2",
+                name: "Distributed Microservices & Kubernetes Workshop",
+                date: "Aug 12, 2026",
+                time: "02:00 PM - 05:00 PM",
+                venue: "Tech Tower Lab 2",
+                organizer: "Cloud Infrastructure Club",
+                seatsAvailable: 15,
+                type: "workshop"
+            },
+            {
+                id: "ev-3",
+                name: "Algorithmic Code Sprint 2026",
+                date: "Aug 16, 2026",
+                time: "06:00 PM - 09:00 PM",
+                venue: "Online Judge / Computer Center",
+                organizer: "Competitive Coding Guild",
+                seatsAvailable: 120,
+                type: "competition"
+            },
+            {
+                id: "ev-4",
+                name: "Open Source Developers & Rust Meetup",
+                date: "Aug 20, 2026",
+                time: "04:00 PM - 06:00 PM",
+                venue: "Student Hub Room 101",
+                organizer: "FOSS Campus Chapter",
+                seatsAvailable: 28,
+                type: "club"
+            }
+        ];
+
+        let currentFilter = 'All';
+
+        function renderEvents() {
+            const grid = document.getElementById('events-grid');
+            const list = MOCK_EVENTS.filter(e => currentFilter === 'All' || e.type.toLowerCase() === currentFilter.toLowerCase());
+
+            if (list.length === 0) {
+                grid.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No events found in this category.</div>`;
+                return;
+            }
+
+            let html = '';
+            list.forEach(item => {
+                const isRegistered = registeredEventIds.has(item.id);
+
+                let badgeBg = 'var(--soft-yellow)';
+                if (item.type === 'hackathon') badgeBg = 'var(--bubble-pink)';
+                if (item.type === 'workshop') badgeBg = 'var(--mint-green)';
+                if (item.type === 'competition') badgeBg = 'var(--lavender)';
+
+                html += `
+                    <div class="event-card">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                <span class="sticker-tag" style="background: ${badgeBg}; font-size: 0.75rem; margin: 0;">${item.type.toUpperCase()}</span>
+                                <span class="sticker-tag" style="background: var(--surface); font-size: 0.75rem; margin: 0;">${item.seatsAvailable} Seats Left</span>
+                            </div>
+                            <h3 style="font-family: var(--font-heading); color: var(--primary-blue); font-size: 1.25rem;">${item.name}</h3>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
+                                <div>📅 <strong>Date:</strong> ${item.date} (${item.time})</div>
+                                <div style="margin-top: 0.2rem;">📍 <strong>Venue:</strong> ${item.venue}</div>
+                                <div style="margin-top: 0.2rem;">👤 <strong>Host:</strong> ${item.organizer}</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem; flex-wrap: wrap;">
+                            <button class="btn-pill" style="${isRegistered ? 'background: #c0392b; color: white;' : 'background: var(--primary-blue); color: white;'}" onclick="toggleEventRegistration('${item.id}', '${item.name}')">
+                                ${isRegistered ? 'Cancel Registration' : 'Register'}
+                            </button>
+                            <!-- Naming rule: "Add to Calendar", not API name -->
+                            <button class="btn-pill" style="background: var(--surface); color: var(--text-main);" onclick="addToCalendar('${item.name}', '${item.date}')">
+                                Add to Calendar 📅
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterEvents(category, el) {
+            currentFilter = category;
+            document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            renderEvents();
+        }
+
+        // TODO: Replace with real POST /events/register
+        function toggleEventRegistration(eventId, eventName) {
+            if (registeredEventIds.has(eventId)) {
+                registeredEventIds.delete(eventId);
+                alert(`Cancelled registration for "${eventName}".`);
+            } else {
+                registeredEventIds.add(eventId);
+                alert(`✓ Successfully registered for "${eventName}"!`);
+            }
+            renderEvents();
+        }
+
+        // Naming rule compliance: "Add to Calendar"
+        function addToCalendar(eventName, eventDate) {
+            // TODO: Connects to POST /communication/calendar
+            alert(`✓ Added "${eventName}" on ${eventDate} to your Calendar!`);
+        }
+
+        renderEvents();
+    </script>
+</body>
+</html>

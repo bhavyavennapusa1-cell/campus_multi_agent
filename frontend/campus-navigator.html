@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus AI | Campus Navigator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .navigator-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+
+        .navigator-layout {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .navigator-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Filter Pills Bar */
+        .category-pills-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .category-pill {
+            font-family: var(--font-heading);
+            background: var(--surface);
+            color: var(--text-main);
+            border: 2px solid var(--border-dark);
+            border-radius: 50px;
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            box-shadow: 2px 2px 0px var(--border-dark);
+            transition: all 0.15s ease;
+        }
+
+        .category-pill:hover {
+            transform: translateY(-2px);
+            background: var(--soft-yellow);
+        }
+
+        .category-pill.active {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 3px 3px 0px var(--border-dark);
+        }
+
+        /* Location Sidebar List */
+        .locations-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        .location-card {
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 3px 3px 0px var(--border-dark);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .location-card:hover, .location-card.selected {
+            transform: translateY(-2px);
+            box-shadow: 5px 5px 0px var(--border-dark);
+            border-color: var(--primary-blue);
+        }
+
+        /* Map Container */
+        .map-frame-wrapper {
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 20px;
+            box-shadow: 5px 5px 0px var(--border-dark);
+            overflow: hidden;
+            height: 600px;
+            position: relative;
+        }
+
+        #google-map-element {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Interactive Canvas Fallback when API key is placeholder */
+        .canvas-map-fallback {
+            width: 100%;
+            height: 100%;
+            background-color: #e5e3df;
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px);
+            background-size: 30px 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-pin {
+            position: absolute;
+            transform: translate(-50%, -100%);
+            cursor: pointer;
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+
+        .map-pin:hover, .map-pin.active {
+            transform: translate(-50%, -120%) scale(1.25);
+            z-index: 20;
+        }
+
+        .pin-bubble {
+            background: var(--surface);
+            border: 2px solid var(--border-dark);
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-family: var(--font-heading);
+            font-size: 0.75rem;
+            box-shadow: 2px 2px 0px var(--border-dark);
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Reused -->
+    <nav class="navbar">
+        <div class="nav-brand">📚 CampusAgenda AI</div>
+        <button class="hamburger" id="hamburger">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="chat.html">Assistant</a>
+            <a href="about.html">Architecture</a>
+        </div>
+    </nav>
+
+    <main class="navigator-container">
+        <!-- Hero Header -->
+        <div class="cloud-container" style="padding: 1.75rem; margin-bottom: 1.5rem;">
+            <div class="sticker-tag" style="background: var(--bubble-pink);">🗺️ Interactive Campus Map</div>
+            <h1 style="font-family: var(--font-heading); font-size: 2.3rem; color: var(--primary-blue);">Campus Navigator</h1>
+            <p style="color: var(--text-muted); max-width: 650px; margin: 0.25rem auto 0;">
+                Find academic blocks, hostels, libraries, dining halls, and sports arenas. Pan the map, drop markers, and request turn-by-turn directions.
+            </p>
+        </div>
+
+        <!-- Search Bar (.input-wrapper style) -->
+        <div class="input-wrapper" style="margin-bottom: 0.5rem;">
+            <span style="font-size: 1.2rem; align-self: center; padding-left: 0.5rem;">🔍</span>
+            <input type="text" id="campus-search" placeholder="Search campus locations (e.g. Library, Computer Science, Hostel, Food Court)..." oninput="handleSearchInput()">
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="category-pills-bar">
+            <button class="category-pill active" onclick="filterCategory('All', this)">All Locations</button>
+            <button class="category-pill" onclick="filterCategory('Academic', this)">Academic</button>
+            <button class="category-pill" onclick="filterCategory('Hostel', this)">Hostel</button>
+            <button class="category-pill" onclick="filterCategory('Library', this)">Library</button>
+            <button class="category-pill" onclick="filterCategory('Food', this)">Food</button>
+            <button class="category-pill" onclick="filterCategory('Sports', this)">Sports</button>
+        </div>
+
+        <!-- Main Navigator Layout (Sidebar + Map) -->
+        <div class="navigator-layout">
+            <!-- Location Cards Sidebar -->
+            <div class="locations-sidebar" id="locations-list">
+                <!-- Location cards rendered dynamically -->
+            </div>
+
+            <!-- Embedded Map Display Frame -->
+            <div class="map-frame-wrapper">
+                <div id="google-map-element">
+                    <!-- Map / Canvas rendered here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        // Navbar hamburger toggle
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+
+        // Display-only key, not used for search/directions logic — see team API rule
+        const GOOGLE_MAPS_API_KEY = "YOUR_API_KEY_HERE";
+
+        // Placeholder Campus Center Lat/Lng (e.g. Smart Campus Center)
+        const CAMPUS_CENTER = { lat: 17.4455, lng: 78.3488 };
+
+        // Mock Campus Locations Array
+        const MOCK_CAMPUS_LOCATIONS = [
+            { 
+                id: "loc-1",
+                name: "Central Library & Knowledge Center", 
+                lat: 17.4458, 
+                lng: 78.3482, 
+                category: "Library",
+                building: "Block A",
+                description: "24/7 quiet study zones, digital archives, and computer labs.",
+                relativeX: 45, relativeY: 40
+            },
+            { 
+                id: "loc-2",
+                name: "Computer Science Dept & AI Lab", 
+                lat: 17.4465, 
+                lng: 78.3495, 
+                category: "Academic",
+                building: "Tech Tower 1",
+                description: "Main CS lectures, robotics lab, and multi-agent AI research center.",
+                relativeX: 65, relativeY: 28
+            },
+            { 
+                id: "loc-3",
+                name: "Boys Hostel Block B", 
+                lat: 17.4440, 
+                lng: 78.3470, 
+                category: "Hostel",
+                building: "Block B",
+                description: "Student dormitories, common reading lounge, and dining hall.",
+                relativeX: 25, relativeY: 65
+            },
+            { 
+                id: "loc-4",
+                name: "Girls Hostel Block A", 
+                lat: 17.4435, 
+                lng: 78.3460, 
+                category: "Hostel",
+                building: "Block A",
+                description: "Student dormitories, courtyard, and 24/7 security reception.",
+                relativeX: 18, relativeY: 75
+            },
+            { 
+                id: "loc-5",
+                name: "Student Activity & Food Court", 
+                lat: 17.4450, 
+                lng: 78.3505, 
+                category: "Food",
+                building: "Student Hub",
+                description: "Cafeteria, multi-cuisine food stalls, and coffee shop.",
+                relativeX: 75, relativeY: 52
+            },
+            { 
+                id: "loc-6",
+                name: "Sports Complex & Gymnasium", 
+                lat: 17.4472, 
+                lng: 78.3465, 
+                category: "Sports",
+                building: "Arena",
+                description: "Indoor basketball, badminton courts, gym, and outdoor track.",
+                relativeX: 30, relativeY: 20
+            },
+            { 
+                id: "loc-7",
+                name: "Main Auditorium & Event Hall", 
+                lat: 17.4452, 
+                lng: 78.3478, 
+                category: "Academic",
+                building: "Admin Block",
+                description: "Hackathon stage, guest lecture halls, and seminar rooms.",
+                relativeX: 52, relativeY: 48
+            }
+        ];
+
+        /*
+         * =========================================================================
+         * TODO: Indoor-Wayfinding Data Extension Point (Out of scope for hackathon)
+         * -------------------------------------------------------------------------
+         * Indoor wayfinding data (such as vector floor plans, BLE beacon nodes,
+         * room-to-room navigation graph nodes, and elevator/stairway transition matrices)
+         * would plug in right here:
+         * 
+         * const INDOOR_WAYFINDING_NODES = {
+         *     "Tech Tower 1": { floor1: [...], floor2: [...], edges: [...] },
+         *     "Central Library": { groundFloor: [...], mezzanine: [...] }
+         * };
+         * =========================================================================
+         */
+
+        let currentCategory = "All";
+        let searchQuery = "";
+        let selectedLocationId = MOCK_CAMPUS_LOCATIONS[0].id;
+        let googleMapInstance = null;
+        let googleMarkers = [];
+
+        // PART G Refactoring Rule 1: Location SEARCH calls a mock function representing GET /navigator/search?q=
+        async function mockSearchLocations(query, category) {
+            /*
+             * Real implementation:
+             * const res = await fetch(`/navigator/search?q=${encodeURIComponent(query)}&category=${encodeURIComponent(category)}`);
+             * return await res.json();
+             */
+            return MOCK_CAMPUS_LOCATIONS.filter(loc => {
+                const matchesCat = (category === "All" || loc.category === category);
+                const matchesSearch = query === "" || 
+                    loc.name.toLowerCase().includes(query.toLowerCase()) ||
+                    loc.category.toLowerCase().includes(query.toLowerCase()) ||
+                    loc.building.toLowerCase().includes(query.toLowerCase());
+                return matchesCat && matchesSearch;
+            });
+        }
+
+        // PART G Refactoring Rule 2: "Get Directions" calls a mock function representing POST /navigator/directions
+        async function mockGetDirections(destinationLat, destinationLng) {
+            /*
+             * Real implementation:
+             * const res = await fetch('/navigator/directions', {
+             *     method: 'POST',
+             *     headers: { 'Content-Type': 'application/json' },
+             *     body: JSON.stringify({ originLat: CAMPUS_CENTER.lat, originLng: CAMPUS_CENTER.lng, destinationLat, destinationLng })
+             * });
+             * return await res.json();
+             */
+            return {
+                routeUrl: `https://www.google.com/maps/dir/?api=1&destination=${destinationLat},${destinationLng}`,
+                estimatedMinutes: 5,
+                distanceMeters: 400
+            };
+        }
+
+        // Render Location Cards in Sidebar
+        async function renderLocationsList() {
+            const sidebar = document.getElementById('locations-list');
+            // Call mock GET /navigator/search?q=
+            const locations = await mockSearchLocations(searchQuery, currentCategory);
+
+            if (locations.length === 0) {
+                sidebar.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        No locations match your search criteria.
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            locations.forEach(loc => {
+                const isSelected = loc.id === selectedLocationId;
+
+                let badgeBg = 'var(--soft-yellow)';
+                if (loc.category === 'Academic') badgeBg = 'var(--mint-green)';
+                if (loc.category === 'Hostel') badgeBg = 'var(--bubble-pink)';
+                if (loc.category === 'Food') badgeBg = 'var(--lavender)';
+                if (loc.category === 'Sports') badgeBg = '#d4edda';
+
+                html += `
+                    <div class="location-card ${isSelected ? 'selected' : ''}" onclick="selectLocation('${loc.id}')">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.4rem;">
+                            <span class="sticker-tag" style="background: ${badgeBg}; font-size: 0.75rem; margin: 0; padding: 0.2rem 0.6rem;">${loc.category}</span>
+                            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">🏢 ${loc.building}</span>
+                        </div>
+                        <h4 style="font-family: var(--font-heading); color: var(--primary-blue); font-size: 1.05rem;">${loc.name}</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.3rem 0 0.8rem;">${loc.description}</p>
+                        
+                        <!-- Button labeled "Get Directions" calling mock POST /navigator/directions -->
+                        <button class="btn-pill" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;" onclick="handleDirectionsClick(event, ${loc.lat}, ${loc.lng})">
+                            Get Directions ↗
+                        </button>
+                    </div>
+                `;
+            });
+
+            sidebar.innerHTML = html;
+        }
+
+        // Action handler for Get Directions
+        async function handleDirectionsClick(e, lat, lng) {
+            e.stopPropagation();
+            const directionsResponse = await mockGetDirections(lat, lng);
+            // Open calculated route URL in a new tab
+            window.open(directionsResponse.routeUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        // Handle Selecting a Location (Pans map and drops/highlights marker)
+        function selectLocation(locId) {
+            selectedLocationId = locId;
+            renderLocationsList();
+
+            const loc = MOCK_CAMPUS_LOCATIONS.find(l => l.id === locId);
+            if (!loc) return;
+
+            if (googleMapInstance) {
+                googleMapInstance.panTo({ lat: loc.lat, lng: loc.lng });
+                googleMapInstance.setZoom(17);
+            }
+
+            renderCanvasMapFallback();
+        }
+
+        // Filter by Category
+        function filterCategory(cat, el) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            renderLocationsList();
+            renderCanvasMapFallback();
+        }
+
+        // Search Input Filter
+        function handleSearchInput() {
+            searchQuery = document.getElementById('campus-search').value.trim();
+            renderLocationsList();
+            renderCanvasMapFallback();
+        }
+
+        // Render Canvas Map Fallback when Google Maps API key is placeholder
+        async function renderCanvasMapFallback() {
+            const container = document.getElementById('google-map-element');
+            if (googleMapInstance) return;
+
+            const locations = await mockSearchLocations(searchQuery, currentCategory);
+            const activeLoc = MOCK_CAMPUS_LOCATIONS.find(l => l.id === selectedLocationId);
+
+            let pinsHtml = '';
+            locations.forEach(loc => {
+                const isActive = loc.id === selectedLocationId;
+                pinsHtml += `
+                    <div class="map-pin ${isActive ? 'active' : ''}" 
+                         style="left: ${loc.relativeX}%; top: ${loc.relativeY}%;" 
+                         onclick="selectLocation('${loc.id}')">
+                        <div class="pin-bubble" style="${isActive ? 'background: var(--primary-blue); color: white;' : ''}">
+                            📍 ${loc.name}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="canvas-map-fallback">
+                    <div style="position: absolute; top: 15px; left: 15px; background: var(--surface); border: 2px solid var(--border-dark); border-radius: 12px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-family: var(--font-heading); box-shadow: 2px 2px 0px var(--border-dark); z-index: 5;">
+                        🗺️ Smart Campus Vector Grid (${CAMPUS_CENTER.lat}, ${CAMPUS_CENTER.lng})
+                    </div>
+                    ${pinsHtml}
+                </div>
+            `;
+        }
+
+        // Display-only key, not used for search/directions logic — see team API rule
+        function initGoogleMaps() {
+            if (GOOGLE_MAPS_API_KEY === "YOUR_API_KEY_HERE" || !window.google || !window.google.maps) {
+                renderCanvasMapFallback();
+                return;
+            }
+
+            try {
+                const mapEl = document.getElementById('google-map-element');
+                googleMapInstance = new google.maps.Map(mapEl, {
+                    center: CAMPUS_CENTER,
+                    zoom: 16,
+                    styles: [
+                        { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
+                    ]
+                });
+
+                MOCK_CAMPUS_LOCATIONS.forEach(loc => {
+                    const marker = new google.maps.Marker({
+                        position: { lat: loc.lat, lng: loc.lng },
+                        map: googleMapInstance,
+                        title: loc.name
+                    });
+
+                    marker.addListener('click', () => {
+                        selectLocation(loc.id);
+                    });
+
+                    googleMarkers.push(marker);
+                });
+            } catch (err) {
+                console.warn("Google Maps init fallback to vector canvas:", err);
+                renderCanvasMapFallback();
+            }
+        }
+
+        if (GOOGLE_MAPS_API_KEY !== "YOUR_API_KEY_HERE") {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initGoogleMaps`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        renderLocationsList();
+        renderCanvasMapFallback();
+    </script>
+</body>
+</html>

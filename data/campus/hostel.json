@@ -1,0 +1,61 @@
+{
+  "hostels": [
+    {
+      "block_id": "HST_BLK_A",
+      "block_name": "Block-A (Boys Senior Hostel)",
+      "gender": "Boys",
+      "curfew_weekday": "10:30 PM",
+      "curfew_weekend": "11:30 PM",
+      "gate_closing_time": "10:30 PM sharp",
+      "late_entry_rules": "Late entry permitted up to 11:15 PM with warden physical sign-in & SMS alert to guardian.",
+      "outpass_rules": "Weekend outpass requires online portal application 24 hrs in advance + warden approval.",
+      "warden_name": "Dr. K. V. Raman",
+      "warden_phone": "+91-9876500001",
+      "warden_email": "warden.blocka@vasavi.ac.in",
+      "mess_timings": {
+        "breakfast": "07:30 AM - 09:00 AM",
+        "lunch": "12:15 PM - 01:45 PM",
+        "snacks": "04:30 PM - 05:30 PM",
+        "dinner": "07:30 PM - 09:15 PM"
+      }
+    },
+    {
+      "block_id": "HST_BLK_B",
+      "block_name": "Block-B (Girls Hostel)",
+      "gender": "Girls",
+      "curfew_weekday": "09:30 PM",
+      "curfew_weekend": "10:30 PM",
+      "gate_closing_time": "09:30 PM sharp",
+      "late_entry_rules": "Late entry requires prior written approval from Chief Warden & parent phone confirmation.",
+      "outpass_rules": "Outpass mandatory for leaving premises after 07:00 PM.",
+      "warden_name": "Mrs. S. Latha",
+      "warden_phone": "+91-9876500002",
+      "warden_email": "warden.blockb@vasavi.ac.in",
+      "mess_timings": {
+        "breakfast": "07:30 AM - 09:00 AM",
+        "lunch": "12:15 PM - 01:45 PM",
+        "snacks": "04:30 PM - 05:30 PM",
+        "dinner": "07:15 PM - 09:00 PM"
+      }
+    },
+    {
+      "block_id": "HST_BLK_C",
+      "block_name": "Block-C (Junior Hostel)",
+      "gender": "Boys",
+      "curfew_weekday": "10:00 PM",
+      "curfew_weekend": "11:00 PM",
+      "gate_closing_time": "10:00 PM",
+      "late_entry_rules": "Biometric logging mandatory at hostel gate.",
+      "outpass_rules": "Day outpass valid 08:00 AM to 08:00 PM.",
+      "warden_name": "Mr. M. Rajesh",
+      "warden_phone": "+91-9876500003",
+      "warden_email": "warden.blockc@vasavi.ac.in",
+      "mess_timings": {
+        "breakfast": "07:30 AM - 09:00 AM",
+        "lunch": "12:15 PM - 01:45 PM",
+        "snacks": "04:30 PM - 05:30 PM",
+        "dinner": "07:30 PM - 09:15 PM"
+      }
+    }
+  ]
+}

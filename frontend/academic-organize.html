@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus AI | Academic Agenda & Organizer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .academic-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+
+        .organize-form-card {
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 5px 5px 0px var(--border-dark);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            outline: none;
+            box-shadow: 3px 3px 0px var(--border-dark);
+            transition: all 0.15s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-blue);
+            transform: translateY(-1px);
+            box-shadow: 4px 4px 0px var(--border-dark);
+        }
+
+        .confirmation-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .checklist-day-card {
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 4px 4px 0px var(--border-dark);
+        }
+
+        .day-header {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            color: var(--primary-blue-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px dashed var(--border-dark);
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .task-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-blue);
+        }
+
+        .loading-box {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: var(--surface);
+            border: 3px solid var(--border-dark);
+            border-radius: 20px;
+            box-shadow: 4px 4px 0px var(--border-dark);
+        }
+
+        .spinner-large {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-dark);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Reused -->
+    <nav class="navbar">
+        <div class="nav-brand">📚 CampusAgenda AI</div>
+        <button class="hamburger" id="hamburger">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="chat.html">Assistant</a>
+            <a href="about.html">Architecture</a>
+        </div>
+    </nav>
+
+    <main class="academic-container">
+        <!-- Cloud Container Hero -->
+        <div class="cloud-container" style="padding: 2rem; margin-bottom: 2rem;">
+            <div class="sticker-tag" style="background: var(--mint-green);">🎓 Academic Organizer Agent</div>
+            <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue);">Organize Study Agenda</h1>
+            <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0;">
+                Tell our Academic Agent what exam, project, or topic you are preparing for. We'll generate a day-by-day plan and automatically sync tasks & calendar reminders!
+            </p>
+        </div>
+
+        <!-- Form Section -->
+        <div class="organize-form-card">
+            <form id="academic-organize-form" onsubmit="handleFormSubmit(event)">
+                <div class="form-group">
+                    <label for="target-topic">What do you need to prepare for?</label>
+                    <input type="text" id="target-topic" class="form-input" placeholder="e.g. Operating Systems Final Exam & Lab Viva" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="target-date">Target Date / Exam Date</label>
+                    <input type="date" id="target-date" class="form-input" required>
+                </div>
+
+                <div style="margin-top: 1.5rem; text-align: right;">
+                    <button type="submit" id="submit-btn" class="btn-blob" style="background: var(--mint-green);">Generate Study Plan ✨</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Dynamic Output Viewport -->
+        <div id="organize-result-viewport"></div>
+    </main>
+
+    <footer class="footer">
+        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+
+        const defaultDate = new Date();
+        defaultDate.setDate(defaultDate.getDate() + 5);
+        document.getElementById('target-date').value = defaultDate.toISOString().split('T')[0];
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const topic = document.getElementById('target-topic').value.trim();
+            const date = document.getElementById('target-date').value;
+            if (!topic || !date) return;
+
+            const viewport = document.getElementById('organize-result-viewport');
+            const submitBtn = document.getElementById('submit-btn');
+
+            submitBtn.disabled = true;
+            viewport.innerHTML = `
+                <div class="loading-box">
+                    <div class="spinner-large"></div>
+                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Generating your plan...</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+                        Synthesizing study modules for "${topic}" and creating task checklist & calendar reminders...
+                    </p>
+                </div>
+            `;
+
+            // TODO: Replace with real POST /academic/tasks and GET /academic/tasks
+            setTimeout(async () => {
+                const responseData = await mockFetchAcademicOrganize(topic, date);
+                submitBtn.disabled = false;
+                renderAcademicPlan(responseData);
+            }, 1500);
+        }
+
+        // TODO: Replace mock with real POST /academic/tasks
+        async function mockFetchAcademicOrganize(topic, targetDateStr) {
+            /* 
+             * Real implementation:
+             * const res = await fetch('/academic/tasks', {
+             *     method: 'POST',
+             *     headers: { 'Content-Type': 'application/json' },
+             *     body: JSON.stringify({ topic, date: targetDateStr })
+             * });
+             * return await res.json();
+             */
+            return {
+                studyPlan: [
+                    { 
+                        day: "Day 1", 
+                        tasks: [
+                            `Review core concepts & syllabus boundaries for ${topic}`,
+                            "Solve 5 foundation problems & take notes on weak areas"
+                        ] 
+                    },
+                    { 
+                        day: "Day 2", 
+                        tasks: [
+                            "Deep dive into key architecture & design patterns",
+                            "Implement code exercises or formula derivations"
+                        ] 
+                    },
+                    { 
+                        day: "Day 3", 
+                        tasks: [
+                            "Practice previous year question papers under timed conditions",
+                            "Review mistake log and clarify doubts with AI Assistant"
+                        ] 
+                    },
+                    { 
+                        day: "Day 4", 
+                        tasks: [
+                            `Final revision of formulas, diagrams, and cheat-sheets before ${targetDateStr}`,
+                            "Rest well & organize stationery/exam admission pass"
+                        ] 
+                    }
+                ],
+                todoistTasksCreated: 8,
+                calendarEventsCreated: 4
+            };
+        }
+
+        function renderAcademicPlan(data) {
+            const viewport = document.getElementById('organize-result-viewport');
+            if (!data || !data.studyPlan) {
+                viewport.innerHTML = `<div class="loading-box"><p>No plan generated.</p></div>`;
+                return;
+            }
+
+            // Naming rule: "Tasks" and "Calendar" (never expose raw API names to user)
+            let html = `
+                <div class="confirmation-chips">
+                    <span class="sticker-tag" style="background: var(--mint-green); font-size: 0.95rem; margin: 0; transform: rotate(-1deg);">
+                        ✓ ${data.todoistTasksCreated} tasks added to Tasks
+                    </span>
+                    <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.95rem; margin: 0; transform: rotate(1deg);">
+                        ✓ ${data.calendarEventsCreated} reminders added to Calendar
+                    </span>
+                </div>
+                <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary-blue); margin-bottom: 1rem;">
+                    📖 Your Day-by-Day Study Plan
+                </h3>
+            `;
+
+            data.studyPlan.forEach(dayBlock => {
+                html += `
+                    <div class="checklist-day-card">
+                        <div class="day-header">
+                            <span>📅</span>
+                            <span>${dayBlock.day}</span>
+                        </div>
+                        <div class="tasks-list">
+                            ${dayBlock.tasks.map((taskText, idx) => `
+                                <div class="task-item">
+                                    <input type="checkbox" id="task-${dayBlock.day.replace(/\s+/g, '')}-${idx}">
+                                    <label for="task-${dayBlock.day.replace(/\s+/g, '')}-${idx}">${taskText}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            viewport.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

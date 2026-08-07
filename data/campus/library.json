@@ -1,0 +1,29 @@
+{
+  "library": {
+    "hours": {
+      "weekdays": "08:00 AM - 08:00 PM",
+      "saturdays": "09:00 AM - 05:00 PM",
+      "exam_period": "08:00 AM - 10:00 PM (extended reading room access)"
+    },
+    "borrowing_rules": {
+      "undergraduate_limit": 4,
+      "postgraduate_limit": 6,
+      "loan_period_days": 14,
+      "renewal_allowed_times": 2,
+      "overdue_fine_per_day_inr": 5.0
+    },
+    "digital_resources": [
+      "IEEE Xplore Digital Library",
+      "ACM Digital Library",
+      "Springer Nature E-Books",
+      "NPTEL Video Lectures",
+      "NDLI (National Digital Library of India)"
+    ],
+    "room_booking_rules": {
+      "group_discussion_rooms": 4,
+      "max_booking_hours": 2,
+      "advance_booking_days": 3,
+      "booking_portal": "https://library.vasavi.ac.in/room-booking"
+    }
+  }
+}
