@@ -107,27 +107,34 @@ def chat(req: ChatRequest):
             pass
 
     # Keyword-based orchestrator routing fallback
+    prof = req.profile or {}
+    prof_name = prof.get("name") or "Bhavya Vennapusa (Demo Profile)"
+    prof_branch = prof.get("branch") or "CSE - 3rd Year"
+    prof_attendance = prof.get("attendance") or "88%"
+    prof_hostel = prof.get("hostel") or "Block B"
+
     text_lower = message_text.lower()
     if any(k in text_lower for k in ["eligib", "google", "placement", "internship", "company"]):
         agent = "placement"
         action = "check_eligibility"
-        reply = "Student Bhavya Vennapusa (CGPA 8.8, 0 backlogs) is ELIGIBLE for Dream Tier placement drives (Google, Microsoft). Policy reference: Placement Policy §2.1."
+        reply = f"Student {prof_name} ({prof_branch}) is ELIGIBLE for Dream Tier placement drives (Google, Microsoft). Policy reference: Placement Policy §2.1."
         req_confirm = False
     elif any(k in text_lower for k in ["hostel", "curfew", "gate", "dorm", "warden"]):
         agent = "campus"
         action = "get_hostel_info"
-        reply = "Hostel Regulation (Curfew Timings): Main entry gate closes at 10:30 PM on weekdays and 11:30 PM on weekends. Late entry requires warden sign-in."
+        reply = f"Hostel Regulation ({prof_hostel} Curfew Timings): Main entry gate closes at 10:30 PM on weekdays and 11:30 PM on weekends. Warden sign-in required for late entry."
         req_confirm = False
     elif any(k in text_lower for k in ["email", "draft", "mail", "remind"]):
         agent = "communication"
         action = "draft_email"
-        reply = "Email drafted for academic office inquiry. Awaiting user confirmation to dispatch."
+        reply = f"Email drafted for academic office inquiry regarding {prof_name}. Awaiting user confirmation to dispatch."
         req_confirm = True
     else:
         agent = "academic"
         action = "get_attendance"
-        reply = "Based on academic records, your current attendance is 88.0% across all registered courses. Mandatory minimum attendance is 75.0%."
+        reply = f"Based on academic records, {prof_name}'s current attendance is {prof_attendance} across registered courses. Mandatory minimum attendance is 75.0%."
         req_confirm = False
+
 
     return {
         "reply": reply,

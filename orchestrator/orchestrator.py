@@ -67,8 +67,89 @@ def plan(user_request: str) -> list[PlanStep]:
 
     req_lower = clean_req.lower()
 
-    # Academic attendance queries (check attendance keywords first)
+    # --- MULTI-STEP CHAINED PLANS (chained via depends_on) ---
+    has_placement_kw = any(k in req_lower for k in ["eligib", "placement", "dream", "company", "google", "microsoft", "salesforce", "oracle", "cognizant", "tcs", "internship"])
+    has_action_kw = any(k in req_lower for k in ["register", "workshop", "calendar", "remind", "reminder", "event", "schedule"])
+    has_exam_kw = any(k in req_lower for k in ["exam", "regs", "regulations", "grade", "marks"])
+    has_attend_kw = any(k in req_lower for k in ["attend", "attendance", "absent", "condon", "detain", "shortage"])
+    has_comm_kw = any(k in req_lower for k in ["email", "draft", "mail", "notify", "inform"])
+
+    # Multi-Step Pattern 1: Placement check -> Event discovery -> Reminder scheduling
+    if has_placement_kw and has_action_kw:
+        company = "Google" if "google" in req_lower else ("Microsoft" if "microsoft" in req_lower else "Dream Tier")
+        return [
+            PlanStep(
+                id=1,
+                agent="placement",
+                action="check_eligibility",
+                params={"company": company, "query": clean_req},
+                depends_on=[]
+            ),
+            PlanStep(
+                id=2,
+                agent="campus",
+                action="get_events",
+                params={"query": f"workshops and events for {company} candidates"},
+                depends_on=[1]
+            ),
+            PlanStep(
+                id=3,
+                agent="communication",
+                action="schedule_reminder",
+                params={"event": f"{company} Placement Drive & Workshop", "minutes_before": 60},
+                depends_on=[2]
+            )
+        ]
+
+    # Multi-Step Pattern 2: Exam / Attendance Check -> Email Draft Notification
+    if (has_exam_kw or has_attend_kw) and (has_comm_kw or "eligibility" in req_lower):
+        return [
+            PlanStep(
+                id=1,
+                agent="academic",
+                action="get_attendance",
+                params={"query": clean_req},
+                depends_on=[]
+            ),
+            PlanStep(
+                id=2,
+                agent="academic",
+                action="get_exam_schedule",
+                params={"query": clean_req},
+                depends_on=[1]
+            ),
+            PlanStep(
+                id=3,
+                agent="communication",
+                action="draft_email",
+                params={"subject": "Academic Attendance & Exam Eligibility Inquiry"},
+                depends_on=[2]
+            )
+        ]
+
+    # Multi-Step Pattern 3: Today's Classes / Timetable -> Upcoming Workshops
+    if any(k in req_lower for k in ["timetable", "today", "classes"]) and any(k in req_lower for k in ["workshop", "recommend", "ai", "event"]):
+        return [
+            PlanStep(
+                id=1,
+                agent="academic",
+                action="get_timetable",
+                params={"query": clean_req},
+                depends_on=[]
+            ),
+            PlanStep(
+                id=2,
+                agent="campus",
+                action="get_events",
+                params={"query": "AI workshops and hackathons"},
+                depends_on=[1]
+            )
+        ]
+
+    # --- SINGLE-STEP FALLBACK PLANS ---
+    # Academic attendance queries
     if any(k in req_lower for k in ["attend", "absent", "condon", "detain", "percentage", "shortage"]):
+
         return [
             PlanStep(
                 id=1,

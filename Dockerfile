@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["python", "api_server.py"]
+CMD ["python", "main.py"]

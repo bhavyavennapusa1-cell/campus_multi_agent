@@ -1,5 +1,5 @@
-// Configurable Backend API URL
-const API_BASE = "http://localhost:8000";
+// Configurable Backend API URL (empty string = relative/same-origin)
+const API_BASE = "";
 
 document.addEventListener('DOMContentLoaded', () => {
     const chatForm = document.getElementById('chat-form');

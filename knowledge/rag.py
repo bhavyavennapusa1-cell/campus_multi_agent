@@ -1,13 +1,17 @@
 import os
 import re
 import sys
+import glob
 import logging
+# pyrefly: ignore [missing-import]
+import yaml
 
 logger = logging.getLogger("rag")
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CHROMA_DATA_PATH = os.path.join(os.path.dirname(__file__), "chroma_db")
 VALID_CATEGORIES = {"academic", "placement", "campus"}
 RETRIEVAL_CONFIDENCE_THRESHOLD = 0.025
@@ -19,6 +23,7 @@ _bm25_index = None
 _tokenized_corpus = []
 collection = None
 RAG_READY = False
+BM25_READY = False
 
 STOP_WORDS = {
     "a", "an", "the", "in", "on", "at", "is", "are", "was", "were", "be", "been", "being",
@@ -35,14 +40,88 @@ def _tokenize(text: str) -> list[str]:
     return [t for t in tokens if len(t) > 1 and t not in STOP_WORDS]
 
 
+def _load_lightweight_bm25_corpus():
+    """
+    Lightweight, fast BM25 corpus loader reading markdown documents directly from disk.
+    Requires 0 neural network models, 0 GPU memory, and boots instantly (< 512MB RAM).
+    """
+    global _corpus_docs, _corpus_metas, _corpus_ids, _tokenized_corpus, _bm25_index, BM25_READY
+    try:
+        # pyrefly: ignore [missing-import]
+        from rank_bm25 import BM25Okapi
+
+        md_files = (
+            glob.glob(os.path.join(PROJECT_ROOT, "data", "docs", "**", "*.md"), recursive=True) +
+            glob.glob(os.path.join(PROJECT_ROOT, "knowledge", "docs", "**", "*.md"), recursive=True)
+        )
+        md_files = list(set(md_files))
+        md_files = [f for f in md_files if os.path.basename(f).lower() != "readme.md"]
+
+        docs, metas, ids = [], [], []
+        for file_path in sorted(md_files):
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+
+                pattern = r"^---\s*\n(.*?)\n---\s*\n(.*)$"
+                match = re.search(pattern, content, re.DOTALL)
+                if match:
+                    yaml_str, body = match.group(1), match.group(2)
+                    frontmatter = yaml.safe_load(yaml_str) or {}
+                else:
+                    frontmatter, body = {}, content
+
+                doc_id = str(frontmatter.get("doc_id", "UNKNOWN"))
+                doc_title = str(frontmatter.get("title", "Untitled Document"))
+                category = str(frontmatter.get("category", "general")).strip().lower()
+                version = str(frontmatter.get("version", "1.0"))
+
+                # Split body into sections by ## or ### headings
+                sections = re.split(r'\n(?=#{1,3}\s+)', body)
+                for idx, sec in enumerate(sections):
+                    sec_text = sec.strip()
+                    if not sec_text:
+                        continue
+                    sec_lines = sec_text.split("\n")
+                    head_match = re.match(r"^#{1,3}\s+(.*)$", sec_lines[0])
+                    sec_title = head_match.group(1).strip() if head_match else doc_title
+
+                    cid = f"{doc_id}_{idx}"
+                    docs.append(sec_text)
+                    metas.append({
+                        "doc_id": doc_id,
+                        "title": doc_title,
+                        "section_title": sec_title,
+                        "category": category,
+                        "version": version
+                    })
+                    ids.append(cid)
+            except Exception:
+                continue
+
+        if docs:
+            _corpus_docs = docs
+            _corpus_metas = metas
+            _corpus_ids = ids
+            _tokenized_corpus = [_tokenize(doc) for doc in _corpus_docs]
+            _bm25_index = BM25Okapi(_tokenized_corpus)
+            BM25_READY = True
+            print(f"RAG System (Lightweight BM25 Mode): Indexed {len(_corpus_docs)} document chunks.")
+    except Exception as e:
+        BM25_READY = False
+        print(f"Warning: Lightweight BM25 index initialization failed: {e}")
+
+
 def _init_rag():
     global collection, _corpus_docs, _corpus_metas, _corpus_ids, _tokenized_corpus, _bm25_index, RAG_READY
+
+    # Always initialize lightweight BM25 corpus index for free-tier compatibility
+    _load_lightweight_bm25_corpus()
     
-    # Check if heavy RAG initialization is enabled (disabled by default to prevent Render 512MB RAM OOM)
+    # Optional Heavy RAG initialization (SentenceTransformers + ChromaDB vector search)
     enable_heavy_rag = os.environ.get("ENABLE_HEAVY_RAG", "false").lower() in ("true", "1")
     if not enable_heavy_rag:
         RAG_READY = False
-        print("RAG startup document ingestion & heavy embedding loading disabled for lightweight server boot (< 512MB RAM).")
         return
 
     try:
@@ -50,6 +129,7 @@ def _init_rag():
         import chromadb
         # pyrefly: ignore [missing-import]
         from chromadb.utils import embedding_functions
+        # pyrefly: ignore [missing-import]
         from rank_bm25 import BM25Okapi
 
         # Auto-ingest if chroma_db directory doesn't exist or collection count is 0
@@ -81,29 +161,27 @@ def _init_rag():
             embedding_function=embedding_fn
         )
 
-        print("Building in-memory BM25 index for hybrid retrieval...")
         _corpus_data = collection.get(include=["documents", "metadatas"])
-        _corpus_docs = _corpus_data.get("documents") or []
-        _corpus_metas = _corpus_data.get("metadatas") or []
-        _corpus_ids = _corpus_data.get("ids") or []
+        _corpus_docs = _corpus_data.get("documents") or _corpus_docs
+        _corpus_metas = _corpus_data.get("metadatas") or _corpus_metas
+        _corpus_ids = _corpus_data.get("ids") or _corpus_ids
 
         _tokenized_corpus = [_tokenize(doc) for doc in _corpus_docs]
-        _bm25_index = BM25Okapi(_tokenized_corpus) if _tokenized_corpus else None
+        _bm25_index = BM25Okapi(_tokenized_corpus) if _tokenized_corpus else _bm25_index
         RAG_READY = True
-        print(f"RAG System Ready: Indexed {len(_corpus_docs)} document chunks.")
+        print(f"RAG System Ready (Full Hybrid Vector + BM25 Mode): Indexed {len(_corpus_docs)} document chunks.")
     except Exception as e:
         RAG_READY = False
-        print(f"Warning: RAG system initialization deferred/failed gracefully: {e}")
+        print(f"Warning: Full Heavy RAG initialization deferred/failed gracefully: {e}")
 
 
 # Initialize RAG on module import
 _init_rag()
 
 
-
 def format_citation(result: dict) -> str:
     """
-    Returns a human-readable citation string like 'Attendance Policy §2.3 (v2.1)'.
+    Returns a human-readable citation string like 'Attendance Policy §Condonation Guidelines (v2.1)'.
     """
     if not result:
         return ""
@@ -122,18 +200,49 @@ def format_citation(result: dict) -> str:
 
 def retrieve(query: str, k: int = 3, category: str = None) -> list[dict]:
     """
-    Hybrid retrieval using ChromaDB semantic vector search and BM25 keyword search,
-    fused via Reciprocal Rank Fusion (RRF). Returns [] gracefully if RAG is unavailable.
+    Retrieves document chunks using Hybrid Vector + BM25 search (if ENABLE_HEAVY_RAG=true)
+    or lightweight BM25 keyword search (if running on free tier).
     """
-    if not RAG_READY or collection is None or not _corpus_docs:
-        return []
-
     if category is not None:
         category_clean = category.strip().lower()
         if category_clean not in VALID_CATEGORIES:
             raise ValueError(f"Invalid category '{category}'. Must be one of {sorted(VALID_CATEGORIES)} or None.")
         category = category_clean
 
+    # Fallback to BM25-only retrieval when ChromaDB vector index is inactive
+    if not RAG_READY or collection is None:
+        if not BM25_READY or not _bm25_index or not _corpus_docs:
+            return []
+
+        try:
+            query_tokens = _tokenize(query)
+            bm25_scores = _bm25_index.get_scores(query_tokens)
+            sorted_indices = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)
+
+            results = []
+            for idx in sorted_indices:
+                if bm25_scores[idx] <= 0.0:
+                    break
+                meta = _corpus_metas[idx]
+                if category and meta.get("category") != category:
+                    continue
+
+                results.append({
+                    "text": _corpus_docs[idx],
+                    "doc_id": meta.get("doc_id", "UNKNOWN"),
+                    "title": meta.get("title", ""),
+                    "section_title": meta.get("section_title", "Overview"),
+                    "category": meta.get("category", ""),
+                    "version": meta.get("version", "1.0"),
+                    "score": round(bm25_scores[idx], 4)
+                })
+                if len(results) >= k:
+                    break
+            return results
+        except Exception:
+            return []
+
+    # Full Hybrid ChromaDB + BM25 Retrieval Path
     fetch_k = max(k * 3, 10)
     query_kwargs = {
         "query_texts": [query],
@@ -225,6 +334,6 @@ def retrieve(query: str, k: int = 3, category: str = None) -> list[dict]:
 
 
 if __name__ == "__main__":
-    test_res = retrieve("minimum attendance", k=2)
+    test_res = retrieve("attendance minimum requirement", k=2)
     for r in test_res:
         print(f"[{r['score']}] {format_citation(r)}: {r['text'][:100]}...")
