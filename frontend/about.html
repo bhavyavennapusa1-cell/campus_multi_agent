@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus AI | Architecture</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">📚 CampusAgenda AI</div>
+        <button class="hamburger" id="hamburger">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html">Home</a>
+            <a href="chat.html">Assistant</a>
+            <a href="about.html" class="active">Architecture</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="cloud-container" style="padding: 2rem;">
+            <h2 style="font-family: var(--font-heading); color: var(--primary-blue);">System Architecture & Agent Swarm</h2>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">How our multi-agent system routes and resolves queries.</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+            <div style="background: var(--surface); border: 3px solid var(--border-dark); padding: 1.5rem; border-radius: 20px; box-shadow: 4px 4px 0px var(--border-dark);">
+                <h3 style="font-family: var(--font-heading); color: var(--primary-blue); margin-bottom: 0.5rem;">1. Orchestrator Layer</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">The primary planning coordinator that parses natural language intent, decomposes requests, and delegates tasks to specialized agents.</p>
+            </div>
+
+            <div style="background: var(--surface); border: 3px solid var(--border-dark); padding: 1.5rem; border-radius: 20px; box-shadow: 4px 4px 0px var(--border-dark);">
+                <h3 style="font-family: var(--font-heading); color: var(--primary-blue); margin-bottom: 0.5rem;">2. Specialized Agent Swarm</h3>
+                <ul style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; font-size: 0.95rem; color: var(--text-muted);">
+                    <li>🎓 <b>Academic Agent:</b> Timetables, attendance metrics, and exam guidelines.</li>
+                    <li>💼 <b>Placement Agent:</b> Company eligibility rules and interview prep.</li>
+                    <li>🎉 <b>Events Agent:</b> Workshop discoveries and registration workflows.</li>
+                    <li>🏢 <b>Student Services Agent:</b> Hostel updates, library access, and FAQs.</li>
+                    <li>✉️ <b>Communication Agent:</b> Notification dispatch and email drafting.</li>
+                </ul>
+            </div>
+
+            <div style="background: var(--surface); border: 3px solid var(--border-dark); padding: 1.5rem; border-radius: 20px; box-shadow: 4px 4px 0px var(--border-dark);">
+                <h3 style="font-family: var(--font-heading); color: var(--primary-blue); margin-bottom: 0.5rem;">3. Shared Knowledge (RAG) & Memory</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">ChromaDB vector store over institutional documentation combined with persistent session memory profiles.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Built with ❤️ for AgentX National Hackathon 2026[cite: 1] | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
