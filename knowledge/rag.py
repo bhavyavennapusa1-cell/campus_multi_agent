@@ -37,8 +37,18 @@ def _tokenize(text: str) -> list[str]:
 
 def _init_rag():
     global collection, _corpus_docs, _corpus_metas, _corpus_ids, _tokenized_corpus, _bm25_index, RAG_READY
+    
+    # Check if heavy RAG initialization is enabled (disabled by default to prevent Render 512MB RAM OOM)
+    enable_heavy_rag = os.environ.get("ENABLE_HEAVY_RAG", "false").lower() in ("true", "1")
+    if not enable_heavy_rag:
+        RAG_READY = False
+        print("RAG startup document ingestion & heavy embedding loading disabled for lightweight server boot (< 512MB RAM).")
+        return
+
     try:
+        # pyrefly: ignore [missing-import]
         import chromadb
+        # pyrefly: ignore [missing-import]
         from chromadb.utils import embedding_functions
         from rank_bm25 import BM25Okapi
 
@@ -88,6 +98,7 @@ def _init_rag():
 
 # Initialize RAG on module import
 _init_rag()
+
 
 
 def format_citation(result: dict) -> str:
