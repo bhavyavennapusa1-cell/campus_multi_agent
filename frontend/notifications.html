@@ -115,7 +115,7 @@
 
         <!-- Hero Header -->
         <div class="cloud-container" style="padding: 1.75rem; margin-bottom: 2rem;">
-            <div class="sticker-tag" style="background: var(--bubble-pink);">🔔 Activity Feed</div>
+            <a href="chat.html?prompt=Show%20my%20recent%20notifications%20and%20campus%20alerts" class="sticker-tag route-to-chat" data-prompt="Show my recent notifications and campus alerts" style="background: var(--bubble-pink); text-decoration: none; cursor: pointer; display: inline-block;">🔔 Activity Feed</a>
             <h1 style="font-family: var(--font-heading); font-size: 2.3rem; color: var(--primary-blue);">Notifications</h1>
             <p style="color: var(--text-muted); max-width: 600px; margin: 0.25rem auto 0;">
                 Real-time alerts generated across all academic, placement, event, and service agents.
@@ -226,6 +226,25 @@
             }
         ];
 
+        function handleNotificationClick(category) {
+            const cat = (category || '').toLowerCase();
+            if (cat.includes('exam') || cat.includes('assignment')) {
+                window.location.href = 'academic.html';
+            } else if (cat.includes('placement')) {
+                window.location.href = 'placement.html';
+            } else if (cat.includes('event')) {
+                window.location.href = 'events.html';
+            } else if (cat.includes('announcement')) {
+                window.location.href = 'student-services.html';
+            } else if (cat.includes('chat')) {
+                window.location.href = 'chat.html';
+            } else if (cat.includes('appointment')) {
+                window.location.href = 'communication.html';
+            } else {
+                window.location.href = 'dashboard.html';
+            }
+        }
+
         function renderNotifications() {
             const container = document.getElementById('notifications-list');
             // Capped to max 20
@@ -234,7 +253,7 @@
             let html = '';
             list.forEach(item => {
                 html += `
-                    <div class="notification-card ${item.unread ? 'unread' : ''}">
+                    <div class="notification-card ${item.unread ? 'unread' : ''}" style="cursor: pointer;" onclick="handleNotificationClick('${item.category}')">
                         <div class="notification-icon-bg" style="background: ${item.badgeBg};">
                             ${item.icon}
                         </div>
