@@ -2,32 +2,38 @@ from typing import Optional, List, Dict, Any
 from agents.common.envelope import TaskRequest, ResponseEnvelope
 from agents.common.registry import AgentRegistry
 from agents.academic_agent.repo import AcademicRepo, InMemoryAcademicRepo
+from agents.adapters.todoist_adapter import TodoistAdapter
+from agents.adapters.google_calendar_adapter import GoogleCalendarAdapter
 
 
 class AcademicAgent:
     """
     Academic Agent
     
-    Owns academic dataset (courses, attendance %, exam schedule, min-attendance rules).
-    Tools: get_course_info, get_timetable, check_attendance_eligibility, get_exam_schedule, get_regulations, recommend_electives.
-    
-    A2A Interactions:
-    - Called by Placement Agent: check_eligibility -> calls check_attendance_eligibility.
-    - Called by Campus Agent (Events sub-module): register_for_event -> calls get_timetable to check for clashes.
-    - Calls Communication Agent: check_attendance_eligibility proactively calls draft_email if attendance < 75%.
+    Owns academic dataset & task/calendar integrations.
+    Tools: get_course_info, get_timetable, check_attendance_eligibility, get_exam_schedule,
+           get_regulations, recommend_electives, create_task, get_tasks, update_task, complete_task,
+           create_study_plan, get_roadmap.
     """
 
-    def __init__(self, registry: AgentRegistry, repo: Optional[AcademicRepo] = None):
+    def __init__(
+        self,
+        registry: AgentRegistry,
+        repo: Optional[AcademicRepo] = None,
+        todoist_adapter: Optional[TodoistAdapter] = None,
+        calendar_adapter: Optional[GoogleCalendarAdapter] = None
+    ):
         self.agent_name = "academic_agent"
         self.registry = registry
         self.repo: AcademicRepo = repo or InMemoryAcademicRepo()
+        self.todoist_adapter = todoist_adapter or TodoistAdapter()
+        self.calendar_adapter = calendar_adapter or GoogleCalendarAdapter()
 
     async def handle(self, task: TaskRequest) -> ResponseEnvelope:
         tool_name = task.task.lower()
         student_id = task.student_id or task.params.get("student_id")
         a2a_calls: List[Dict[str, Any]] = []
 
-        # Validate student existence for student-specific tools
         if tool_name in ["get_timetable", "check_attendance_eligibility", "get_exam_schedule"]:
             if not student_id:
                 return ResponseEnvelope(
@@ -53,7 +59,7 @@ class AcademicAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"courses": info},
+                data={"courses": info, "source": "mock"},
                 message=f"Retrieved course info for '{course_id or 'all'}'",
                 trace_id=task.trace_id
             )
@@ -64,12 +70,94 @@ class AcademicAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={
-                    "student_id": student_id,
-                    "timetable": timetable,
-                    "exams": exams
-                },
+                data={"student_id": student_id, "timetable": timetable, "exams": exams, "source": "mock"},
                 message=f"Retrieved timetable and exam schedule for student {student_id}",
+                trace_id=task.trace_id
+            )
+
+        elif tool_name == "get_tasks":
+            tasks_res = await self.todoist_adapter.get_tasks()
+            return ResponseEnvelope(
+                agent=self.agent_name,
+                status="success",
+                data=tasks_res,
+                message=f"Retrieved {len(tasks_res.get('tasks', []))} academic tasks (Source: {tasks_res.get('source')})",
+                trace_id=task.trace_id
+            )
+
+        elif tool_name == "create_task":
+            content = task.params.get("content") or task.params.get("title", "Study Task")
+            due_string = task.params.get("due_string", "today")
+            priority = int(task.params.get("priority", 1))
+
+            task_res = await self.todoist_adapter.create_task(content, due_string, priority)
+            return ResponseEnvelope(
+                agent=self.agent_name,
+                status="success",
+                data=task_res,
+                message=f"Created academic task '{content}' (Source: {task_res.get('source')})",
+                trace_id=task.trace_id
+            )
+
+        elif tool_name == "update_task":
+            task_id = task.params.get("task_id", "t1")
+            content = task.params.get("content", "Updated Task")
+            upd_res = await self.todoist_adapter.update_task(task_id, content)
+            return ResponseEnvelope(
+                agent=self.agent_name,
+                status="success",
+                data=upd_res,
+                message=f"Updated task '{task_id}'",
+                trace_id=task.trace_id
+            )
+
+        elif tool_name == "complete_task":
+            task_id = task.params.get("task_id", "t1")
+            comp_res = await self.todoist_adapter.complete_task(task_id)
+            return ResponseEnvelope(
+                agent=self.agent_name,
+                status="success",
+                data=comp_res,
+                message=f"Completed task '{task_id}'",
+                trace_id=task.trace_id
+            )
+
+        elif tool_name == "create_study_plan":
+            subject = task.params.get("subject", "Database Management Systems")
+            days_left = int(task.params.get("days_left", 10))
+            exam_date = task.params.get("exam_date", "2026-08-17")
+
+            study_plan_res = await self.todoist_adapter.create_study_plan(subject, days_left, exam_date)
+
+            gcal_event = await self.calendar_adapter.add_event_to_calendar(
+                summary=f"Study Session: {subject}",
+                start_time=f"{exam_date}T10:00:00Z",
+                end_time=f"{exam_date}T12:00:00Z",
+                location="Main Library Study Room 4"
+            )
+
+            study_plan_res["calendar_sync"] = gcal_event
+
+            return ResponseEnvelope(
+                agent=self.agent_name,
+                status="success",
+                data=study_plan_res,
+                message=f"Generated {days_left}-day study plan for {subject} with materialized Todoist tasks and Google Calendar study session.",
+                trace_id=task.trace_id
+            )
+
+        elif tool_name == "get_roadmap":
+            domain = task.params.get("domain", "backend")
+            return ResponseEnvelope(
+                agent=self.agent_name,
+                status="success",
+                data={
+                    "source": "mock",
+                    "domain": domain,
+                    "roadmap_url": f"https://roadmap.sh/{domain}",
+                    "description": f"Curated interactive developer learning roadmap for {domain}."
+                },
+                message=f"Retrieved learning roadmap link for {domain}",
                 trace_id=task.trace_id
             )
 
@@ -81,6 +169,7 @@ class AcademicAgent:
             is_eligible = attendance_pct >= min_threshold
 
             res_data: Dict[str, Any] = {
+                "source": "mock",
                 "student_id": student_id,
                 "student_name": student.get("name"),
                 "attendance_pct": attendance_pct,
@@ -88,13 +177,11 @@ class AcademicAgent:
                 "eligible": is_eligible
             }
 
-            # REQUIREMENT: If attendance < 75%, proactively call Communication Agent to draft makeup email
             if not is_eligible:
                 shortfall = round(min_threshold - attendance_pct, 1)
                 res_data["shortfall_pct"] = shortfall
                 res_data["status_note"] = f"Attendance ({attendance_pct}%) below regulation threshold ({min_threshold}%)."
 
-                # Proactive A2A call to Communication Agent to draft email
                 draft_params = {
                     "recipient": "academic_dean@campus.edu",
                     "subject": f"Permission Request: Attendance Waiver / Makeup Exam - {student.get('name')} ({student_id})",
@@ -151,7 +238,7 @@ class AcademicAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"student_id": student_id, "exams": exams},
+                data={"student_id": student_id, "exams": exams, "source": "mock"},
                 message=f"Retrieved exam schedule for student {student_id}",
                 trace_id=task.trace_id
             )
@@ -161,7 +248,7 @@ class AcademicAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"regulations": regs},
+                data={"regulations": regs, "source": "mock"},
                 message="Retrieved academic regulations",
                 trace_id=task.trace_id
             )
@@ -176,7 +263,7 @@ class AcademicAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"branch": branch, "recommended_electives": recs},
+                data={"branch": branch, "recommended_electives": recs, "source": "mock"},
                 message=f"Found {len(recs)} recommended electives for branch '{branch or 'all'}'",
                 trace_id=task.trace_id
             )

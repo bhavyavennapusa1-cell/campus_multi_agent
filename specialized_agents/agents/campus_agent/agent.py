@@ -2,6 +2,8 @@ from typing import Optional, List, Dict, Any
 from agents.common.envelope import TaskRequest, ResponseEnvelope
 from agents.common.registry import AgentRegistry
 from agents.campus_agent.repo import CampusRepo, InMemoryCampusRepo
+from agents.adapters.google_maps_adapter import GoogleMapsAdapter
+from agents.adapters.google_calendar_adapter import GoogleCalendarAdapter
 
 
 class CampusAgent:
@@ -12,12 +14,6 @@ class CampusAgent:
     1. Events sub-module: discover_events, register_for_event, manage_hackathon_team, create_calendar_entry, cancel_or_withdraw, recommend_events
     2. Student Services sub-module: get_hostel_info, get_library_status, check_scholarship_eligibility, get_transport_info, raise_grievance, search_campus_faqs
     3. Campus Navigator sub-module: get_campus_map, search_location, get_directions, get_nearby_facilities, get_indoor_wayfinding, get_accessible_route
-    
-    A2A Interactions:
-    - Events → Academic Agent: register_for_event calls get_timetable/exams to check for clashes before confirming.
-      If clash, returns status: "needs_clarification".
-    - Events → Communication Agent: on successful registration, calls schedule_appointment and schedule_reminder.
-    - Student Services → Communication Agent: raise_grievance calls send_notification to confirm ticket.
     """
 
     EVENTS_TOOLS = {
@@ -35,15 +31,22 @@ class CampusAgent:
         "get_nearby_facilities", "get_indoor_wayfinding", "get_accessible_route"
     }
 
-    def __init__(self, registry: AgentRegistry, repo: Optional[CampusRepo] = None):
+    def __init__(
+        self,
+        registry: AgentRegistry,
+        repo: Optional[CampusRepo] = None,
+        maps_adapter: Optional[GoogleMapsAdapter] = None,
+        calendar_adapter: Optional[GoogleCalendarAdapter] = None
+    ):
         self.agent_name = "campus_agent"
         self.registry = registry
         self.repo: CampusRepo = repo or InMemoryCampusRepo()
+        self.maps_adapter = maps_adapter or GoogleMapsAdapter()
+        self.calendar_adapter = calendar_adapter or GoogleCalendarAdapter()
 
     async def handle(self, task: TaskRequest) -> ResponseEnvelope:
         tool_name = task.task.lower()
 
-        # Mini-Orchestrator routing logic
         if tool_name in self.EVENTS_TOOLS:
             return await self._handle_events_module(tool_name, task)
         elif tool_name in self.STUDENT_SERVICES_TOOLS:
@@ -59,9 +62,6 @@ class CampusAgent:
                 trace_id=task.trace_id
             )
 
-    # -------------------------------------------------------------------------
-    # 1. EVENTS SUB-MODULE HANDLER
-    # -------------------------------------------------------------------------
     async def _handle_events_module(self, tool_name: str, task: TaskRequest) -> ResponseEnvelope:
         student_id = task.student_id or task.params.get("student_id")
         a2a_calls: List[Dict[str, Any]] = []
@@ -72,7 +72,7 @@ class CampusAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"events": events},
+                data={"events": events, "source": "mock"},
                 message=f"Found {len(events)} campus events",
                 trace_id=task.trace_id
             )
@@ -102,7 +102,6 @@ class CampusAgent:
             event_start = event.get("start_time")
             event_end = event.get("end_time")
 
-            # MANDATORY A2A STEP: Call Academic Agent to check timetable/exam clash!
             acad_proxy = self.registry.get("academic_agent", caller_name=self.agent_name)
             acad_req = TaskRequest(
                 trace_id=task.trace_id,
@@ -122,18 +121,13 @@ class CampusAgent:
                 "response_data": acad_resp.data
             })
 
-            # Evaluate clash against exams and scheduled classes
             clashes: List[Dict[str, Any]] = []
             if acad_resp.status == "success":
                 exams = acad_resp.data.get("exams", [])
-                timetable = acad_resp.data.get("timetable", [])
-
-                # Check Exam clashes
                 for ex in exams:
                     if ex.get("date") == event_date:
                         ex_start = ex.get("start_time")
                         ex_end = ex.get("end_time")
-                        # Simple overlap check: start < ex_end and end > ex_start
                         if event_start < ex_end and event_end > ex_start:
                             clashes.append({
                                 "conflict_type": "EXAM_CLASH",
@@ -143,7 +137,6 @@ class CampusAgent:
                                 "hall": ex.get("hall") or ex.get("location")
                             })
 
-            # IF CLASH DETECTED: Return status "needs_clarification" instead of silent success!
             if clashes:
                 clash_details = clashes[0]
                 warning_msg = (
@@ -157,20 +150,23 @@ class CampusAgent:
                         "event": event,
                         "clash_detected": True,
                         "conflict_details": clashes,
-                        "recommendation": "Please resolve timetable clash before registering."
+                        "recommendation": "Please resolve timetable clash before registering.",
+                        "source": "mock"
                     },
                     message=warning_msg,
                     a2a_calls=a2a_calls,
                     trace_id=task.trace_id
                 )
 
-            # NO CLASH: Confirm registration in repo
             reg_res = self.repo.register_event(student_id, event["event_id"])
+            gcal_res = await self.calendar_adapter.add_event_to_calendar(
+                summary=f"Campus Event: {event.get('title')}",
+                start_time=f"{event_date}T{event_start}:00Z",
+                end_time=f"{event_date}T{event_end}:00Z",
+                location=event.get("location", "")
+            )
 
-            # A2A STEP: Call Communication Agent for schedule_appointment & schedule_reminder
             comms_proxy = self.registry.get("communication_agent", caller_name=self.agent_name)
-
-            # 1. schedule_appointment
             appt_req = TaskRequest(
                 trace_id=task.trace_id,
                 task="schedule_appointment",
@@ -193,7 +189,6 @@ class CampusAgent:
                 "status": appt_resp.status
             })
 
-            # 2. schedule_reminder (60 min before event)
             rem_req = TaskRequest(
                 trace_id=task.trace_id,
                 task="schedule_reminder",
@@ -220,8 +215,10 @@ class CampusAgent:
                 status="success",
                 data={
                     "registration": reg_res,
+                    "gcal_sync": gcal_res,
                     "calendar_entry": appt_resp.data,
-                    "reminder": rem_resp.data
+                    "reminder": rem_resp.data,
+                    "source": gcal_res.get("source", "mock")
                 },
                 message=f"Registered student {student_id} for '{event.get('title')}' with calendar appointment and 60-min reminder scheduled.",
                 a2a_calls=a2a_calls,
@@ -238,13 +235,12 @@ class CampusAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"team": team_res},
+                data={"team": team_res, "source": "mock"},
                 message=f"Hackathon team action '{action}' performed for team '{team_id}'",
                 trace_id=task.trace_id
             )
 
         elif tool_name == "create_calendar_entry":
-            # Direct companion to Communication Agent's schedule_appointment
             comms_proxy = self.registry.get("communication_agent", caller_name=self.agent_name)
             comms_resp = await comms_proxy.handle(TaskRequest(
                 trace_id=task.trace_id,
@@ -274,7 +270,7 @@ class CampusAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"event_id": event_id, "student_id": student_id, "status": "withdrawn"},
+                data={"event_id": event_id, "student_id": student_id, "status": "withdrawn", "source": "mock"},
                 message=f"Withdrew student {student_id} from event {event_id}",
                 trace_id=task.trace_id
             )
@@ -284,14 +280,11 @@ class CampusAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"recommended_events": events[:2]},
+                data={"recommended_events": events[:2], "source": "mock"},
                 message="Recommended events based on campus activity",
                 trace_id=task.trace_id
             )
 
-    # -------------------------------------------------------------------------
-    # 2. STUDENT SERVICES SUB-MODULE HANDLER
-    # -------------------------------------------------------------------------
     async def _handle_student_services_module(self, tool_name: str, task: TaskRequest) -> ResponseEnvelope:
         student_id = task.student_id or task.params.get("student_id")
         a2a_calls: List[Dict[str, Any]] = []
@@ -309,13 +302,14 @@ class CampusAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"hostel_info": info or {}},
+                data={"hostel_info": info or {}, "source": "mock"},
                 message=f"Retrieved hostel details for student {student_id}",
                 trace_id=task.trace_id
             )
 
         elif tool_name == "get_library_status":
             lib_info = self.repo.get_library_status(student_id)
+            lib_info["source"] = "mock"
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
@@ -326,7 +320,6 @@ class CampusAgent:
 
         elif tool_name == "check_scholarship_eligibility":
             scholarships = self.repo.get_scholarships()
-            # If student_id present, verify against Academic attendance / CGPA via Academic Agent
             eligible_scholarships = []
             if student_id:
                 acad_proxy = self.registry.get("academic_agent", caller_name=self.agent_name)
@@ -354,7 +347,7 @@ class CampusAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"scholarships": eligible_scholarships},
+                data={"scholarships": eligible_scholarships, "source": "mock"},
                 message=f"Evaluated scholarship eligibility ({len(eligible_scholarships)} matches)",
                 a2a_calls=a2a_calls,
                 trace_id=task.trace_id
@@ -366,7 +359,7 @@ class CampusAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"transport_info": trans},
+                data={"transport_info": trans, "source": "mock"},
                 message=f"Retrieved campus shuttle transport info for '{route_id or 'all routes'}'",
                 trace_id=task.trace_id
             )
@@ -385,7 +378,6 @@ class CampusAgent:
 
             ticket = self.repo.create_grievance(student_id, category, description)
 
-            # MANDATORY A2A STEP: Call Communication Agent send_notification on grievance creation!
             comms_proxy = self.registry.get("communication_agent", caller_name=self.agent_name)
             notif_req = TaskRequest(
                 trace_id=task.trace_id,
@@ -412,7 +404,7 @@ class CampusAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"ticket": ticket, "notification": notif_resp.data},
+                data={"ticket": ticket, "notification": notif_resp.data, "source": "mock"},
                 message=f"Raised grievance ticket '{ticket['ticket_id']}' and dispatched confirmation notification via Communication Agent.",
                 a2a_calls=a2a_calls,
                 trace_id=task.trace_id
@@ -424,21 +416,18 @@ class CampusAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"query": query, "results": matches},
+                data={"query": query, "results": matches, "source": "mock"},
                 message=f"Found {len(matches)} matching campus FAQ entries",
                 trace_id=task.trace_id
             )
 
-    # -------------------------------------------------------------------------
-    # 3. CAMPUS NAVIGATOR SUB-MODULE HANDLER
-    # -------------------------------------------------------------------------
     async def _handle_navigator_module(self, tool_name: str, task: TaskRequest) -> ResponseEnvelope:
         if tool_name == "get_campus_map":
             locs = self.repo.get_locations()
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"map_locations": locs},
+                data={"map_locations": locs, "source": "mock"},
                 message="Retrieved interactive campus map layout",
                 trace_id=task.trace_id
             )
@@ -457,7 +446,7 @@ class CampusAgent:
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"location": loc},
+                data={"location": loc, "source": "mock"},
                 message=f"Found location '{loc['name']}' in building '{loc.get('building')}'",
                 trace_id=task.trace_id
             )
@@ -473,27 +462,36 @@ class CampusAgent:
                     message="Missing destination for navigation",
                     trace_id=task.trace_id
                 )
+
+            # Primary: Campus DB for indoor / building routes
             route = self.repo.get_route(origin, destination)
-            is_accessible = (tool_name == "get_accessible_route")
-            if is_accessible:
+            source_tag = "mock"
+
+            # If not in campus DB, use Google Maps API adapter fallback for off-campus
+            if not route or "Fallback" in route.get("route_name", ""):
+                maps_res = await self.maps_adapter.get_directions(origin, destination)
+                route = maps_res
+                source_tag = maps_res.get("source", "mock")
+
+            if tool_name == "get_accessible_route":
                 route["wheelchair_accessible_guaranteed"] = True
 
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"route": route},
-                message=f"Calculated route from '{origin}' to '{destination}' ({route.get('walk_time_minutes')} mins walk)",
+                data={"route": route, "source": source_tag},
+                message=f"Calculated route from '{origin}' to '{destination}'",
                 trace_id=task.trace_id
             )
 
         elif tool_name == "get_nearby_facilities":
             near = task.params.get("near", "Central Quad")
-            locs = self.repo.get_locations()
+            maps_fac = await self.maps_adapter.find_nearby_facilities(near)
             return ResponseEnvelope(
                 agent=self.agent_name,
                 status="success",
-                data={"near": near, "facilities": list(locs.keys())[:3]},
-                message=f"Found nearby campus facilities near '{near}'",
+                data=maps_fac,
+                message=f"Found nearby campus facilities near '{near}' (Source: {maps_fac.get('source')})",
                 trace_id=task.trace_id
             )
 
@@ -506,7 +504,8 @@ class CampusAgent:
                 data={
                     "building": building,
                     "room": room,
-                    "indoor_steps": [f"Enter {building} ground lobby", "Take elevator to 2nd floor", f"Turn right to Room {room}"]
+                    "indoor_steps": [f"Enter {building} ground lobby", "Take elevator to 2nd floor", f"Turn right to Room {room}"],
+                    "source": "mock"
                 },
                 message=f"Generated indoor wayfinding guide for {building} -> Room {room}",
                 trace_id=task.trace_id
