@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false) => {
+    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = 'default', cards = []) => {
         const msgDiv = document.createElement('div');
         msgDiv.className = `message msg-${sender}`;
         msgDiv.dataset.context = actionContext;
@@ -145,6 +145,22 @@ document.addEventListener('DOMContentLoaded', () => {
         msgDiv.innerHTML = contentHtml;
         chatHistory.appendChild(msgDiv);
         chatHistory.scrollTop = chatHistory.scrollHeight;
+    };
+
+    // Typing indicator (shown in chat-history while waiting for a reply)
+    const showTypingIndicator = () => {
+        removeTypingIndicator(); // avoid duplicates
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message msg-bot typing-indicator';
+        typingDiv.id = 'typing-indicator';
+        typingDiv.innerHTML = `<span></span><span></span><span></span>`;
+        chatHistory.appendChild(typingDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    };
+
+    const removeTypingIndicator = () => {
+        const existing = document.getElementById('typing-indicator');
+        if (existing) existing.remove();
     };
 
     // Render Traces in Panel
@@ -239,7 +255,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
             const data = await response.json();
-            appendMessage(data.reply, 'bot', data.agents_used, data.reasoning_steps, data.requires_confirmation);
+            appendMessage(
+                data.reply,
+                'bot',
+                data.agents_used,
+                data.reasoning_steps,
+                data.requires_confirmation,
+                (data.agents_used && data.agents_used[0]) || 'default',
+                data.cards || []
+            );
             renderTraces(data.trace);
 
         } catch (error) {
