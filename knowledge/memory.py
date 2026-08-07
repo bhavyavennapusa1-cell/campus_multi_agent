@@ -31,7 +31,7 @@ def get_db_connection():
 
 
 def init_db():
-    """Creates conversation_history and student_profile tables if they do not exist and runs column migrations."""
+    """Creates conversation_history, student_profile, and retrieval_log tables if they do not exist and runs column migrations."""
     with get_db_connection() as conn:
         cursor = conn.cursor()
         
@@ -89,7 +89,49 @@ def init_db():
             if col_name not in existing_cols:
                 cursor.execute(f"ALTER TABLE student_profile ADD COLUMN {col_name} {col_def};")
 
+        # Table 3: retrieval_log
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS retrieval_log (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id TEXT NOT NULL,
+                query TEXT NOT NULL,
+                top_doc_ids TEXT NOT NULL,
+                top_scores TEXT NOT NULL,
+                timestamp TEXT NOT NULL
+            );
+        """)
+
         conn.commit()
+
+
+def log_retrieval(session_id: str, query: str, top_doc_ids: list[str], top_scores: list[float]) -> None:
+    """Passively logs every retrieval call into SQLite retrieval_log table."""
+    now_iso = datetime.now(timezone.utc).isoformat()
+    doc_ids_str = json.dumps(top_doc_ids or [])
+    scores_str = json.dumps([round(s, 4) for s in (top_scores or [])])
+
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO retrieval_log (
+                    session_id, query, top_doc_ids, top_scores, timestamp
+                ) VALUES (?, ?, ?, ?, ?);
+            """, (session_id or "global_retrieval", query, doc_ids_str, scores_str, now_iso))
+            conn.commit()
+    except Exception as e:
+        print(f"Warning: Failed to log retrieval turn: {e}")
+
+
+def get_retrieval_logs(session_id: str = None, limit: int = 10) -> list[dict]:
+    """Returns recent passive retrieval logs."""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        if session_id:
+            cursor.execute("SELECT * FROM retrieval_log WHERE session_id = ? ORDER BY id DESC LIMIT ?;", (session_id, limit))
+        else:
+            cursor.execute("SELECT * FROM retrieval_log ORDER BY id DESC LIMIT ?;", (limit,))
+        return [dict(row) for row in cursor.fetchall()]
 
 
 # Initialize database automatically at module import

@@ -5,6 +5,7 @@ category: academic
 version: "2.5"
 effective_date: "2026-06-01"
 last_updated: "2026-08-01"
+related_docs: ["DOC_ACAD_REGS_002", "DOC_HOSTEL_001"]
 ---
 
 # Vasavi Campus Student Handbook & Code of Conduct

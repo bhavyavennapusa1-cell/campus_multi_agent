@@ -1,3 +1,13 @@
+---
+doc_id: DOC_ATTEND_001
+title: Institutional Attendance Regulations and Shortage Rules
+category: academic
+version: "2.1"
+effective_date: "2026-06-01"
+last_updated: "2026-08-01"
+related_docs: ["DOC_ACAD_REGS_002", "DOC_HANDBOOK_001", "DOC_EXAM_002"]
+---
+
 # Vasavi College of Engineering - Attendance Regulations
 
 ## Minimum Attendance Criteria
@@ -8,4 +18,3 @@
 ## Medical Leave & Makeup Exam Rules
 1. Medical Leave Exclusion: Medical leave with valid documentation may be excluded from attendance calculations up to a maximum of 10 working days per semester.
 2. Makeup Exam Eligibility: A makeup exam request is valid ONLY if attendance is >=65% AND absence was due to an officially approved medical emergency or institution-represented event.
-

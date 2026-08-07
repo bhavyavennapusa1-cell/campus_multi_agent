@@ -5,6 +5,7 @@ category: campus
 version: "1.5"
 effective_date: "2026-06-01"
 last_updated: "2026-08-01"
+related_docs: ["DOC_HOSTEL_001", "DOC_CAMP_GRV_006"]
 ---
 
 # Campus Transport, Health Center & Auxiliary Services

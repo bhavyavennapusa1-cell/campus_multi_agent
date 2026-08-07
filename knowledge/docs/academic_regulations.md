@@ -5,6 +5,7 @@ category: academic
 version: "3.1"
 effective_date: "2026-06-01"
 last_updated: "2026-08-01"
+related_docs: ["DOC_ATTEND_001", "DOC_EXAM_002", "DOC_HANDBOOK_001"]
 ---
 
 # Institutional Academic Regulations & Grading Policy
