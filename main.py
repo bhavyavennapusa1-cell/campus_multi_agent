@@ -359,6 +359,7 @@ If a step needs user confirmation, ask for it naturally and mention what will ha
 
             if anthropic_key:
                 try:
+                    # pyrefly: ignore [missing-import]
                     import anthropic
                     client = anthropic.Anthropic(api_key=anthropic_key, timeout=4.0)
                     response = client.messages.create(

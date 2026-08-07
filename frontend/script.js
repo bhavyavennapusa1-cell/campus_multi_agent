@@ -258,14 +258,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const autoPrompt = urlParams.get('prompt');
     if (autoPrompt && chatInput) {
         chatInput.value = autoPrompt;
-        chatInput.focus();
+        window.history.replaceState({}, document.title, window.location.pathname);
+        setTimeout(() => {
+            if (chatForm) {
+                chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            }
+        }, 150);
     }
 
     chips.forEach(chip => {
         chip.addEventListener('click', () => {
             if (chatInput) {
                 chatInput.value = chip.getAttribute('data-prompt');
-                chatInput.focus();
+                if (chatForm) {
+                    chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                }
             }
         });
     });
@@ -410,15 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const sendQuery = async (messageText) => {
-        const sendBtn = chatForm ? chatForm.querySelector('button[type="submit"]') : null;
-
-        renderTraces([
-            { agent: "orchestrator", action: "intent_parsing", status: "running", message: "Analyzing user input..." },
-            { agent: "knowledge", action: "vector_retrieval", status: "pending", message: "Querying ChromaDB index..." }
-        ]);
-
         showTypingIndicator();
-
         try {
             const response = await fetch(`${API_BASE}/chat`, {
                 method: 'POST',
@@ -463,14 +462,24 @@ document.addEventListener('DOMContentLoaded', () => {
             );
             renderTraces(fallback.trace);
         } finally {
-            // BUG 4 FIX: Always re-enable input & send button in finally block
+            // ALWAYS re-enable chatInput and send button in finally block
+            const currentSendBtn = chatForm ? chatForm.querySelector('button[type="submit"]') : null;
             if (chatInput) {
                 chatInput.disabled = false;
+                chatInput.removeAttribute('disabled');
+                chatInput.readOnly = false;
                 chatInput.focus();
             }
-            if (sendBtn) {
-                sendBtn.disabled = false;
+            if (currentSendBtn) {
+                currentSendBtn.disabled = false;
+                currentSendBtn.removeAttribute('disabled');
             }
+            setTimeout(() => {
+                if (chatInput) {
+                    chatInput.disabled = false;
+                    chatInput.focus();
+                }
+            }, 100);
         }
     };
 

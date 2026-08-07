@@ -103,7 +103,8 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
 
     has_placement_kw = any(k in req_lower for k in ["eligib", "placement", "dream", "company", "google", "microsoft", "salesforce", "oracle", "cognizant", "tcs", "internship", "job"])
     has_action_kw = any(k in req_lower for k in ["register", "workshop", "calendar", "remind", "reminder", "event", "schedule"])
-    has_exam_kw = any(k in req_lower for k in ["exam", "regs", "regulations", "grade", "marks", "dbms", "subject", "timetable"])
+    has_exam_kw = any(k in req_lower for k in ["exam", "exams", "midterm", "endterm", "regs", "regulations", "grade", "marks", "grade card"])
+    has_course_kw = any(k in req_lower for k in ["resource", "resources", "material", "materials", "syllabus", "course", "courses", "subject", "subjects", "book", "books", "notes"])
     has_attend_kw = any(k in req_lower for k in ["attend", "attendance", "absent", "condon", "detain", "shortage"])
     has_comm_kw = any(k in req_lower for k in ["email", "draft", "mail", "notify", "inform", "message", "contact"])
     has_contact_kw = any(k in req_lower for k in ["mentor", "hod", "classmate", "classmates", "peer", "group", "advisor"])
@@ -120,6 +121,10 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
 
     if has_contact_kw:
         steps.append(PlanStep(id=step_id, agent="communication", action="get_relevant_contacts", params={"query": clean_req, "query_type": clean_req}))
+        step_id += 1
+
+    if has_course_kw and not has_exam_kw and not has_placement_kw:
+        steps.append(PlanStep(id=step_id, agent="academic", action="course_info", params={"query": clean_req, "subject": clean_req}))
         step_id += 1
 
     if (has_exam_kw or "dbms" in req_lower) and not has_contact_kw:
@@ -150,13 +155,12 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
         step_id += 1
 
     if not steps:
-        # Clarification step when no keyword pattern matches
-        q_text = "I'm not sure which campus service you need. Could you please clarify if your question is about academic courses/timetables, placement/internships, campus navigation, or faculty/student communications?"
+        # Route custom queries directly to general synthesis for grounded RAG answer
         steps.append(PlanStep(
             id=1,
             agent="academic",
             action="general_synthesis",
-            params={"query": user_request, "clarification_needed": True, "clarification_question": q_text}
+            params={"query": user_request}
         ))
 
     return steps[:5]
@@ -178,13 +182,39 @@ def plan(user_request: str, profile: dict = None, session_id: str = "default") -
     history_records = get_history(session_id, last_n=3)
     history_summary = [{"role": h["role"], "agent": h.get("agent_name"), "content": h["content"]} for h in history_records]
 
-    system_prompt = f"""You are the orchestrator for a Smart Campus multi-agent assistant. Read the student's message and decide which specialized agent(s) must be called to answer it — never answer from your own knowledge.
+    system_prompt = f"""You are the orchestrator for a Smart Campus multi-agent assistant. Read the student's message and decide which specialized agent(s) and action(s) must be called to answer it accurately.
 
-Available agents:
-- academic: timetables, attendance, exam registrations, study plans, course info
-- placement: internships, job postings, applications, company registrations
-- campus: navigation, building/hostel locations, directions, facilities
-- communication: drafting emails to faculty, peer group messages, announcements
+Available agents and actions:
+- academic:
+  - course_info: syllabus, subject resources, course materials, books, notes, subject details
+  - get_attendance: attendance percentage, attendance status, detention risk
+  - get_timetable: daily schedule, class timetable, today's lectures
+  - get_exam_schedule: exam dates, exam timetable, venue, max marks
+  - create_study_plan: study preparation plan, exam prep schedule
+  - create_task / get_tasks: manage study tasks
+  - general_synthesis: general academic questions
+- placement:
+  - check_eligibility: check drive or company eligibility
+  - get_internships / find_opportunities: internship listings, job postings, career opportunities
+  - get_github_profile: coding stats and github portfolio
+  - general_synthesis: general career & placement questions
+- campus:
+  - get_hostel_info: hostel rules, curfew, gate timings, mess, room info
+  - file_grievance: file maintenance or campus complaints
+  - general_synthesis: general campus & hostel queries
+- navigator:
+  - get_directions: campus map, route, directions to buildings/library/labs
+  - find_nearby_facilities: find nearby ATMs, food courts, labs, study spots
+  - general_synthesis: general navigation questions
+- events:
+  - get_events: campus events, hackathons, workshops, cultural fest
+  - register_event: register for a specific workshop or event
+  - general_synthesis: general event queries
+- communication:
+  - draft_email: draft formal email to faculty/professor
+  - get_relevant_contacts: find faculty advisor, mentor, HOD contact info
+  - schedule_reminder: set event or task reminder
+  - general_synthesis: general communication queries
 
 Student context:
 - Name: {prof_name}
@@ -194,14 +224,13 @@ Student context:
 - Session history: {json.dumps(history_summary)}
 
 Instructions:
-1. Identify the underlying intent(s), even if phrased casually or combined across domains.
-2. Select every agent needed — don't limit to one if the request spans domains.
-3. Pass relevant profile fields to each agent you call.
-4. If the message doesn't clearly map to any agent, return a "clarify" action with a specific follow-up question instead of guessing.
-5. If ambiguous between two agents, call both and let synthesis reconcile results.
-6. Never fabricate agent capabilities or data.
+1. Identify the student's actual intent from their typed text.
+2. Select the specific agent and action that answers their query. For resource/subject/course queries, use academic agent's course_info or general_synthesis.
+3. If query spans multiple domains, return multiple actions.
+4. Always pass relevant inputs/parameters (e.g. {{"query": "{clean_req}", "subject": "{clean_req}"}}).
 
-Return your plan as structured actions: [{{"agent": <name>, "action": <specific task>, "inputs": {{...}}}}]"""
+Return your plan as a structured JSON array: [{{"agent": "<agent_name>", "action": "<action_name>", "inputs": {{...}}}}]"""
+
 
 
     anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
