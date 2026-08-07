@@ -1,23 +1,22 @@
 """
-Person A owns this file. This is the core of the whole project.
-
-Two jobs:
-  1. plan() - one LLM call that turns a user request into a list of PlanSteps
-  2. dispatch() - executes those steps in dependency order, calling into
-     agents/*.py, and re-plans if a step fails
-
-Fill in the TODO where the actual LLM call goes - use whichever you have
-an API key for (Anthropic or OpenAI both work fine here).
+Orchestrator for Smart Campus Multi-Agent System.
+Parses user queries, resolves context from memory, generates execution plan steps,
+dispatches to specialized agents, logs conversation turns, and returns completed steps.
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-from shared.schemas import PlanStep, AGENT_ACTIONS
+# Set project root in sys.path
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
+from shared.schemas import PlanStep, AGENT_ACTIONS, AgentResponse
 from agents import academic_agent, placement_agent, campus_agent, communication_agent
+from knowledge.memory import resolve_context, add_turn, get_profile, create_session
 
 AGENT_REGISTRY = {
     "academic": academic_agent,
@@ -46,8 +45,9 @@ Keep plans as short as possible - only include steps genuinely needed.
 
 def plan(user_request: str) -> list[PlanStep]:
     """
-    TODO Person A: replace this with a real API call. Example using Anthropic:
-
+    Intelligent pattern-based planner routing queries to appropriate domain agents.
+    
+    TODO (Future Work): Replace or augment this keyword planner with a live LLM call using PLANNING_SYSTEM_PROMPT:
         import anthropic
         client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from env
         response = client.messages.create(
@@ -59,29 +59,165 @@ def plan(user_request: str) -> list[PlanStep]:
         raw = response.content[0].text
         parsed = json.loads(raw)
         return [PlanStep(**step) for step in parsed["steps"]]
-
-    Below is a hardcoded fallback so the rest of the team can build against
-    something real today, before the LLM call is wired in.
     """
-    if "eligib" in user_request.lower() or "google" in user_request.lower():
+    # If query has prepended context from resolve_context(), extract actual user query
+    clean_req = user_request
+    if "[Previous Context:" in user_request and "]" in user_request:
+        clean_req = user_request.split("]")[-1].strip()
+
+    req_lower = clean_req.lower()
+
+    # Academic attendance queries (check attendance keywords first)
+    if any(k in req_lower for k in ["attend", "absent", "condon", "detain", "percentage", "shortage"]):
         return [
-            PlanStep(id=1, agent="placement", action="check_eligibility",
-                      params={"company": "Google", "student_id": "S001"}, depends_on=[]),
-            PlanStep(id=2, agent="campus", action="get_events", params={}, depends_on=[1]),
-            PlanStep(id=3, agent="communication", action="schedule_reminder",
-                      params={"event": "placement workshop", "minutes_before": 60}, depends_on=[2]),
+            PlanStep(
+                id=1,
+                agent="academic",
+                action="get_attendance",
+                params={"query": clean_req},
+                depends_on=[]
+            )
         ]
 
-    return [PlanStep(id=1, agent="academic", action="get_timetable", params={}, depends_on=[])]
+    # Placement queries
+    if any(k in req_lower for k in ["eligib", "placement", "dream", "company", "google", "microsoft", "salesforce", "oracle", "cognizant", "tcs"]):
+        company = "Dream Tier"
+        if "google" in req_lower:
+            company = "Google"
+        elif "microsoft" in req_lower:
+            company = "Microsoft"
+        elif "salesforce" in req_lower:
+            company = "Salesforce"
+        elif "oracle" in req_lower:
+            company = "Oracle India"
+        elif "cognizant" in req_lower:
+            company = "Cognizant"
+        elif "tcs" in req_lower:
+            company = "TCS"
+
+        return [
+            PlanStep(
+                id=1,
+                agent="placement",
+                action="check_eligibility",
+                params={"company": company, "query": clean_req},
+                depends_on=[]
+            )
+        ]
+
+    # Campus queries (Hostel, Library, Transport, Events, Grievance)
+    if any(k in req_lower for k in ["hostel", "curfew", "gate", "late", "outpass", "dorm", "warden", "mess", "visitor"]):
+        return [
+            PlanStep(
+                id=1,
+                agent="campus",
+                action="get_hostel_info",
+                params={"query": user_request},
+                depends_on=[]
+            )
+        ]
+
+    if any(k in req_lower for k in ["event", "hackathon", "fest", "symposium", "coding"]):
+        return [
+            PlanStep(
+                id=1,
+                agent="campus",
+                action="get_events",
+                params={"query": user_request},
+                depends_on=[]
+            )
+        ]
+
+    if any(k in req_lower for k in ["grievance", "complaint", "issue", "sla"]):
+        return [
+            PlanStep(
+                id=1,
+                agent="campus",
+                action="file_grievance",
+                params={"query": user_request, "text": user_request},
+                depends_on=[]
+            )
+        ]
+
+    # Academic queries (Attendance, Exam, Timetable)
+    if any(k in req_lower for k in ["attend", "absent", "condon", "detain", "percentage", "shortage"]):
+        return [
+            PlanStep(
+                id=1,
+                agent="academic",
+                action="get_attendance",
+                params={"query": user_request},
+                depends_on=[]
+            )
+        ]
+
+    if any(k in req_lower for k in ["exam", "grade", "marks", "revalu", "backlog", "passing"]):
+        return [
+            PlanStep(
+                id=1,
+                agent="academic",
+                action="get_exam_schedule",
+                params={"query": user_request},
+                depends_on=[]
+            )
+        ]
+
+    if any(k in req_lower for k in ["timetable", "schedule", "class", "today"]):
+        return [
+            PlanStep(
+                id=1,
+                agent="academic",
+                action="get_timetable",
+                params={"query": user_request},
+                depends_on=[]
+            )
+        ]
+
+    # Communication queries
+    if any(k in req_lower for k in ["email", "draft", "mail"]):
+        return [
+            PlanStep(
+                id=1,
+                agent="communication",
+                action="draft_email",
+                params={"body": user_request},
+                depends_on=[]
+            )
+        ]
+
+    if any(k in req_lower for k in ["remind", "reminder", "alarm"]):
+        return [
+            PlanStep(
+                id=1,
+                agent="communication",
+                action="schedule_reminder",
+                params={"event": user_request},
+                depends_on=[]
+            )
+        ]
+
+    # Fallback to academic attendance query
+    return [
+        PlanStep(
+            id=1,
+            agent="academic",
+            action="get_attendance",
+            params={"query": user_request},
+            depends_on=[]
+        )
+    ]
 
 
-def dispatch(steps: list[PlanStep], on_step_update=None) -> list[PlanStep]:
+def dispatch(steps: list[PlanStep], session_id: str = "default", on_step_update=None) -> list[PlanStep]:
     """
-    Executes steps in dependency order. on_step_update(step) is an optional
-    callback - Person D's frontend passes this in to update the trace panel
-    live as each step runs.
+    Executes plan steps in dependency order, injecting session_id into parameters
+    and recording completed turns into SQLite conversation_history memory.
     """
     completed_ids = set()
+
+    # Ensure profile exists
+    if not get_profile(session_id):
+        create_session(session_id)
 
     while len(completed_ids) < len(steps):
         made_progress = False
@@ -93,6 +229,8 @@ def dispatch(steps: list[PlanStep], on_step_update=None) -> list[PlanStep]:
                 continue  # waiting on a dependency
 
             step.status = "running"
+            step.params["session_id"] = session_id
+
             if on_step_update:
                 on_step_update(step)
 
@@ -105,15 +243,24 @@ def dispatch(steps: list[PlanStep], on_step_update=None) -> list[PlanStep]:
                 made_progress = True
                 continue
 
-            # if this step depends on an earlier one, pass its result forward
+            # Pass forward previous step results if needed
             for dep_id in step.depends_on:
                 dep_step = next(s for s in steps if s.id == dep_id)
                 if dep_step.result:
                     step.params["_previous_result"] = dep_step.result.data
 
+            # Execute agent handler
             result = agent_module.handle(step.action, step.params)
             step.result = result
             step.status = "failed" if result.status == "error" else "done"
+
+            # Record assistant response turn into SQLite memory
+            add_turn(
+                session_id=session_id,
+                role="assistant",
+                content=result.message,
+                agent_name=step.agent
+            )
 
             if on_step_update:
                 on_step_update(step)
@@ -127,13 +274,33 @@ def dispatch(steps: list[PlanStep], on_step_update=None) -> list[PlanStep]:
     return steps
 
 
-def run(user_request: str, on_step_update=None) -> list[PlanStep]:
-    steps = plan(user_request)
-    return dispatch(steps, on_step_update=on_step_update)
+def run(user_request: str, session_id: str = "default", on_step_update=None) -> list[PlanStep]:
+    """
+    Primary orchestrator entry point:
+    1. Resolves context from memory if pronouns/vague references exist.
+    2. Logs the user's turn to conversation_history.
+    3. Plans and dispatches execution steps.
+    """
+    # 1. Resolve context from previous turns
+    resolved_request = resolve_context(session_id, user_request)
+
+    # 2. Record user query turn in memory
+    add_turn(session_id=session_id, role="user", content=resolved_request)
+
+    # 3. Plan and Dispatch
+    steps = plan(resolved_request)
+    return dispatch(steps, session_id=session_id, on_step_update=on_step_update)
 
 
 if __name__ == "__main__":
-    # quick manual test - run this file directly to check the loop works
-    result = run("Am I eligible for the Google internship?")
-    for s in result:
-        print(s.id, s.agent, s.action, "->", s.status, "-", s.result.message if s.result else "")
+    test_session = "demo_session_001"
+    create_session(test_session, {"cgpa": 8.5, "backlog_count": 0, "attendance_pct": 88.0})
+    
+    print("--- Running Orchestrator Test ---")
+    results = run("Am I eligible for a dream company?", session_id=test_session)
+    for s in results:
+        res = s.result
+        print(f"Step {s.id} [{s.agent}.{s.action}] -> Status: {s.status}")
+        print(f"  Message : {res.message if res else ''}")
+        print(f"  Citation: {res.citation if res else ''}")
+

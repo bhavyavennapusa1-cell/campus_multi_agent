@@ -4,5 +4,3 @@ anthropic
 python-dotenv
 fastapi
 uvicorn
-sentence-transformers
-rank-bm25
