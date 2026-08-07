@@ -144,6 +144,7 @@ def run_integration_tests():
     steps_4_t2 = run_orchestrator(s4_t2_query, session_id=s4_session)
     res_4_t2 = steps_4_t2[0].result
 
+    # pyrefly: ignore [unexpected-keyword]
     s4_history = get_history(s4_session, last_n=10)
     # Check if turn 2 user query in history was context-resolved
     last_user_turn = [t for t in s4_history if t["role"] == "user"][-1]
