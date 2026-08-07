@@ -3,8 +3,9 @@ FROM node:20-alpine AS frontend-builder
 WORKDIR /app
 COPY . .
 WORKDIR /app/suhani-dashboard-ui
-RUN npm install || true
+RUN npm install
 RUN npm run build
+
 
 # Stage 2: Final Python Application Image
 FROM python:3.11-slim
