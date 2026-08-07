@@ -1,64 +1,59 @@
 """
-Person C owns this file.
-Two kinds of memory:
-  - short-term: conversation history for the current session (in-memory dict is fine)
-  - long-term: student profile, persisted to a small SQLite table
-
-For a 24-hour hackathon, in-memory short-term is fine (resets on restart) -
-don't over-engineer this part.
+Memory Module for Smart Campus Multi-Agent System.
+Handles student profiles and multi-turn session conversation history.
 """
 
-import sqlite3
-from pathlib import Path
+# Mock student database for quick profile resolution
+STUDENT_PROFILES = {
+    "1602-22-733-001": {
+        "student_id": "1602-22-733-001",
+        "name": "Bhavya",
+        "year": "3rd Year",
+        "branch": "CSE",
+        "cgpa": 8.4,
+        "attendance_percentage": 72.0,
+        "registered_events": ["Hackathon 2026"]
+    },
+    "default": {
+        "student_id": "1602-22-733-099",
+        "name": "Sample Student",
+        "year": "3rd Year",
+        "branch": "CSE",
+        "cgpa": 7.8,
+        "attendance_percentage": 68.5,
+        "registered_events": []
+    }
+}
 
-DB_PATH = Path(__file__).resolve().parent.parent / "data" / "memory.db"
-
-# --- short-term: conversation history, per session_id ---
-_conversations: dict[str, list[dict]] = {}
-
-
-def add_message(session_id: str, role: str, content: str):
-    _conversations.setdefault(session_id, []).append({"role": role, "content": content})
-
-
-def get_history(session_id: str) -> list[dict]:
-    return _conversations.get(session_id, [])
-
-
-# --- long-term: student profile in SQLite ---
-def _init_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS profile (
-            session_id TEXT PRIMARY KEY,
-            student_id TEXT,
-            year INTEGER,
-            branch TEXT
-        )
-    """)
-    conn.commit()
-    conn.close()
+# In-memory storage for active sessions
+SESSION_MEMORY = {}
 
 
-def save_profile(session_id: str, student_id: str, year: int, branch: str):
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute(
-        "INSERT OR REPLACE INTO profile (session_id, student_id, year, branch) VALUES (?, ?, ?, ?)",
-        (session_id, student_id, year, branch),
-    )
-    conn.commit()
-    conn.close()
+def get_student_profile(student_id: str = "default") -> dict:
+    """Retrieves student profile attributes."""
+    return STUDENT_PROFILES.get(student_id, STUDENT_PROFILES["default"])
 
 
-def get_profile(session_id: str) -> dict | None:
-    conn = sqlite3.connect(DB_PATH)
-    row = conn.execute(
-        "SELECT student_id, year, branch FROM profile WHERE session_id = ?", (session_id,)
-    ).fetchone()
-    conn.close()
-    if not row:
-        return None
-    return {"student_id": row[0], "year": row[1], "branch": row[2]}
+def get_session_history(session_id: str) -> list:
+    """Returns the conversation history for a given session."""
+    return SESSION_MEMORY.get(session_id, [])
 
 
-_init_db()
+def add_to_session_history(session_id: str, role: str, message: str):
+    """Appends a new user/agent message to the session history."""
+    if session_id not in SESSION_MEMORY:
+        SESSION_MEMORY[session_id] = []
+    
+    SESSION_MEMORY[session_id].append({
+        "role": role,
+        "content": message
+    })
+
+
+if __name__ == "__main__":
+    # Quick sanity check
+    profile = get_student_profile("1602-22-733-001")
+    print(f"Loaded Profile for {profile['name']}: {profile['branch']} {profile['year']}, CGPA: {profile['cgpa']}")
+    
+    add_to_session_history("session_1", "user", "Check my exam eligibility")
+    print("Session Memory Test:", get_session_history("session_1"))
