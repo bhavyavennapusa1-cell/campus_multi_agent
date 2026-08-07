@@ -25,9 +25,35 @@ ON_CAMPUS_LOCATIONS = {
 }
 
 
+CAMPUS_COORDINATES = {
+    "library": (17.4458, 78.3482, "Central Library & Knowledge Center"),
+    "central library": (17.4458, 78.3482, "Central Library & Knowledge Center"),
+    "cse": (17.4465, 78.3495, "Computer Science Dept & AI Lab"),
+    "computer science": (17.4465, 78.3495, "Computer Science Dept & AI Lab"),
+    "canteen": (17.4450, 78.3505, "Student Activity & Food Court"),
+    "hostel": (17.4440, 78.3470, "Boys Hostel Block B"),
+    "hostel b": (17.4440, 78.3470, "Boys Hostel Block B"),
+    "hostel a": (17.4435, 78.3460, "Girls Hostel Block A"),
+    "auditorium": (17.4452, 78.3478, "Main Auditorium"),
+    "sports": (17.4472, 78.3465, "Sports Complex"),
+}
+
+
+def resolve_location_coords(destination: str):
+    dest_lower = destination.lower()
+    for key, (lat, lng, name) in CAMPUS_COORDINATES.items():
+        if key in dest_lower:
+            return lat, lng, name
+    return 17.4458, 78.3482, destination
+
+
 def get_directions(params: dict) -> AgentResponse:
     origin = params.get("origin", "Hostel Block B")
     destination = params.get("destination", "Central Library")
+    lat, lng, loc_name = resolve_location_coords(destination)
+    google_maps_url = f"https://www.google.com/maps/dir/?api=1&destination={lat},{lng}"
+    actions = [{"type": "link", "label": "Get Directions", "url": google_maps_url}]
+
     api_key = os.environ.get("GOOGLE_MAPS_API_KEY")
 
     # Check on-campus dictionary/RAG first (Bhavya's dataset priority)
@@ -45,10 +71,13 @@ def get_directions(params: dict) -> AgentResponse:
                 "origin": origin,
                 "destination": destination,
                 "directions": f"Walk straight from {origin} past SAC circle to {on_campus_match}.",
+                "google_maps_url": google_maps_url,
+                "actions": actions,
                 "source": "mock"
             },
             message=f"Directions to {destination}: {on_campus_match} (via campus internal routing).",
-            citation=None
+            citation=None,
+            actions=actions
         )
 
     # Off-campus fallback via Google Maps API
@@ -70,10 +99,13 @@ def get_directions(params: dict) -> AgentResponse:
                         "distance": leg["distance"]["text"],
                         "duration": leg["duration"]["text"],
                         "steps": [s["html_instructions"] for s in leg["steps"][:3]],
+                        "google_maps_url": google_maps_url,
+                        "actions": actions,
                         "source": "live"
                     },
                     message=f"Google Maps directions from {origin} to {destination} ({leg['distance']['text']}, {leg['duration']['text']}).",
-                    citation=None
+                    citation=None,
+                    actions=actions
                 )
         except Exception:
             pass
@@ -86,11 +118,15 @@ def get_directions(params: dict) -> AgentResponse:
             "destination": destination,
             "distance": "1.8 km",
             "duration": "6 mins drive",
+            "google_maps_url": google_maps_url,
+            "actions": actions,
             "source": "mock"
         },
         message=f"Directions from {origin} to {destination}: Take Main Gate Road -> Outer Ring Road exit.",
-        citation=None
+        citation=None,
+        actions=actions
     )
+
 
 
 def find_nearby_facilities(params: dict) -> AgentResponse:

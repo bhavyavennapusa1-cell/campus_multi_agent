@@ -5,8 +5,10 @@ and Google Calendar scheduling using adapter pattern with live/mock fallbacks.
 """
 
 import os
+import re
 import requests
 from pathlib import Path
+
 import sys
 from datetime import datetime, timedelta
 
@@ -102,30 +104,99 @@ def get_timetable(params: dict) -> AgentResponse:
     )
 
 
+SUBJECT_ALIASES = {
+    "ds": "Data Structures",
+    "dsa": "Data Structures",
+    "data structures": "Data Structures",
+    "dbms": "Database Management Systems",
+    "database management systems": "Database Management Systems",
+    "database": "Database Management Systems",
+    "os": "Operating Systems",
+    "operating systems": "Operating Systems",
+}
+
+EXAM_DATABASE = [
+    {"subject": "Database Management Systems", "code": "DBMS", "date": (datetime.now() + timedelta(days=10)).strftime("%Y-%m-%d"), "time": "10:00 AM"},
+    {"subject": "Operating Systems", "code": "OS", "date": "2026-08-20", "time": "10:00 AM"},
+    {"subject": "Data Structures", "code": "DS", "date": "2026-08-22", "time": "10:00 AM"}
+]
+
+
 def get_exam_schedule(params: dict) -> AgentResponse:
     profile = resolve_profile(params)
+    raw_query = str(params.get("subject") or params.get("query") or "").strip().lower()
 
+    matched_std_subject = None
+    if raw_query:
+        sorted_alias_keys = sorted(SUBJECT_ALIASES.keys(), key=len, reverse=True)
+        for alias_key in sorted_alias_keys:
+            pattern = r'\b' + re.escape(alias_key) + r'\b'
+            if re.search(pattern, raw_query):
+                matched_std_subject = SUBJECT_ALIASES[alias_key]
+                break
 
-    query = params.get("query", "examination regulations passing marks grading scale CIE SEE")
-    rag_results = retrieve(query, k=1, category="academic")
+    rag_results = retrieve(raw_query or "examination regulations passing marks grading scale CIE SEE", k=1, category="academic")
     top_rag = rag_results[0] if rag_results else None
     citation = format_citation(top_rag) if top_rag else None
+
+    if matched_std_subject:
+        filtered_exams = [
+            e for e in EXAM_DATABASE 
+            if e["subject"].lower() == matched_std_subject.lower() or e["code"].lower() == matched_std_subject.lower()
+        ]
+        if filtered_exams:
+            target_exam = filtered_exams[0]
+            msg = f"Exam schedule for {profile['name']}: {target_exam['subject']} ({target_exam['code']}) on {target_exam['date']} at {target_exam['time']}."
+            return AgentResponse(
+                status="success",
+                data={
+                    "student": profile["name"],
+                    "exams": filtered_exams,
+                    "matched_subject": matched_std_subject,
+                    "rules": top_rag["text"] if top_rag else "",
+                    "source": "mock"
+                },
+                message=msg,
+                citation=citation
+            )
+        else:
+            return AgentResponse(
+                status="success",
+                data={
+                    "student": profile["name"],
+                    "exams": [],
+                    "matched_subject": matched_std_subject,
+                    "source": "mock"
+                },
+                message=f"No exam schedule found for requested subject '{matched_std_subject}'.",
+                citation=citation
+            )
+
+    # Check if a specific unmapped subject was queried
+    if raw_query and not any(k in raw_query for k in ["schedule", "exam", "exams", "dates", "when", "timetable", "all", "my"]):
+        return AgentResponse(
+            status="success",
+            data={
+                "student": profile["name"],
+                "exams": [],
+                "source": "mock"
+            },
+            message="No exam schedule found for the requested subject.",
+            citation=citation
+        )
 
     return AgentResponse(
         status="success",
         data={
             "student": profile["name"],
-            "exams": [
-                {"subject": "DBMS", "date": (datetime.now() + timedelta(days=10)).strftime("%Y-%m-%d"), "time": "10:00 AM"},
-                {"subject": "Operating Systems", "date": "2026-08-20", "time": "10:00 AM"},
-                {"subject": "Data Structures", "date": "2026-08-22", "time": "10:00 AM"}
-            ],
+            "exams": EXAM_DATABASE,
             "rules": top_rag["text"] if top_rag else "",
             "source": "mock"
         },
-        message=f"Exam schedule for {profile['name']}. DBMS exam is in 10 days.",
+        message=f"Exam schedule for {profile['name']}: DBMS, OS, and DS exams found.",
         citation=citation
     )
+
 
 
 def create_task(params: dict) -> AgentResponse:

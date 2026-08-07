@@ -192,6 +192,67 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatHistory = document.getElementById('chat-history');
     const traceList = document.getElementById('trace-list');
     const chips = document.querySelectorAll('.chip');
+    const btnNewChat = document.getElementById('btn-new-chat');
+
+    // --- Session ID & Local Storage History Management ---
+    function getOrCreateSessionId() {
+        let sid = sessionStorage.getItem('chat_session_id');
+        if (!sid) {
+            sid = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+            sessionStorage.setItem('chat_session_id', sid);
+        }
+        return sid;
+    }
+
+    let currentSessionId = getOrCreateSessionId();
+
+    function saveMessageToHistory(sessionId, msgObj) {
+        let history = [];
+        const historyJson = sessionStorage.getItem('chat_history_' + sessionId);
+        if (historyJson) {
+            try { history = JSON.parse(historyJson); } catch (e) { history = []; }
+        }
+        history.push(msgObj);
+        sessionStorage.setItem('chat_history_' + sessionId, JSON.stringify(history));
+    }
+
+    function loadChatHistory(sessionId) {
+        if (!chatHistory) return false;
+        const historyJson = sessionStorage.getItem('chat_history_' + sessionId);
+        if (!historyJson) return false;
+        try {
+            const messages = JSON.parse(historyJson);
+            if (!Array.isArray(messages) || messages.length === 0) return false;
+            
+            chatHistory.innerHTML = '';
+            messages.forEach(m => {
+                appendMessageToDOM(m.text, m.sender, m.agentsUsed, m.reasoningSteps, m.requiresConfirmation, m.actionContext, m.actions, false);
+            });
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // Auto-hydrate history on page load/switch
+    loadChatHistory(currentSessionId);
+
+    if (btnNewChat) {
+        btnNewChat.addEventListener('click', () => {
+            sessionStorage.removeItem('chat_session_id');
+            currentSessionId = getOrCreateSessionId();
+            if (chatHistory) {
+                chatHistory.innerHTML = `
+                    <div class="message msg-bot">
+                        Hi there! Select one of the quick scenario chips below or type your custom query.
+                    </div>
+                `;
+            }
+            if (traceList) {
+                traceList.innerHTML = `<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 3rem;">Awaiting orchestrator plan execution...</div>`;
+            }
+        });
+    }
 
     const urlParams = new URLSearchParams(window.location.search);
     const autoPrompt = urlParams.get('prompt');
@@ -219,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = 'default') => {
+    const appendMessageToDOM = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = 'default', actions = [], saveToStorage = true) => {
         if (!chatHistory) return;
         const msgDiv = document.createElement('div');
         msgDiv.className = `message msg-${sender} animate-pop`;
@@ -235,6 +296,22 @@ document.addEventListener('DOMContentLoaded', () => {
             contentHtml += `</div>`;
         }
 
+        // Render Clickable Action Buttons (BUG 3)
+        if (actions && actions.length > 0) {
+            let actionsHtml = `<div class="action-links-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.6rem;">`;
+            actions.forEach(act => {
+                if (act.type === 'link' || act.url) {
+                    actionsHtml += `
+                        <a href="${act.url}" target="_blank" rel="noopener noreferrer" class="btn-pill action-link-btn" style="background: var(--mint-green); color: var(--text-main); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.9rem; font-size: 0.85rem; border: 2px solid var(--border-dark); box-shadow: 2px 2px 0px var(--border-dark); transition: transform 0.15s;">
+                            📍 ${act.label || 'Get Directions'} →
+                        </a>
+                    `;
+                }
+            });
+            actionsHtml += `</div>`;
+            contentHtml += actionsHtml;
+        }
+
         if (requiresConfirmation) {
             contentHtml += `
                 <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;" class="action-buttons">
@@ -246,10 +323,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         msgDiv.innerHTML = contentHtml;
         chatHistory.appendChild(msgDiv);
+
+        if (saveToStorage) {
+            saveMessageToHistory(currentSessionId, { text, sender, agentsUsed, reasoningSteps, requiresConfirmation, actionContext, actions });
+        }
         
         setTimeout(() => {
             chatHistory?.scrollTo({ top: chatHistory.scrollHeight, behavior: 'smooth' });
         }, 50);
+    };
+
+    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = 'default', actions = []) => {
+        appendMessageToDOM(text, sender, agentsUsed, reasoningSteps, requiresConfirmation, actionContext, actions, true);
     };
 
     const showTypingIndicator = () => {
@@ -295,21 +380,28 @@ document.addEventListener('DOMContentLoaded', () => {
         let replyText = "Based on institutional regulations, your request has been processed across campus agent pipelines.";
         let agent = "academic";
         let action = "data_retrieval";
+        let actions = [];
 
         if (textLower.includes("eligib") || textLower.includes("google")) {
             agent = "placement";
             action = "check_eligibility";
             replyText = "Student is ELIGIBLE for Dream Tier placement drives (Google, Microsoft). Policy reference: Placement Policy §2.1.";
-        } else if (textLower.includes("email")) {
+        } else if (textLower.includes("email") || textLower.includes("draft")) {
             agent = "communication";
             action = "draft_email";
-            replyText = "Email drafted for academic office inquiry. Awaiting user confirmation to dispatch.";
+            replyText = "Email drafted for academic office inquiry. Would you like me to send this official email to academic_office@vasavi.ac.in?";
+        } else if (textLower.includes("direction") || textLower.includes("where") || textLower.includes("library") || textLower.includes("navigate")) {
+            agent = "navigator";
+            action = "get_directions";
+            replyText = "Directions to Central Library: Walk straight from Hostel Block B past SAC circle to Central Library Building, 2nd Floor.";
+            actions = [{"type": "link", "label": "Get Directions", "url": "https://www.google.com/maps/dir/?api=1&destination=17.4458,78.3482"}];
         }
 
         return {
             reply: replyText,
             agents_used: [agent],
             requires_confirmation: (agent === "communication"),
+            actions: actions,
             trace: [
                 { agent: "orchestrator", action: "plan_query", status: "done", message: "Decomposed query into execution steps" },
                 { agent: agent, action: action, status: "done", message: replyText }
@@ -318,23 +410,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const sendQuery = async (messageText) => {
+        const sendBtn = chatForm ? chatForm.querySelector('button[type="submit"]') : null;
+
         renderTraces([
             { agent: "orchestrator", action: "intent_parsing", status: "running", message: "Analyzing user input..." },
             { agent: "knowledge", action: "vector_retrieval", status: "pending", message: "Querying ChromaDB index..." }
         ]);
 
         showTypingIndicator();
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000);
 
         try {
             const response = await fetch(`${API_BASE}/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                signal: controller.signal,
                 body: JSON.stringify({
                     message: messageText,
-                    session_id: "demo_session_frontend",
+                    session_id: currentSessionId,
                     profile: {
                         name: memName?.value || "Bhavya Vennapusa",
                         branch: memBranch?.value || "CSE - 3rd Year",
@@ -343,23 +434,43 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 })
             });
-            clearTimeout(timeoutId);
+
             removeTypingIndicator();
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
             const data = await response.json();
-            appendMessage(data.reply, 'bot', data.agents_used, [], data.requires_confirmation, (data.agents_used && data.agents_used[0]) || 'default');
+            appendMessage(
+                data.reply, 
+                'bot', 
+                data.agents_used, 
+                [], 
+                data.requires_confirmation, 
+                data.action_id || (data.agents_used && data.agents_used[0]) || 'default',
+                data.actions || []
+            );
             renderTraces(data.trace);
         } catch (error) {
-            clearTimeout(timeoutId);
-            setTimeout(() => {
-                removeTypingIndicator();
-                const fallback = getFallbackResponse(messageText);
-                appendMessage(fallback.reply, 'bot', fallback.agents_used, [], fallback.requires_confirmation, fallback.agents_used[0]);
-                renderTraces(fallback.trace);
-                if (chatInput) {
-                    chatInput.disabled = false;
-                    chatInput.focus();
-                }
-            }, 800);
+            removeTypingIndicator();
+            const fallback = getFallbackResponse(messageText);
+            appendMessage(
+                fallback.reply, 
+                'bot', 
+                fallback.agents_used, 
+                [], 
+                fallback.requires_confirmation, 
+                fallback.agents_used[0],
+                fallback.actions || []
+            );
+            renderTraces(fallback.trace);
+        } finally {
+            // BUG 4 FIX: Always re-enable input & send button in finally block
+            if (chatInput) {
+                chatInput.disabled = false;
+                chatInput.focus();
+            }
+            if (sendBtn) {
+                sendBtn.disabled = false;
+            }
         }
     };
 
@@ -369,12 +480,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const text = chatInput.value.trim();
             if (!text) return;
 
+            const sendBtn = chatForm.querySelector('button[type="submit"]');
+
             appendMessage(text, 'user');
             chatInput.value = '';
             chatInput.disabled = true;
+            if (sendBtn) sendBtn.disabled = true;
+
             sendQuery(text);
         });
     }
+});
+
 });
 
 window.handleConfirm = (isConfirmed, context, btnElement) => {

@@ -5,10 +5,12 @@ with static frontend file serving and CORS middleware.
 """
 
 import os
+import re
 import sys
 import tempfile
 from pathlib import Path
 from typing import Optional, List, Literal
+
 
 # Ensure project root is in sys.path
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -189,16 +191,53 @@ def chat(req: ChatRequest):
     """Primary multi-agent reasoning chat endpoint."""
     message_text = req.message
     session_id = req.session_id
-    profile = req.profile
+    profile = req.profile or {}
+
+    prof_name = profile.get("name") or "Student"
+    prof_branch = profile.get("branch_year") or profile.get("branch") or "CSE - 3rd Year"
+    prof_hostel = profile.get("hostel_block") or profile.get("hostel") or "Block B"
+    prof_att = profile.get("attendance") or profile.get("attendance_pct") or "88"
+    if isinstance(prof_att, (int, float)):
+        prof_att = f"{prof_att}"
 
     if run:
         try:
             steps = run(message_text, session_id=session_id, profile=profile)
             agents_used = list(dict.fromkeys(s.agent for s in steps))
             reasoning_steps = [f"[{s.agent}] Action '{s.action}' -> {s.status}" for s in steps]
-            requires_confirmation = any(
-                s.result and getattr(s.result, 'status', '') == "needs_confirmation" for s in steps
-            ) or ("email" in message_text.lower() or "draft" in message_text.lower())
+
+            actions = []
+            requires_confirmation = False
+            action_id = None
+
+            for s in steps:
+                res = s.result
+                if res:
+                    if hasattr(res, 'actions') and res.actions:
+                        actions.extend(res.actions)
+                    elif isinstance(res.data, dict) and "actions" in res.data:
+                        actions.extend(res.data["actions"])
+
+                    if getattr(res, 'status', '') == "needs_confirmation":
+                        requires_confirmation = True
+                        if isinstance(res.data, dict) and res.data.get("action_id"):
+                            action_id = res.data.get("action_id")
+
+            # Fallback check for email/draft keywords if action_id missing
+            if ("email" in message_text.lower() or "draft" in message_text.lower() or "grievance" in message_text.lower()):
+                requires_confirmation = True
+                if not action_id and communication_agent.PENDING_ACTIONS:
+                    action_id = list(communication_agent.PENDING_ACTIONS.keys())[-1]
+
+            unique_actions = []
+            seen_urls = set()
+            for act in actions:
+                u = act.get("url")
+                if u and u not in seen_urls:
+                    seen_urls.add(u)
+                    unique_actions.append(act)
+                elif not u:
+                    unique_actions.append(act)
 
             trace = [
                 {
@@ -210,32 +249,83 @@ def chat(req: ChatRequest):
                 for s in steps
             ]
 
-            if synthesize_response:
+            steps_trace_str = "\n".join(
+                f"- Agent: {s.agent}, Action: {s.action}, Status: {s.status}, Message: {s.result.message if s.result else ''}"
+                for s in steps
+            )
+
+            synthesis_system_prompt = f"""You are CampusAgenda AI. Turn the backend agent trace below into ONE natural, concise reply for the student. Never show markdown headers, internal IDs, or raw policy-document fragments — extract only what's relevant to answering their question, in plain conversational language.
+
+Student: {prof_name}, {prof_branch}, Hostel {prof_hostel}, Attendance {prof_att}%
+Question: "{message_text}"
+Agent trace: {steps_trace_str}
+
+If a step needs user confirmation, ask for it naturally and mention what will happen if confirmed. If an agent found nothing relevant, don't mention it. Never invent data not present in the trace."""
+
+            anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
+            reply = None
+
+            if anthropic_key:
+                try:
+                    import anthropic
+                    client = anthropic.Anthropic(api_key=anthropic_key, timeout=4.0)
+                    response = client.messages.create(
+                        model="claude-3-5-sonnet-20241022",
+                        max_tokens=500,
+                        system=synthesis_system_prompt,
+                        messages=[{"role": "user", "content": "Synthesize the trace into a single reply."}],
+                    )
+                    reply = response.content[0].text.strip()
+                except Exception:
+                    pass
+
+            if not reply and synthesize_response:
                 reply = synthesize_response(message_text, steps, profile=profile)
-            else:
-                reply = " ".join(s.result.message for s in steps if s.result and s.result.message)
-                if not reply:
-                    reply = f"Processed request via {', '.join(agents_used)} agent pipeline."
+
+            if not reply:
+                messages = []
+                for s in steps:
+                    if s.result and s.result.message:
+                        clean_msg = re.sub(r'\[Action ID:\s*[^\]]+\]', '', s.result.message).strip()
+                        clean_msg = re.sub(r'#{1,6}\s*', '', clean_msg).strip()
+                        messages.append(clean_msg)
+                
+                if requires_confirmation:
+                    reply = f"Hello {prof_name}! I have prepared your request. Would you like me to send this official email to academic_office@vasavi.ac.in?"
+                elif messages:
+                    reply = f"Hello {prof_name}! " + " ".join(messages)
+                else:
+                    reply = f"Hello {prof_name}! Processed request via {', '.join(agents_used)} agent pipeline."
+
+            # Post-processing: strip any remaining markdown headers or action IDs
+            reply = re.sub(r'\[Action ID:\s*[^\]]+\]', '', reply).strip()
+            reply = re.sub(r'#{1,6}\s*', '', reply).strip()
 
             return {
                 "reply": reply,
+                "actions": unique_actions,
                 "agents_used": agents_used,
                 "reasoning_steps": reasoning_steps,
                 "requires_confirmation": requires_confirmation,
+                "action_id": action_id,
                 "trace": trace
             }
         except Exception as e:
-            pass
+            import traceback
+            print(f"Chat endpoint error: {e}")
+            traceback.print_exc()
 
 
-    # Keyword Orchestrator Fallback
     return {
         "reply": f"Processed query regarding: {message_text}",
+        "actions": [],
         "agents_used": ["academic"],
         "reasoning_steps": ["[academic] Dispatched default action"],
         "requires_confirmation": False,
+        "action_id": None,
         "trace": [{"agent": "academic", "action": "general_synthesis", "status": "done", "message": "Handled via fallback pipeline."}]
     }
+
 
 
 # --- Feature 3: Communication & Human-in-the-loop Approval ---

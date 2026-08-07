@@ -18,6 +18,7 @@ class AgentResponse:
     data: dict[str, Any] = field(default_factory=dict)
     message: str = ""          # one-line human-readable summary, shown in the trace panel
     citation: str | None = None  # source doc filename, only set when RAG was used
+    actions: list[dict[str, Any]] = field(default_factory=list)  # optional interactive UI actions
 
     def to_dict(self) -> dict:
         return {
@@ -25,7 +26,9 @@ class AgentResponse:
             "data": self.data,
             "message": self.message,
             "citation": self.citation,
+            "actions": self.actions,
         }
+
 
 
 @dataclass
