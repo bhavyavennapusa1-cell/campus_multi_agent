@@ -41,6 +41,7 @@ from agents import (
     navigator_agent,
     events_agent,
 )
+from shared import user_db
 
 # Lazy Whisper Model Loading for Fast Startup
 WHISPER_MODEL = None
@@ -136,11 +137,102 @@ class ScheduleReminderRequest(BaseModel):
     minutes_before: int = 60
 
 
+class SignupRequest(BaseModel):
+    email: str
+    password: str
+    name: str
+    branch: Optional[str] = "CSE - 3rd Year"
+    attendance: Optional[str] = "100%"
+    hostel: Optional[str] = "Block B"
+    career_goal: Optional[str] = "Backend Developer"
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class UpdateProfileRequest(BaseModel):
+    token: str
+    name: str
+    branch: Optional[str] = "CSE - 3rd Year"
+    attendance: Optional[str] = "88%"
+    hostel: Optional[str] = "Block B"
+    career_goal: Optional[str] = "Backend Developer"
+
+
+class LogoutRequest(BaseModel):
+    token: str
+
+
 # --- System Endpoints ---
 @app.get("/health")
 def health():
     """Liveness check endpoint."""
     return {"status": "ok", "service": "Smart Campus Multi-Agent System"}
+
+
+# --- Authentication & User Profile Endpoints ---
+@app.post("/auth/signup")
+def signup(req: SignupRequest):
+    try:
+        user = user_db.create_user(
+            email=req.email,
+            password=req.password,
+            name=req.name,
+            branch=req.branch or "CSE - 3rd Year",
+            attendance=req.attendance or "100%",
+            hostel=req.hostel or "Block B",
+            career_goal=req.career_goal or "Backend Developer"
+        )
+        return {"status": "success", "token": user["token"], "user": user}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Signup failed: {str(e)}")
+
+
+@app.post("/auth/login")
+def login(req: LoginRequest):
+    try:
+        user = user_db.authenticate_user(email=req.email, password=req.password)
+        return {"status": "success", "token": user["token"], "user": user}
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
+
+
+@app.get("/auth/me")
+def get_current_user(token: str = Query(...)):
+    user = user_db.get_user_by_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Session expired or invalid token.")
+    return {"status": "success", "user": user}
+
+
+@app.post("/auth/profile")
+def update_profile(req: UpdateProfileRequest):
+    try:
+        user = user_db.update_user_profile(
+            token=req.token,
+            name=req.name,
+            branch=req.branch or "CSE - 3rd Year",
+            attendance=req.attendance or "88%",
+            hostel=req.hostel or "Block B",
+            career_goal=req.career_goal or "Backend Developer"
+        )
+        return {"status": "success", "user": user}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Profile update failed: {str(e)}")
+
+
+@app.post("/auth/logout")
+def logout(req: LogoutRequest):
+    user_db.logout_user(req.token)
+    return {"status": "success", "message": "Logged out successfully."}
 
 
 # --- Feature 1: Voice Transcription Endpoint ---

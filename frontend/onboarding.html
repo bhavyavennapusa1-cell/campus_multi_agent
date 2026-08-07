@@ -140,12 +140,18 @@
                 <button type="button" class="btn-pill step-pill" id="pill-step-3" style="background: var(--surface); color: var(--text-main);">3. Goals</button>
             </div>
 
+            <div id="ob-error-msg" style="display: none; background: #fadbd8; border: 2px solid #e74c3c; border-radius: 12px; padding: 0.75rem 1rem; font-size: 0.9rem; color: #c0392b; font-weight: 600; margin-bottom: 1.5rem; text-align: left;"></div>
+
             <form id="onboarding-form" onsubmit="handleOnboardingSubmit(event)">
                 
                 <div class="step-content active" id="step-1">
-                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.5rem; font-size: 1.1rem;">What's your full name?</label>
-                    <div class="input-wrapper" style="margin-bottom: 2rem;">
+                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">What's your full name?</label>
+                    <div class="input-wrapper" style="margin-bottom: 1rem;">
                         <input type="text" id="ob-name" placeholder="e.g. Bhavya Vennapusa" required style="border: none; box-shadow: none;">
+                    </div>
+                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Email or Roll Number</label>
+                    <div class="input-wrapper" style="margin-bottom: 2rem;">
+                        <input type="text" id="ob-email" placeholder="e.g. student@campus.edu" required style="border: none; box-shadow: none;">
                     </div>
                     <div style="text-align: right;">
                         <button type="button" class="btn-blob" onclick="goToStep(2)">Continue →</button>
@@ -153,9 +159,13 @@
                 </div>
 
                 <div class="step-content" id="step-2">
-                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.5rem; font-size: 1.1rem;">Branch & Academic Year</label>
-                    <div class="input-wrapper" style="margin-bottom: 2rem;">
+                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Branch & Academic Year</label>
+                    <div class="input-wrapper" style="margin-bottom: 1rem;">
                         <input type="text" id="ob-branch" placeholder="e.g. CSE - 3rd Year" required style="border: none; box-shadow: none;">
+                    </div>
+                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Account Password</label>
+                    <div class="input-wrapper" style="margin-bottom: 2rem;">
+                        <input type="password" id="ob-password" placeholder="••••••••" required style="border: none; box-shadow: none;">
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <button type="button" class="btn-pill" style="background: var(--surface); color: var(--text-main);" onclick="goToStep(1)">← Back</button>
@@ -164,8 +174,8 @@
                 </div>
 
                 <div class="step-content" id="step-3">
-                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.5rem; font-size: 1.1rem;">Primary Career Goal</label>
-                    <div class="input-wrapper form-select-wrapper" style="margin-bottom: 2rem; padding: 0.75rem 1rem;">
+                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Primary Career Goal</label>
+                    <div class="input-wrapper form-select-wrapper" style="margin-bottom: 1rem; padding: 0.75rem 1rem;">
                         <select id="ob-career-goal" required>
                             <option value="Backend Developer" selected>Backend Developer</option>
                             <option value="Frontend Developer">Frontend Developer</option>
@@ -173,17 +183,23 @@
                             <option value="Product Manager">Product Manager</option>
                         </select>
                     </div>
+                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Hostel Block</label>
+                    <div class="input-wrapper" style="margin-bottom: 2rem;">
+                        <input type="text" id="ob-hostel" value="Block B" required style="border: none; box-shadow: none;">
+                    </div>
                     <div style="display: flex; justify-content: space-between;">
                         <button type="button" class="btn-pill" style="background: var(--surface); color: var(--text-main);" onclick="goToStep(2)">← Back</button>
-                        <button type="submit" class="btn-blob" style="background: var(--mint-green);">Finish Setup ✨</button>
+                        <button type="submit" id="ob-submit-btn" class="btn-blob" style="background: var(--mint-green);">Finish Setup ✨</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="script.js"></script>
     <script>
+        const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:8000' : '';
+
         const hamburger = document.getElementById('hamburger');
         const navLinks = document.getElementById('nav-links');
         if (hamburger && navLinks) {
@@ -193,7 +209,7 @@
         }
 
         function goToStep(stepNum) {
-
+            document.getElementById('ob-error-msg').style.display = 'none';
             document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
             document.getElementById(`step-${stepNum}`).classList.add('active');
 
@@ -204,22 +220,47 @@
             }
         }
 
-        function handleOnboardingSubmit(e) {
+        async function handleOnboardingSubmit(e) {
             e.preventDefault();
-            const btn = document.querySelector('button[type="submit"]');
-            btn.innerHTML = "Saving... ⏳";
-            
-            setTimeout(() => {
-                const studentData = {
-                    name: document.getElementById('ob-name').value,
-                    branch: document.getElementById('ob-branch').value,
-                    careerGoal: document.getElementById('ob-career-goal').value,
-                    attendance: "100%", // Defaulted for new user
-                    hostel: "Unassigned"
-                };
-                localStorage.setItem('studentProfile', JSON.stringify(studentData));
+            const errBox = document.getElementById('ob-error-msg');
+            errBox.style.display = 'none';
+
+            const btn = document.getElementById('ob-submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = "Creating Account... ⏳";
+
+            const payload = {
+                email: document.getElementById('ob-email').value.trim(),
+                password: document.getElementById('ob-password').value,
+                name: document.getElementById('ob-name').value.trim(),
+                branch: document.getElementById('ob-branch').value.trim(),
+                attendance: "100%",
+                hostel: document.getElementById('ob-hostel').value.trim() || "Block B",
+                career_goal: document.getElementById('ob-career-goal').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.detail || "Signup failed. Please try again.");
+                }
+
+                localStorage.setItem('studentSessionToken', data.token);
+                localStorage.setItem('studentProfile', JSON.stringify(data.user));
+                localStorage.setItem('studentSession', JSON.stringify({ email: data.user.email, name: data.user.name }));
+                
                 window.location.href = 'dashboard.html';
-            }, 800);
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerHTML = "Finish Setup ✨";
+                errBox.textContent = err.message;
+                errBox.style.display = 'block';
+            }
         }
     </script>
 </body>

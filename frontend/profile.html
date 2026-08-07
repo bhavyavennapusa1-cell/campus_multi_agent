@@ -124,12 +124,15 @@
     <main class="profile-container" style="position: relative; z-index: 10;">
 
         <!-- Hero Header -->
-        <div class="cloud-container" style="padding: 1.75rem; margin-bottom: 2rem;">
-            <a href="chat.html?prompt=Show%20my%20stored%20student%20profile%20and%20memory" class="sticker-tag route-to-chat" data-prompt="Show my stored student profile and memory" style="background: var(--soft-yellow); text-decoration: none; cursor: pointer; display: inline-block;">👤 Memory & Identity</a>
-            <h1 style="font-family: var(--font-heading); font-size: 2.3rem; color: var(--primary-blue);">Student Profile</h1>
-            <p style="color: var(--text-muted); max-width: 600px; margin: 0.25rem auto 0;">
-                View persistent memory parameters injected into Orchestrator context and update your student records.
-            </p>
+        <div class="cloud-container" style="padding: 1.75rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <a href="chat.html?prompt=Show%20my%20stored%20student%20profile%20and%20memory" class="sticker-tag route-to-chat" data-prompt="Show my stored student profile and memory" style="background: var(--soft-yellow); text-decoration: none; cursor: pointer; display: inline-block;">👤 Memory & Identity</a>
+                <h1 style="font-family: var(--font-heading); font-size: 2.3rem; color: var(--primary-blue);">Student Profile</h1>
+                <p style="color: var(--text-muted); max-width: 600px; margin: 0.25rem 0 0;">
+                    View persistent memory parameters injected into Orchestrator context and update your student records.
+                </p>
+            </div>
+            <button class="btn-pill" onclick="handleLogout(event)" style="background: #c0392b; color: white;">Logout 🚪</button>
         </div>
 
         <div class="profile-grid">
@@ -140,60 +143,61 @@
 
                 <div class="info-row">
                     <span class="info-label">Student Name</span>
-                    <span class="info-value" id="display-name">Bhavya Vennapusa</span>
+                    <span class="info-value" id="display-name">-</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Branch & Year</span>
-                    <span class="info-value" id="display-branch">CSE - 3rd Year</span>
+                    <span class="info-value" id="display-branch">-</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Attendance %</span>
-                    <span class="info-value" id="display-attendance" style="color: #27ae60;">88%</span>
+                    <span class="info-value" id="display-attendance" style="color: #27ae60;">-</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Hostel Block</span>
-                    <span class="info-value" id="display-hostel">Block B</span>
+                    <span class="info-value" id="display-hostel">-</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Career Goal</span>
-                    <span class="info-value" id="display-goal" style="color: var(--primary-blue);">Backend Developer</span>
+                    <span class="info-value" id="display-goal" style="color: var(--primary-blue);">-</span>
                 </div>
             </div>
 
-            <!-- 2. Editable Profile Form Card (Reusing memory-panel & memory-group styling from chat.css) -->
+            <!-- 2. Editable Profile Form Card -->
             <div class="memory-panel" style="height: auto; border-radius: 20px;">
                 <div class="sticker-tag" style="background: var(--bubble-pink); margin-bottom: 0.5rem;">✏️ Edit Profile</div>
                 <div class="memory-title">Update Memory Context</div>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Changes take effect immediately across all multi-agent workflows.</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem;">Changes take effect immediately across all multi-agent workflows.</p>
+
+                <div id="profile-status-msg" style="display: none; border-radius: 12px; padding: 0.65rem 0.9rem; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem;"></div>
 
                 <form id="profile-edit-form" onsubmit="handleProfileSave(event)">
-                    <!-- TODO: Replace mock with real POST /student/profile -->
                     <div class="memory-group">
                         <label for="prof-name">Student Name</label>
-                        <input type="text" id="prof-name" value="Bhavya Vennapusa" required>
+                        <input type="text" id="prof-name" placeholder="e.g. Bhavya Vennapusa" required>
                     </div>
 
                     <div class="memory-group">
                         <label for="prof-branch">Branch & Year</label>
-                        <input type="text" id="prof-branch" value="CSE - 3rd Year" required>
+                        <input type="text" id="prof-branch" placeholder="e.g. CSE - 3rd Year" required>
                     </div>
 
                     <div class="memory-group">
                         <label for="prof-attendance">Attendance %</label>
-                        <input type="text" id="prof-attendance" value="88%" required>
+                        <input type="text" id="prof-attendance" placeholder="e.g. 88%" required>
                     </div>
 
                     <div class="memory-group">
                         <label for="prof-hostel">Hostel Block</label>
-                        <input type="text" id="prof-hostel" value="Block B" required>
+                        <input type="text" id="prof-hostel" placeholder="e.g. Block B" required>
                     </div>
 
                     <div class="memory-group" style="margin-bottom: 1.25rem;">
                         <label for="prof-goal">Career Goal</label>
-                        <input type="text" id="prof-goal" value="Backend Developer" required>
+                        <input type="text" id="prof-goal" placeholder="e.g. Backend Developer" required>
                     </div>
 
-                    <button type="submit" class="btn-pill" style="width: 100%; justify-content: center; font-size: 0.95rem;">Save Profile Changes →</button>
+                    <button type="submit" id="save-profile-btn" class="btn-pill" style="width: 100%; justify-content: center; font-size: 0.95rem;">Save Profile Changes →</button>
                 </form>
             </div>
         </div>
@@ -204,45 +208,128 @@
     </footer>
 
     <script>
+        const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:8000' : '';
+
+        const token = localStorage.getItem('studentSessionToken');
+        if (!token) {
+            window.location.replace('login.html');
+        }
+
         document.getElementById('hamburger').addEventListener('click', () => {
             document.getElementById('nav-links').classList.toggle('active');
         });
 
-        // Load saved profile data if present
-        function loadProfileData() {
+        function populateDisplayValues(data) {
+            if (!data) return;
+            document.getElementById('display-name').textContent = data.name || "-";
+            document.getElementById('display-branch').textContent = data.branch || "-";
+            document.getElementById('display-attendance').textContent = data.attendance || "-";
+            document.getElementById('display-hostel').textContent = data.hostel || "-";
+            document.getElementById('display-goal').textContent = data.career_goal || data.careerGoal || "-";
+
+            document.getElementById('prof-name').value = data.name || "";
+            document.getElementById('prof-branch').value = data.branch || "";
+            document.getElementById('prof-attendance').value = data.attendance || "";
+            document.getElementById('prof-hostel').value = data.hostel || "";
+            document.getElementById('prof-goal').value = data.career_goal || data.careerGoal || "";
+        }
+
+        // Hydrate profile data from local cache first, then fetch fresh data from backend SQLite store
+        async function loadProfileData() {
             const saved = localStorage.getItem('studentProfile');
             if (saved) {
                 try {
-                    const data = JSON.parse(saved);
-                    document.getElementById('display-name').textContent = data.name || "Bhavya Vennapusa";
-                    document.getElementById('display-branch').textContent = data.branch || "CSE - 3rd Year";
-                    document.getElementById('display-attendance').textContent = data.attendance || "88%";
-                    document.getElementById('display-hostel').textContent = data.hostel || "Block B";
-                    document.getElementById('display-goal').textContent = data.careerGoal || "Backend Developer";
-
-                    document.getElementById('prof-name').value = data.name || "Bhavya Vennapusa";
-                    document.getElementById('prof-branch').value = data.branch || "CSE - 3rd Year";
-                    document.getElementById('prof-attendance').value = data.attendance || "88%";
-                    document.getElementById('prof-hostel').value = data.hostel || "Block B";
-                    document.getElementById('prof-goal').value = data.careerGoal || "Backend Developer";
+                    const localData = JSON.parse(saved);
+                    populateDisplayValues(localData);
                 } catch(e) {}
+            }
+
+            if (token) {
+                try {
+                    const res = await fetch(`${API_BASE}/auth/me?token=${encodeURIComponent(token)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.user) {
+                            localStorage.setItem('studentProfile', JSON.stringify(data.user));
+                            populateDisplayValues(data.user);
+                        }
+                    } else if (res.status === 401) {
+                        handleLogout();
+                    }
+                } catch (err) {
+                    console.warn("Backend load profile fallback:", err);
+                }
             }
         }
 
-        // Handle profile save
-        function handleProfileSave(e) {
+        // Handle profile save to backend SQLite database
+        async function handleProfileSave(e) {
             e.preventDefault();
-            // TODO: Replace mock with real POST /student/profile
-            const updated = {
-                name: document.getElementById('prof-name').value,
-                branch: document.getElementById('prof-branch').value,
-                attendance: document.getElementById('prof-attendance').value,
-                hostel: document.getElementById('prof-hostel').value,
-                careerGoal: document.getElementById('prof-goal').value
+            const statusMsg = document.getElementById('profile-status-msg');
+            const saveBtn = document.getElementById('save-profile-btn');
+            
+            statusMsg.style.display = 'none';
+            saveBtn.disabled = true;
+            saveBtn.textContent = "Saving to Database... ⏳";
+
+            const updatedData = {
+                token: token,
+                name: document.getElementById('prof-name').value.trim(),
+                branch: document.getElementById('prof-branch').value.trim(),
+                attendance: document.getElementById('prof-attendance').value.trim(),
+                hostel: document.getElementById('prof-hostel').value.trim(),
+                career_goal: document.getElementById('prof-goal').value.trim()
             };
-            localStorage.setItem('studentProfile', JSON.stringify(updated));
-            loadProfileData();
-            alert("✓ Profile updated successfully!");
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/profile`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                });
+                const data = await res.json();
+                
+                if (!res.ok) {
+                    throw new Error(data.detail || "Failed to update profile.");
+                }
+
+                localStorage.setItem('studentProfile', JSON.stringify(data.user));
+                populateDisplayValues(data.user);
+
+                statusMsg.style.background = '#d4edda';
+                statusMsg.style.border = '2px solid #27ae60';
+                statusMsg.style.color = '#155724';
+                statusMsg.textContent = "✓ Profile successfully saved to database!";
+                statusMsg.style.display = 'block';
+            } catch (err) {
+                statusMsg.style.background = '#fadbd8';
+                statusMsg.style.border = '2px solid #e74c3c';
+                statusMsg.style.color = '#c0392b';
+                statusMsg.textContent = `❌ Error saving profile: ${err.message}`;
+                statusMsg.style.display = 'block';
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = "Save Profile Changes →";
+            }
+        }
+
+        async function handleLogout(e) {
+            if (e) e.preventDefault();
+            const currentToken = localStorage.getItem('studentSessionToken');
+            if (currentToken) {
+                try {
+                    await fetch(`${API_BASE}/auth/logout`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: currentToken })
+                    });
+                } catch (err) {}
+            }
+            localStorage.removeItem('studentSessionToken');
+            localStorage.removeItem('studentProfile');
+            localStorage.removeItem('studentSession');
+            window.location.replace('login.html');
         }
 
         loadProfileData();

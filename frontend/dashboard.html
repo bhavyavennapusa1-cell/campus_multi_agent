@@ -175,6 +175,10 @@
                 <span>Notifications</span>
                 <span class="badge-bubble">3</span>
             </a>
+            <a href="#" class="sidebar-item" onclick="handleLogout(event)">
+                <span class="sidebar-icon">🚪</span>
+                <span>Logout</span>
+            </a>
         </aside>
 
         <!-- Main Workspace Area -->
@@ -319,21 +323,50 @@
     </footer>
 
     <script>
+        const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:8000' : '';
+
+        // Session Token Guard
+        const sessionToken = localStorage.getItem('studentSessionToken');
+        if (!sessionToken) {
+            window.location.replace('login.html');
+        }
+
         // Responsive Mobile Navbar Toggle
         document.getElementById('hamburger').addEventListener('click', () => {
             document.getElementById('nav-links').classList.toggle('active');
         });
 
-        // Hydrate Student Name if saved in localStorage
-        const savedProfile = localStorage.getItem('studentProfile');
-        if (savedProfile) {
-            try {
-                const data = JSON.parse(savedProfile);
-                if (data.name) {
-                    document.getElementById('welcome-message').textContent = `Good morning, ${data.name} 👋`;
+        // Hydrate Student Name from real saved backend profile or localStorage
+        async function loadDashboardUser() {
+            const savedProfile = localStorage.getItem('studentProfile');
+            if (savedProfile) {
+                try {
+                    const data = JSON.parse(savedProfile);
+                    if (data.name) {
+                        document.getElementById('welcome-message').textContent = `Good morning, ${data.name} 👋`;
+                    }
+                } catch (e) { }
+            }
+
+            if (sessionToken) {
+                try {
+                    const res = await fetch(`${API_BASE}/auth/me?token=${encodeURIComponent(sessionToken)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.user && data.user.name) {
+                            localStorage.setItem('studentProfile', JSON.stringify(data.user));
+                            document.getElementById('welcome-message').textContent = `Good morning, ${data.user.name} 👋`;
+                        }
+                    } else if (res.status === 401) {
+                        handleLogout();
+                    }
+                } catch (err) {
+                    console.warn("Auth me fallback:", err);
                 }
-            } catch (e) { }
+            }
         }
+        loadDashboardUser();
 
         // Prompt button event binding to safely handle routing
         document.querySelectorAll('.route-to-chat').forEach(btn => {
@@ -344,14 +377,22 @@
             });
         });
 
-        // TODO: replace with real fetch('/student/dashboard') to hydrate status cards dynamically
-        async function fetchDashboardStatus() {
-            /*
-             * Real implementation:
-             * const data = await fetch('/student/dashboard').then(r => r.json());
-             * document.getElementById('welcome-message').textContent = `Good morning, ${data.studentName} 👋`;
-             * // Hydrate priorities, AI recommendation, upcoming items and status cards
-             */
+        async function handleLogout(e) {
+            if (e) e.preventDefault();
+            const currentToken = localStorage.getItem('studentSessionToken');
+            if (currentToken) {
+                try {
+                    await fetch(`${API_BASE}/auth/logout`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: currentToken })
+                    });
+                } catch (err) {}
+            }
+            localStorage.removeItem('studentSessionToken');
+            localStorage.removeItem('studentProfile');
+            localStorage.removeItem('studentSession');
+            window.location.replace('login.html');
         }
     </script>
 </body>
