@@ -138,6 +138,7 @@
             <a href="index.html">Home</a>
             <a href="dashboard.html">Dashboard</a>
             <a href="chat.html">Assistant</a>
+            <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out 🚪</a>
         </div>
     </nav>
 
@@ -212,7 +213,7 @@
                         <div><strong>Active Grant:</strong> National Merit Tech Fellowship (Approved)</div>
                         <div style="margin-top: 0.3rem;"><strong>Stipend Amount:</strong> ₹15,000 / Semester</div>
                         <div style="margin-top: 0.6rem;">
-                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); alert('Downloading Scholarship Grant Certificate...')">Download Certificate 📄</button>
+                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); downloadCertificateFile('', 'National Merit Tech Fellowship', '₹15,000 / Semester')">Download Certificate 📄</button>
                         </div>
                     </div>
                 </div>

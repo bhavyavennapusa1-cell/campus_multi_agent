@@ -244,6 +244,7 @@
             <a href="index.html">Home</a>
             <a href="dashboard.html">Dashboard</a>
             <a href="chat.html">Assistant</a>
+            <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out 🚪</a>
         </div>
     </nav>
 
@@ -350,7 +351,7 @@
                                     <p style="font-size: 0.85rem; color: var(--text-muted);">👨‍🏫 Faculty: <strong>${c.faculty}</strong></p>
                                 </div>
                                 <div style="margin-top: 1.25rem;">
-                                    <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="alert('Downloading syllabus for ${c.code}...')">
+                                    <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="downloadSyllabusFile('${c.code}', '${c.course}', '${c.faculty}', ${c.credits})">
                                         View Syllabus PDF 📄
                                     </button>
                                 </div>
@@ -543,11 +544,9 @@
             alert(`📅 Class Details:\nCourse: ${courseStr}\nDay: ${dayStr}\nTime: ${timeStr}`);
         }
 
-        // Mock action for "Add to Calendar" button (following naming rule)
+        // Action for "Add to Calendar" button (following naming rule)
         function mockAddToCalendar(subject, date) {
-            // TODO: Connects to POST /communication/calendar
-            console.log(`[Calendar Mock] Added exam "${subject}" on ${date} to student calendar.`);
-            alert(`✓ Added "${subject}" to Calendar!`);
+            downloadIcsFile(`${subject} Exam`, date, 'Exam Hall 102', `Official Midterm/Endterm Exam for ${subject}`);
         }
 
         // Form Submit Handler for Organize tab (verbatim from academic-organize.html)

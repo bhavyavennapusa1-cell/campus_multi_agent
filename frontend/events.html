@@ -126,6 +126,7 @@
             <a href="index.html">Home</a>
             <a href="dashboard.html">Dashboard</a>
             <a href="chat.html">Assistant</a>
+            <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out 🚪</a>
         </div>
     </nav>
 
@@ -287,7 +288,7 @@
             renderEvents();
         }
 
-        // Naming rule compliance: "Add to Calendar" -> POST /communication/calendar
+        // "Add to Calendar" -> Export real .ics calendar file
         async function addToCalendar(eventName, eventDate) {
             try {
                 if (window.CampusApi && window.CampusApi.scheduleCalendar) {
@@ -296,7 +297,7 @@
             } catch (e) {
                 console.warn("Calendar API fallback:", e);
             }
-            alert(`✓ Added "${eventName}" on ${eventDate} to your Calendar!`);
+            downloadIcsFile(eventName, eventDate, 'Campus Auditorium', `Official Event: ${eventName}`);
         }
 
 
