@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]);
 
         try {
-            const response = await fetch('http://localhost:8000/chat', {
+            const response = await fetch('/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTraces(data.trace);
 
         } catch (error) {
-            appendMessage('⚠️ Could not connect to backend server at localhost:8000. Please ensure Person A’s FastAPI backend is running.', 'bot', ['System'], ['Error handling triggered: fallback response active.']);
+            appendMessage('⚠️ Could not connect to backend server at /chat. Please ensure FastAPI backend is running.', 'bot', ['System'], ['Error handling triggered: fallback response active.']);
             renderTraces([{ agent: "System", action: "API Request", status: "failed", message: "Connection refused." }]);
         } finally {
             chatInput.disabled = false;

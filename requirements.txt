@@ -1,4 +1,3 @@
-streamlit
 chromadb
 anthropic
 python-dotenv
@@ -6,3 +5,4 @@ fastapi
 uvicorn
 sentence-transformers
 rank-bm25
+pyyaml
