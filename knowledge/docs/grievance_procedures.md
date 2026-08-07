@@ -5,6 +5,7 @@ category: campus
 version: "2.0"
 effective_date: "2026-06-01"
 last_updated: "2026-08-01"
+related_docs: ["DOC_HOSTEL_001", "DOC_CAMP_SRV_007"]
 ---
 
 # Student Grievance Redressal Procedure & SLA Matrix

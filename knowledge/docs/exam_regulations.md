@@ -1,12 +1,20 @@
-# Vasavi College of Engineering - Examination Guidelines
+---
+doc_id: DOC_EXAM_002
+title: Examination Regulations, Passing Thresholds, and CIE/SEE Weightage
+category: academic
+version: "2.0"
+effective_date: "2026-06-01"
+last_updated: "2026-08-01"
+related_docs: ["DOC_ACAD_REGS_002", "DOC_ATTEND_001"]
+---
 
-## Evaluation & Passing Rules
-1. Continuous Internal Evaluation (CIE): Accounts for 40% of the total course marks.
-2. Semester End Examination (SEE): Accounts for 60% of total course marks.
-3. Passing Criteria: A minimum of 40% in SEE and 40% overall aggregate is required to pass a course.
+# End-Semester and Internal Examination Regulations
 
-## Exam Hall Conduct & Makeup Examinations
-1. Arrival & Entry: Students must arrive at the examination hall at least 15 minutes before the scheduled start time. Late arrivals beyond 30 minutes will not be permitted entry.
-2. Makeup Examinations: Granted only in cases of medical emergency, family emergency, or institutionally approved travel, supported by written request to the examination controller and documentation submitted within 5 working days.
-3. Disciplinary Action: Use of unauthorized material or electronic devices during an examination will result in strict cancellation of the exam.
+## Passing Thresholds and Weightage
+1. Combined Weightage: Continuous Internal Evaluation (CIE) accounts for 30% of the total grade; Semester End Examination (SEE) accounts for 70%.
+2. Passing Criteria: A student must score a minimum of 40% in the SEE paper (28/70) AND achieve an overall aggregate score of at least 40% (CIE + SEE) to clear a course.
+3. CIE Components: Internal assessment includes 2 mid-term tests (20 marks), quizzes/assignments (5 marks), and active class participation (5 marks).
 
+## Supplementary and Re-Evaluation Rules
+1. Supplementary Exams: Held twice a year (after odd and even semester results). Students with active backlogs may register for a maximum of 4 supplementary papers per cycle.
+2. Re-Evaluation: Students may request re-evaluation within 14 days of result publication. A revised grade is awarded ONLY if the mark change exceeds 10% of total SEE marks.

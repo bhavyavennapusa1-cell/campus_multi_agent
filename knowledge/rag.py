@@ -2,17 +2,24 @@ import os
 import re
 import sys
 import glob
+import json
 import logging
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 # pyrefly: ignore [missing-import]
 import yaml
+from knowledge.memory import log_retrieval
 
 logger = logging.getLogger("rag")
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CHROMA_DATA_PATH = os.path.join(os.path.dirname(__file__), "chroma_db")
+SYNONYMS_PATH = os.path.join(os.path.dirname(__file__), "synonyms.json")
 VALID_CATEGORIES = {"academic", "placement", "campus"}
 RETRIEVAL_CONFIDENCE_THRESHOLD = 0.025
 
@@ -21,6 +28,7 @@ _corpus_metas = []
 _corpus_ids = []
 _bm25_index = None
 _tokenized_corpus = []
+_synonyms = {}
 collection = None
 RAG_READY = False
 BM25_READY = False
@@ -38,6 +46,36 @@ def _tokenize(text: str) -> list[str]:
     """Tokenizer with stop-word filtering for BM25."""
     tokens = re.findall(r"\w+", text.lower())
     return [t for t in tokens if len(t) > 1 and t not in STOP_WORDS]
+
+
+def _load_synonyms():
+    """Loads student slang synonym mappings for query expansion."""
+    global _synonyms
+    if os.path.exists(SYNONYMS_PATH):
+        try:
+            with open(SYNONYMS_PATH, "r", encoding="utf-8") as f:
+                _synonyms = json.load(f)
+        except Exception as e:
+            print(f"Warning: Failed to load synonyms dictionary: {e}")
+
+
+def _expand_query(query: str) -> str:
+    """Expands student query with mapped canonical document keywords."""
+    if not _synonyms:
+        return query
+
+    query_lower = query.lower()
+    tokens = re.findall(r"\w+", query_lower)
+    expanded_terms = set()
+
+    for token in tokens:
+        if token in _synonyms:
+            expanded_terms.add(_synonyms[token])
+
+    if expanded_terms:
+        extra_str = " " + " ".join(expanded_terms)
+        return query + extra_str
+    return query
 
 
 def _load_lightweight_bm25_corpus():
@@ -75,6 +113,7 @@ def _load_lightweight_bm25_corpus():
                 doc_title = str(frontmatter.get("title", "Untitled Document"))
                 category = str(frontmatter.get("category", "general")).strip().lower()
                 version = str(frontmatter.get("version", "1.0"))
+                related_docs = frontmatter.get("related_docs") or []
 
                 # Split body into sections by ## or ### headings
                 sections = re.split(r'\n(?=#{1,3}\s+)', body)
@@ -93,7 +132,8 @@ def _load_lightweight_bm25_corpus():
                         "title": doc_title,
                         "section_title": sec_title,
                         "category": category,
-                        "version": version
+                        "version": version,
+                        "related_docs": related_docs
                     })
                     ids.append(cid)
             except Exception:
@@ -115,7 +155,7 @@ def _load_lightweight_bm25_corpus():
 def _init_rag():
     global collection, _corpus_docs, _corpus_metas, _corpus_ids, _tokenized_corpus, _bm25_index, RAG_READY
 
-    # Always initialize lightweight BM25 corpus index for free-tier compatibility
+    _load_synonyms()
     _load_lightweight_bm25_corpus()
     
     # Optional Heavy RAG initialization (SentenceTransformers + ChromaDB vector search)
@@ -198,10 +238,10 @@ def format_citation(result: dict) -> str:
     return f"{title_name} §{sec_title} (v{version})"
 
 
-def retrieve(query: str, k: int = 3, category: str = None) -> list[dict]:
+def retrieve(query: str, k: int = 3, category: str = None, session_id: str = "global_retrieval", include_related: bool = False) -> list[dict]:
     """
     Retrieves document chunks using Hybrid Vector + BM25 search (if ENABLE_HEAVY_RAG=true)
-    or lightweight BM25 keyword search (if running on free tier).
+    or lightweight BM25 keyword search with synonym expansion and passive logging.
     """
     if category is not None:
         category_clean = category.strip().lower()
@@ -209,131 +249,164 @@ def retrieve(query: str, k: int = 3, category: str = None) -> list[dict]:
             raise ValueError(f"Invalid category '{category}'. Must be one of {sorted(VALID_CATEGORIES)} or None.")
         category = category_clean
 
+    # Query expansion via slang dictionary
+    expanded_query = _expand_query(query)
+
+    top_results = []
+
     # Fallback to BM25-only retrieval when ChromaDB vector index is inactive
     if not RAG_READY or collection is None:
-        if not BM25_READY or not _bm25_index or not _corpus_docs:
-            return []
-
-        try:
-            query_tokens = _tokenize(query)
-            bm25_scores = _bm25_index.get_scores(query_tokens)
-            sorted_indices = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)
-
-            results = []
-            for idx in sorted_indices:
-                if bm25_scores[idx] <= 0.0:
-                    break
-                meta = _corpus_metas[idx]
-                if category and meta.get("category") != category:
-                    continue
-
-                results.append({
-                    "text": _corpus_docs[idx],
-                    "doc_id": meta.get("doc_id", "UNKNOWN"),
-                    "title": meta.get("title", ""),
-                    "section_title": meta.get("section_title", "Overview"),
-                    "category": meta.get("category", ""),
-                    "version": meta.get("version", "1.0"),
-                    "score": round(bm25_scores[idx], 4)
-                })
-                if len(results) >= k:
-                    break
-            return results
-        except Exception:
-            return []
-
-    # Full Hybrid ChromaDB + BM25 Retrieval Path
-    fetch_k = max(k * 3, 10)
-    query_kwargs = {
-        "query_texts": [query],
-        "n_results": min(fetch_k, max(len(_corpus_docs), 1))
-    }
-    if category:
-        query_kwargs["where"] = {"category": category}
-
-    try:
-        sem_results = collection.query(**query_kwargs)
-    except Exception:
-        sem_results = None
-
-    sem_ranks = {}
-    candidate_map = {}
-
-    if sem_results and sem_results.get("ids") and sem_results["ids"][0]:
-        sem_ids = sem_results["ids"][0]
-        sem_docs = sem_results["documents"][0]
-        sem_metas = sem_results["metadatas"][0]
-        for rank, (cid, doc, meta) in enumerate(zip(sem_ids, sem_docs, sem_metas), 1):
-            sem_ranks[cid] = rank
-            candidate_map[cid] = {"text": doc, "meta": meta}
-
-    bm25_ranks = {}
-    if _bm25_index and _tokenized_corpus:
-        try:
-            query_tokens = _tokenize(query)
-            bm25_scores = _bm25_index.get_scores(query_tokens)
-            max_bm25 = max(bm25_scores) if len(bm25_scores) > 0 else 0.0
-
-            if max_bm25 > 0.0:
+        if BM25_READY and _bm25_index and _corpus_docs:
+            try:
+                query_tokens = _tokenize(expanded_query)
+                bm25_scores = _bm25_index.get_scores(query_tokens)
                 sorted_indices = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)
 
-                bm25_rank = 1
                 for idx in sorted_indices:
                     if bm25_scores[idx] <= 0.0:
                         break
-                    cid = _corpus_ids[idx]
-                    doc = _corpus_docs[idx]
                     meta = _corpus_metas[idx]
-
                     if category and meta.get("category") != category:
                         continue
 
-                    bm25_ranks[cid] = bm25_rank
-                    if cid not in candidate_map:
-                        candidate_map[cid] = {"text": doc, "meta": meta}
-
-                    bm25_rank += 1
-                    if bm25_rank > fetch_k:
+                    top_results.append({
+                        "text": _corpus_docs[idx],
+                        "doc_id": meta.get("doc_id", "UNKNOWN"),
+                        "title": meta.get("title", ""),
+                        "section_title": meta.get("section_title", "Overview"),
+                        "category": meta.get("category", ""),
+                        "version": meta.get("version", "1.0"),
+                        "related_docs": meta.get("related_docs", []),
+                        "score": round(bm25_scores[idx], 4)
+                    })
+                    if len(top_results) >= k:
                         break
+            except Exception:
+                top_results = []
+    else:
+        # Full Hybrid ChromaDB + BM25 Retrieval Path
+        fetch_k = max(k * 3, 10)
+        query_kwargs = {
+            "query_texts": [expanded_query],
+            "n_results": min(fetch_k, max(len(_corpus_docs), 1))
+        }
+        if category:
+            query_kwargs["where"] = {"category": category}
+
+        try:
+            sem_results = collection.query(**query_kwargs)
         except Exception:
-            pass
+            sem_results = None
 
-    fused_candidates = []
-    for cid, data in candidate_map.items():
-        s_rank = sem_ranks.get(cid, 999)
-        b_rank = bm25_ranks.get(cid, 999)
+        sem_ranks = {}
+        candidate_map = {}
 
-        rrf_score = 0.0
-        if cid in sem_ranks:
-            rrf_score += 1.0 / (60.0 + s_rank)
-        if cid in bm25_ranks:
-            rrf_score += 1.0 / (60.0 + b_rank)
+        if sem_results and sem_results.get("ids") and sem_results["ids"][0]:
+            sem_ids = sem_results["ids"][0]
+            sem_docs = sem_results["documents"][0]
+            sem_metas = sem_results["metadatas"][0]
+            for rank, (cid, doc, meta) in enumerate(zip(sem_ids, sem_docs, sem_metas), 1):
+                sem_ranks[cid] = rank
+                candidate_map[cid] = {"text": doc, "meta": meta}
 
-        meta = data["meta"]
-        fused_candidates.append({
-            "text": data["text"],
-            "doc_id": meta.get("doc_id", "UNKNOWN"),
-            "title": meta.get("title", ""),
-            "section_title": meta.get("section_title", "Overview"),
-            "source_file": meta.get("source_file", ""),
-            "category": meta.get("category", ""),
-            "version": meta.get("version", "1.0"),
-            "last_updated": meta.get("last_updated", ""),
-            "score": round(rrf_score, 6)
-        })
+        bm25_ranks = {}
+        if _bm25_index and _tokenized_corpus:
+            try:
+                query_tokens = _tokenize(expanded_query)
+                bm25_scores = _bm25_index.get_scores(query_tokens)
+                max_bm25 = max(bm25_scores) if len(bm25_scores) > 0 else 0.0
 
-    fused_candidates.sort(key=lambda x: x["score"], reverse=True)
-    top_results = fused_candidates[:k]
+                if max_bm25 > 0.0:
+                    sorted_indices = sorted(range(len(bm25_scores)), key=lambda i: bm25_scores[i], reverse=True)
+
+                    bm25_rank = 1
+                    for idx in sorted_indices:
+                        if bm25_scores[idx] <= 0.0:
+                            break
+                        cid = _corpus_ids[idx]
+                        doc = _corpus_docs[idx]
+                        meta = _corpus_metas[idx]
+
+                        if category and meta.get("category") != category:
+                            continue
+
+                        bm25_ranks[cid] = bm25_rank
+                        if cid not in candidate_map:
+                            candidate_map[cid] = {"text": doc, "meta": meta}
+
+                        bm25_rank += 1
+                        if bm25_rank > fetch_k:
+                            break
+            except Exception:
+                pass
+
+        fused_candidates = []
+        for cid, data in candidate_map.items():
+            s_rank = sem_ranks.get(cid, 999)
+            b_rank = bm25_ranks.get(cid, 999)
+
+            rrf_score = 0.0
+            if cid in sem_ranks:
+                rrf_score += 1.0 / (60.0 + s_rank)
+            if cid in bm25_ranks:
+                rrf_score += 1.0 / (60.0 + b_rank)
+
+            meta = data["meta"]
+            fused_candidates.append({
+                "text": data["text"],
+                "doc_id": meta.get("doc_id", "UNKNOWN"),
+                "title": meta.get("title", ""),
+                "section_title": meta.get("section_title", "Overview"),
+                "source_file": meta.get("source_file", ""),
+                "category": meta.get("category", ""),
+                "version": meta.get("version", "1.0"),
+                "related_docs": meta.get("related_docs", []),
+                "last_updated": meta.get("last_updated", ""),
+                "score": round(rrf_score, 6)
+            })
+
+        fused_candidates.sort(key=lambda x: x["score"], reverse=True)
+        top_results = fused_candidates[:k]
 
     if top_results:
         top_score = top_results[0]["score"]
         if top_score < RETRIEVAL_CONFIDENCE_THRESHOLD:
             top_results[0]["low_confidence"] = True
 
+    # Optional: Pull 1 top chunk from each related document if include_related=True
+    if include_related and top_results:
+        existing_doc_ids = {r["doc_id"] for r in top_results}
+        related_to_fetch = set()
+        for r in top_results:
+            for rel_id in r.get("related_docs", []):
+                if rel_id not in existing_doc_ids:
+                    related_to_fetch.add(rel_id)
+
+        for rel_id in related_to_fetch:
+            for idx, meta in enumerate(_corpus_metas):
+                if meta.get("doc_id") == rel_id:
+                    top_results.append({
+                        "text": _corpus_docs[idx],
+                        "doc_id": meta.get("doc_id"),
+                        "title": meta.get("title"),
+                        "section_title": meta.get("section_title"),
+                        "category": meta.get("category"),
+                        "version": meta.get("version"),
+                        "related_docs": meta.get("related_docs", []),
+                        "score": 0.05,
+                        "is_related_chunk": True
+                    })
+                    break
+
+    # Passive Retrieval Logging to SQLite memory.db
+    top_ids = [r["doc_id"] for r in top_results]
+    top_scores = [r["score"] for r in top_results]
+    log_retrieval(session_id=session_id, query=query, top_doc_ids=top_ids, top_scores=top_scores)
+
     return top_results
 
 
 if __name__ == "__main__":
-    test_res = retrieve("attendance minimum requirement", k=2)
+    test_res = retrieve("bunking classes and late curfew", k=2, include_related=True)
     for r in test_res:
         print(f"[{r['score']}] {format_citation(r)}: {r['text'][:100]}...")

@@ -5,6 +5,7 @@ category: placement
 version: "2.8"
 effective_date: "2026-06-01"
 last_updated: "2026-08-01"
+related_docs: ["DOC_PLAC_001", "DOC_PLAC_STAT_002"]
 ---
 
 # Campus Placement Guidelines & Recruitment Policy
