@@ -1011,3 +1011,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const attachBtn = document.getElementById('attach-btn');
+    const fileUpload = document.getElementById('file-upload');
+    const chatInput = document.getElementById('chat-input');
+
+    if (attachBtn && fileUpload) {
+        // 1. Link button to hidden file input (stripping duplicate listeners just in case)
+        const cleanAttachBtn = attachBtn.cloneNode(true);
+        attachBtn.replaceWith(cleanAttachBtn);
+        
+        cleanAttachBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            fileUpload.click();
+        });
+
+        // 2. Handle the image selection and run OCR
+        fileUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('Please attach a valid image file (PNG, JPG) for scanning.');
+                return;
+            }
+
+            // UI Feedback: Show it's working
+            const originalHTML = cleanAttachBtn.innerHTML;
+            cleanAttachBtn.innerHTML = '⏳ Scanning...';
+            cleanAttachBtn.disabled = true;
+
+            // Run Tesseract.js
+            Tesseract.recognize(
+                file,
+                'eng'
+            ).then(({ data: { text } }) => {
+                const extractedText = text.trim();
+                if (extractedText && chatInput) {
+                    // Inject the text into the chat box cleanly
+                    const promptContext = `[Attached Image Text]:\n"${extractedText}"\n\nPlease create a short quiz based on this text.`;
+                    chatInput.value = (chatInput.value + '\n\n' + promptContext).trim();
+                    chatInput.focus();
+                } else {
+                    alert('Could not detect any readable text in this image.');
+                }
+            }).catch(err => {
+                console.error("OCR Error:", err);
+                alert('An error occurred while scanning the image.');
+            }).finally(() => {
+                // Restore UI
+                cleanAttachBtn.innerHTML = originalHTML;
+                cleanAttachBtn.disabled = false;
+                fileUpload.value = ''; // Reset input
+            });
+        });
+    }
+});

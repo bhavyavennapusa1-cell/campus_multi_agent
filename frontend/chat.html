@@ -9,6 +9,7 @@
  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
  <link rel="stylesheet" href="style.css">
  <link rel="stylesheet" href="chat.css">
+ <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
  <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
@@ -147,8 +148,7 @@
                     <button type="button" id="remove-attachment-btn" style="background: none; border: none; font-weight: 700; cursor: pointer; color: #c0392b;">[X]</button>
                 </div>
                 <form id="chat-form" class="input-wrapper">
-                    <input type="file" id="file-upload" accept=".pdf,.jpg,.jpeg,.png,.docx,.pptx" style="display: none;">
-                    <input type="file" id="file-attachment-input" accept=".pdf,.jpg,.jpeg,.png,.docx,.pptx" style="display: none;">
+                    <input type="file" id="file-upload" accept="image/*" style="display: none;" />
                     <button type="button" id="attach-btn" class="btn-pill" style="display: flex; align-items: center; gap: 6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg> Attach</button>
                     <input type="text" id="chat-input" placeholder="Type your multi-step request..." autocomplete="off" required>
                     <button type="button" id="mic-btn" class="btn-pill" style="display: flex; align-items: center; gap: 6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg> Voice</button>
