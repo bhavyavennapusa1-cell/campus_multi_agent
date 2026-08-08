@@ -225,8 +225,7 @@
                         </li>
                         <li class="priority-item">
                             <input type="checkbox" id="p-2" checked>
-                            <label for="p-2" style="text-decoration: line-through; opacity: 0.7;">Submit Google
-                                Internship eligibility verification document</label>
+                            <label for="p-2">Submit Google Internship eligibility verification document</label>
                         </li>
                         <li class="priority-item">
                             <input type="checkbox" id="p-3">
@@ -368,6 +367,35 @@
             }
         }
         loadDashboardUser();
+
+        // Today's Priorities Checklist - Toggle strikethrough both ways (checked & unchecked)
+        const prioritiesList = document.getElementById('priorities-list');
+        if (prioritiesList) {
+            const syncPriorityItem = (checkbox) => {
+                const label = document.querySelector(`label[for="${checkbox.id}"]`) || checkbox.nextElementSibling;
+                if (label && label.tagName === 'LABEL') {
+                    if (checkbox.checked) {
+                        label.style.textDecoration = 'line-through';
+                        label.style.opacity = '0.7';
+                        label.classList.add('completed');
+                    } else {
+                        label.style.textDecoration = 'none';
+                        label.style.opacity = '1';
+                        label.classList.remove('completed');
+                    }
+                }
+            };
+
+            // Sync initial state on page load for all priority checkboxes
+            prioritiesList.querySelectorAll('input[type="checkbox"]').forEach(syncPriorityItem);
+
+            // Listen for change events to toggle strikethrough on check & uncheck
+            prioritiesList.addEventListener('change', (e) => {
+                if (e.target && e.target.matches('input[type="checkbox"]')) {
+                    syncPriorityItem(e.target);
+                }
+            });
+        }
 
         // Prompt button event binding to safely handle routing
         document.querySelectorAll('.route-to-chat').forEach(btn => {

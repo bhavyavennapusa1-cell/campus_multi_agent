@@ -630,6 +630,22 @@
 
         // Initial tab render
         renderAcademicTab('courses');
+
+        // Toggle strikethrough both ways for academic study plan task checkboxes
+        document.addEventListener('change', (e) => {
+            if (e.target && e.target.matches('.task-item input[type="checkbox"]')) {
+                const label = document.querySelector(`label[for="${e.target.id}"]`) || e.target.nextElementSibling;
+                if (label && label.tagName === 'LABEL') {
+                    if (e.target.checked) {
+                        label.style.textDecoration = 'line-through';
+                        label.style.opacity = '0.7';
+                    } else {
+                        label.style.textDecoration = 'none';
+                        label.style.opacity = '1';
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
