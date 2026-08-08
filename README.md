@@ -14,13 +14,6 @@ Educational institutions run on disconnected platforms — academics, placements
 
 CampusAgenda AI is a proof-of-concept **multi-agent AI system**, not a chatbot with a system prompt. A user sends one natural-language request; an **Orchestrator agent** plans the steps, decides which specialized agents are needed, and dispatches them — pulling from a shared knowledge base, calling tools, and remembering who's asking — to return one coherent answer.
 
-**Example:**
-> *"I'm a 2nd-year CSE student. Am I eligible for the Google internship? If yes, register me for tomorrow's placement workshop, add it to my calendar, and remind me an hour before."*
-
-One request → eligibility check → policy lookup → registration → calendar event → reminder. Four agents, one answer.
-
----
-
 ## Why this isn't "just a chatbot"
 
 The problem statement is explicit that the bar is agentic behavior, not Q&A. Here's how this project maps to it:
