@@ -48,9 +48,11 @@ flowchart TD
     O --> AC[Academic Agent<br/>timetable, attendance, exams]
     O --> PL[Placement Agent<br/>eligibility, drives]
     O --> EV[Events Agent<br/>workshops, registration, calendar]
-    AC ----> K[Knowledge Agent — RAG<br/>policies, handbooks, circulars]
+    O --> CM[Communication Agent<br/>notifications, email drafting]
+    AC --> K[Knowledge Agent — RAG<br/>policies, handbooks, circulars]
     PL --> K
     EV --> K
+    CM --> K
     K --> D[Tools, APIs & Memory Store<br/>calendar export, downloads, student profile DB]
 ```
 
@@ -65,6 +67,7 @@ User request → Orchestrator (plans + routes) → specialized agents → shared
   - *Student Memory State* — the profile injected into orchestrator context, personalized to the logged-in user
   - *Chat* — free-text queries (LLM-routed) plus quick-prompt chips for guaranteed demo scenarios
   - *Live Agent Trace* — real-time view of which agent is running, what it's doing, and the result
+
 - **Sign up / Log in / Log out** — accounts are stored persistently; profile data is per-user, not a shared placeholder
 - **Real tool actions** — "Add to calendar" generates a real `.ics` file; downloads (e.g. syllabus) deliver real files, not simulated success messages
 
@@ -162,5 +165,3 @@ Or just visit the live deployment: **https://campus-multi-agent.onrender.com**
 ---
 
 *Built for AgentX — National Level Hackathon 2026, Vasavi College of Engineering (Autonomous), HackerRank Campus Crew.*
-
-
