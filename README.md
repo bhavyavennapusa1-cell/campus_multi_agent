@@ -149,6 +149,15 @@ Or just visit the live deployment: **https://campus-multi-agent.onrender.com**
 | Knowledge (RAG) & memory | Bhavya Vennapusa |
 | Frontend & demo | Suhani Patel |
 
+## Architectural Safety & Accuracy Directives
+
+- **YouTube Link Resolution (`shared/youtube_service.py`)**: LLMs and static maps frequently hallucinate plausible-looking but non-existent or mismatched YouTube video IDs (e.g. returning ERD tutorial videos for English courses or dead video IDs for Operating Systems). To guarantee link accuracy:
+  - All study plan video resources are resolved dynamically via YouTube Data API v3 (`search.list` & `videos.list`) or validated with keyword relevance filtering.
+  - Caching is performed via SQLite (`youtube_cache.db`).
+  - If API quota is unavailable or no candidate matches keyword relevance, a guaranteed live YouTube search URL (`https://www.youtube.com/results?search_query=...`) is generated. **Unverified or hallucinated video URLs must never be reintroduced.**
+
+---
+
 ## Known limitations / roadmap
 
 - Voice interaction, multilingual support, and formal agent-to-agent (A2A) protocol messaging are not yet implemented (stretch goals)
