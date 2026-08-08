@@ -93,15 +93,16 @@ def search_web_grounding(query: str) -> dict:
                 clean_title = re.sub(r'<[^>]+>', '', title_raw).strip()
                 clean_snippet = re.sub(r'<[^>]+>', '', snippet_raw).strip()
                 clean_link = urllib.parse.unquote(link.split("uddg=")[-1].split("&")[0]) if "uddg=" in link else link
-                return {
-                    "status": "success",
-                    "query": query_clean,
-                    "title": clean_title or f"Search results for {query_clean}",
-                    "snippet": clean_snippet or f"Grounded information for {query_clean}.",
-                    "url": clean_link if clean_link.startswith("http") else f"https://www.google.com/search?q={encoded_q}",
-                    "key_facts": [clean_snippet[:180]] if clean_snippet else [],
-                    "source": "duckduckgo_live_search"
-                }
+                if clean_link.startswith("http") and clean_snippet and "no results" not in clean_snippet.lower():
+                    return {
+                        "status": "success",
+                        "query": query_clean,
+                        "title": clean_title or f"Search results for {query_clean}",
+                        "snippet": clean_snippet,
+                        "url": clean_link,
+                        "key_facts": [clean_snippet[:180]],
+                        "source": "duckduckgo_live_search"
+                    }
     except Exception as e:
         logger.warning(f"Live web search request failed: {e}")
 
