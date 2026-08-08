@@ -158,12 +158,7 @@ def _init_rag():
     _load_synonyms()
     _load_lightweight_bm25_corpus()
     
-    # Optional Heavy RAG initialization (SentenceTransformers + ChromaDB vector search)
-    enable_heavy_rag = os.environ.get("ENABLE_HEAVY_RAG", "false").lower() in ("true", "1")
-    if not enable_heavy_rag:
-        RAG_READY = False
-        return
-
+    # Heavy RAG initialization (SentenceTransformers + ChromaDB vector search)
     try:
         # pyrefly: ignore [missing-import]
         import chromadb

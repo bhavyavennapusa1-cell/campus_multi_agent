@@ -102,7 +102,7 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
         )]
 
     has_placement_kw = any(k in req_lower for k in ["eligib", "placement", "dream", "company", "google", "microsoft", "salesforce", "oracle", "cognizant", "tcs", "internship", "job"])
-    has_events_kw = any(k in req_lower for k in ["workshop", "workshops", "event", "events", "hackathon", "fest"])
+    has_events_kw = any(k in req_lower for k in ["workshop", "workshops", "event", "events", "hackathon", "fest", "register", "registered"])
     has_timetable_kw = any(k in req_lower for k in ["timetable", "today's classes", "classes today", "schedule today", "lecture", "lectures"])
     has_exam_kw = any(k in req_lower for k in ["exam", "exams", "midterm", "endterm", "regs", "regulations", "grade", "marks", "grade card"])
     has_course_kw = any(k in req_lower for k in ["resource", "resources", "material", "materials", "syllabus", "course", "courses", "subject", "subjects", "book", "books", "notes"])
@@ -123,9 +123,15 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
         company = "Google" if "google" in req_lower else ("Microsoft" if "microsoft" in req_lower else ("Oracle India" if "oracle" in req_lower else "Dream Tier"))
         if "drives" in req_lower or "opportunities" in req_lower or "drives is" in req_lower:
             steps.append(PlanStep(id=step_id, agent="placement", action="find_opportunities", params={"role": "Software Engineer"}))
+            step_id += 1
         else:
             steps.append(PlanStep(id=step_id, agent="placement", action="check_eligibility", params={"company": company, "query": clean_req}))
-        step_id += 1
+            step_id += 1
+            if "register" in req_lower or "calendar" in req_lower:
+                steps.append(PlanStep(id=step_id, agent="events", action="register_event", params={"event_name": f"{company} Internship Drive"}))
+                step_id += 1
+                steps.append(PlanStep(id=step_id, agent="communication", action="schedule_reminder", params={"event": f"{company} Internship Drive", "minutes_before": 60}))
+                step_id += 1
 
     if has_events_kw:
         if "register" in req_lower:

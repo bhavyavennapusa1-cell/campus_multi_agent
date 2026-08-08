@@ -224,7 +224,7 @@
                             <label for="p-1">Complete Distributed Systems concurrency lab exercise</label>
                         </li>
                         <li class="priority-item">
-                            <input type="checkbox" id="p-2" checked>
+                            <input type="checkbox" id="p-2">
                             <label for="p-2">Submit Google Internship eligibility verification document</label>
                         </li>
                         <li class="priority-item">
@@ -368,9 +368,20 @@
         }
         loadDashboardUser();
 
-        // Today's Priorities Checklist - Toggle strikethrough both ways (checked & unchecked)
+        // Today's Priorities Checklist - Strikethrough & localStorage persistence
         const prioritiesList = document.getElementById('priorities-list');
         if (prioritiesList) {
+            const STORAGE_KEY = 'dashboardPriorities';
+            
+            // Load saved state from localStorage
+            let savedState = {};
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) savedState = JSON.parse(raw);
+            } catch (err) {
+                console.warn("Failed to parse dashboardPriorities from localStorage:", err);
+            }
+
             const syncPriorityItem = (checkbox) => {
                 const label = document.querySelector(`label[for="${checkbox.id}"]`) || checkbox.nextElementSibling;
                 if (label && label.tagName === 'LABEL') {
@@ -386,14 +397,27 @@
                 }
             };
 
-            // Sync initial state on page load for all priority checkboxes
-            prioritiesList.querySelectorAll('input[type="checkbox"]').forEach(syncPriorityItem);
+            const saveState = () => {
+                const state = {};
+                prioritiesList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    state[cb.id] = cb.checked;
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            };
 
-            // Listen for change events to toggle strikethrough on check & uncheck
-            prioritiesList.addEventListener('change', (e) => {
-                if (e.target && e.target.matches('input[type="checkbox"]')) {
-                    syncPriorityItem(e.target);
+            const checkboxes = prioritiesList.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                // Restore saved checked state if present in localStorage
+                if (Object.prototype.hasOwnProperty.call(savedState, checkbox.id)) {
+                    checkbox.checked = Boolean(savedState[checkbox.id]);
                 }
+                syncPriorityItem(checkbox);
+
+                // Add change listener per checkbox
+                checkbox.addEventListener('change', () => {
+                    syncPriorityItem(checkbox);
+                    saveState();
+                });
             });
         }
 

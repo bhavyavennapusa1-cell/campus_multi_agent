@@ -536,7 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const appendMessageToDOM = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = 'default', actions = [], saveToStorage = true) => {
+    const appendMessageToDOM = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = 'default', actions = [], saveToStorage = true, cards = []) => {
         if (!chatHistory) return;
         const msgDiv = document.createElement('div');
         msgDiv.className = `message msg-${sender} animate-pop`;
@@ -581,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatHistory.appendChild(msgDiv);
 
         if (saveToStorage) {
-            saveMessageToHistory(currentSessionId, { text, sender, agentsUsed, reasoningSteps, requiresConfirmation, actionContext, actions });
+            saveMessageToHistory(currentSessionId, { text, sender, agentsUsed, reasoningSteps, requiresConfirmation, actionContext, actions, cards });
         }
         
         setTimeout(() => {
@@ -589,8 +589,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 50);
     };
 
-    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = 'default', actions = []) => {
-        appendMessageToDOM(text, sender, agentsUsed, reasoningSteps, requiresConfirmation, actionContext, actions, true);
+    const appendMessage = (text, sender, agentsUsed = [], reasoningSteps = [], requiresConfirmation = false, actionContext = 'default', actions = [], cards = []) => {
+        appendMessageToDOM(text, sender, agentsUsed, reasoningSteps, requiresConfirmation, actionContext, actions, true, cards);
     };
 
     const showTypingIndicator = () => {

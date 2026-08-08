@@ -19,7 +19,7 @@ SAMPLE_PLACEMENT_STATUSES = ["not_placed", "not_placed", "not_placed", "placed_c
 VAGUE_TERMS = {
     "it", "this", "that", "those", "these", "one", "he", "she", "him", "her",
     "them", "they", "its", "his", "hers", "what about", "how about", "tell me more",
-    "what if", "late", "what happens", "if i", "and if"
+    "what if", "late", "what happens", "if i", "and if", "again", "what did", "registered", "did you"
 }
 
 
