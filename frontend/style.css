@@ -41,11 +41,34 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom Hackathon-Winning Scrollbar */
-::-webkit-scrollbar { width: 12px; height: 12px; }
-::-webkit-scrollbar-track { background: var(--bg-gingham); border-left: 2px solid var(--border-dark); }
-::-webkit-scrollbar-thumb { background: var(--primary-blue); border: 2px solid var(--border-dark); border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: var(--primary-blue-dark); }
+/* Custom Webkit Scrollbar & Selection */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
+
+::selection { background: var(--soft-yellow, #fef08a); color: #000; }
+
+/* Input Focus States */
+input:focus, textarea:focus, select:focus, #chat-input:focus {
+  outline: none !important;
+  border-color: var(--primary-blue, #6366f1) !important;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15) !important;
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* AI Typing Indicator Bounce Animation */
+#typing-indicator .dot {
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+#typing-indicator .dot:nth-child(1) { animation-delay: -0.32s; }
+#typing-indicator .dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
 
 a { text-decoration: none; color: inherit; }
 ul { list-style: none; }

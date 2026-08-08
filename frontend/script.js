@@ -574,19 +574,34 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const showTypingIndicator = () => {
-        removeTypingIndicator();
-        if (!chatHistory) return;
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'message msg-bot typing-indicator animate-pop';
-        typingDiv.id = 'typing-indicator';
-        typingDiv.innerHTML = `<span></span><span></span><span></span>`;
-        chatHistory.appendChild(typingDiv);
-        chatHistory.scrollTo({ top: chatHistory.scrollHeight, behavior: 'smooth' });
+        let indicator = document.getElementById('typing-indicator');
+        if (indicator) {
+            indicator.classList.remove('hidden');
+            indicator.style.display = 'flex';
+        } else if (chatHistory) {
+            indicator = document.createElement('div');
+            indicator.id = 'typing-indicator';
+            indicator.style.display = 'flex';
+            indicator.style.gap = '6px';
+            indicator.style.alignItems = 'center';
+            indicator.style.padding = '12px 16px';
+            indicator.style.background = 'var(--surface, #fff)';
+            indicator.style.border = '2px solid var(--border-dark, #000)';
+            indicator.style.borderRadius = '12px';
+            indicator.style.width = 'fit-content';
+            indicator.style.marginBottom = '1rem';
+            indicator.innerHTML = `<div class="dot" style="width: 8px; height: 8px; background: var(--text-main, #000); border-radius: 50%;"></div><div class="dot" style="width: 8px; height: 8px; background: var(--text-main, #000); border-radius: 50%;"></div><div class="dot" style="width: 8px; height: 8px; background: var(--text-main, #000); border-radius: 50%;"></div>`;
+            chatHistory.appendChild(indicator);
+        }
+        if (chatHistory) chatHistory.scrollTo({ top: chatHistory.scrollHeight, behavior: 'smooth' });
     };
 
     const removeTypingIndicator = () => {
-        const existing = document.getElementById('typing-indicator');
-        if (existing) existing.remove();
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) {
+            indicator.classList.add('hidden');
+            indicator.style.display = 'none';
+        }
     };
 
     const renderTraces = (traces) => {
