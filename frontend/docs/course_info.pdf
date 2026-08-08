@@ -1,0 +1,68 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length 520 >>
+stream
+BT
+/F1 18 Tf
+50 750 Td
+(Smart Campus AI - Course Syllabus) Tj
+/F1 14 Tf
+0 -30 Td
+(CSE301: Distributed Systems & Cloud Computing) Tj
+/F1 11 Tf
+0 -25 Td
+(Faculty: Dr. K. V. Sharma | Credits: 4 | Semester: Fall 2026) Tj
+/F1 12 Tf
+0 -35 Td
+(1. Course Overview) Tj
+/F1 10 Tf
+0 -18 Td
+(Comprehensive foundation in modern distributed architectures and cloud computing.) Tj
+/F1 12 Tf
+0 -30 Td
+(2. Course Modules) Tj
+/F1 10 Tf
+0 -18 Td
+(- Distributed Concurrency & Consensus Protocols (Paxos, Raft)) Tj
+0 -15 Td
+(- Virtualization, Containers & Kubernetes Orchestration) Tj
+0 -15 Td
+(- Cloud Storage Systems & Microservices) Tj
+/F1 12 Tf
+0 -30 Td
+(3. Evaluation Scheme) Tj
+/F1 10 Tf
+0 -18 Td
+(- Lab Assignments & Projects: 40%) Tj
+0 -15 Td
+(- Midterm Examination: 20%) Tj
+0 -15 Td
+(- Final Comprehensive Exam: 40%) Tj
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000236 00000 n 
+0000000305 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+877
+%%EOF

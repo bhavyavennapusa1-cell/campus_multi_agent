@@ -3,7 +3,7 @@
 <head>
     <!-- Auth Guard Check -->
     <script>
-        if (!localStorage.getItem('studentSession')) {
+        if (!localStorage.getItem('studentSession') && !localStorage.getItem('studentSessionToken')) {
             window.location.replace('login.html');
         }
     </script>

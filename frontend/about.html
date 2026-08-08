@@ -61,7 +61,9 @@
         <button class="hamburger" id="hamburger">☰</button>
         <div class="nav-links" id="nav-links">
             <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
             <a href="chat.html">Assistant</a>
+            <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out 🚪</a>
         </div>
     </nav>
 
@@ -100,6 +102,7 @@
         <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
     </footer>
 
+    <script src="script.js"></script>
     <script>
         document.getElementById('hamburger').addEventListener('click', () => {
             document.getElementById('nav-links').classList.toggle('active');
