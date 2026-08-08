@@ -644,17 +644,6 @@ Instructions:
                 general_parts.append(clean_msg)
 
     paragraphs = []
-    req_lower = user_message.lower()
-    is_hindi = any(w in req_lower for w in ["mera", "meri", "hai", "kya", "kaise", "jankari", "batao", "hu", "chahiye", "namaste"])
-    is_telugu = any(w in req_lower for w in ["naa", "ekada", "ela", "undhi", "chappandi", "cheppandi", "namaskaram"])
-
-    if is_hindi:
-        greeting = f"Namaste {prof_name}!"
-    elif is_telugu:
-        greeting = f"Namaskaram {prof_name}!"
-    else:
-        greeting = f"Hello {prof_name}!"
-
     if eligibility_parts:
         paragraphs.append("\n".join(eligibility_parts))
 
@@ -673,6 +662,34 @@ Instructions:
         paragraphs.append("\n\n".join(general_parts))
 
     body = "\n\n".join(paragraphs) if paragraphs else "Here are your requested campus details."
+
+    req_lower = user_message.lower()
+    is_hindi = any(w in req_lower for w in ["mera", "meri", "hai", "kya", "kaise", "jankari", "batao", "hu", "chahiye", "namaste"])
+    is_telugu = any(w in req_lower for w in ["naa", "ekada", "ela", "undhi", "chappandi", "cheppandi", "namaskaram"])
+
+    if is_hindi:
+        greeting = f"Namaste {prof_name}!"
+        if "Attendance Eligibility Calculation" in body or "attendance" in body.lower():
+            body = body.replace(
+                "Attendance Eligibility Calculation: Student", "Aapka kul attendance vivaran: Chhatra"
+            ).replace(
+                "overall attendance, which satisfies both the 75.0% standard requirement and the 65.0% makeup exam threshold.",
+                "kul attendance hai, jo ki 75.0% ki anivarya shart aur 65.0% ki makeup exam shart dono ko pura karta hai."
+            ).replace(
+                "meeting the standard requirement.",
+                "sabhibi manak avashyaktaon ko pura karta hai."
+            )
+    elif is_telugu:
+        greeting = f"Namaskaram {prof_name}!"
+        if "Attendance Eligibility Calculation" in body or "attendance" in body.lower():
+            body = body.replace(
+                "Attendance Eligibility Calculation: Student", "Mee haajari vivaralu: Vidyarthi"
+            ).replace(
+                "overall attendance, which satisfies both the 75.0% standard requirement and the 65.0% makeup exam threshold.",
+                "haajari kaligi unnaru, idi 75.0% niyamalaku mariyu 65.0% makeup exam niyamalaku saripotundi."
+            )
+    else:
+        greeting = f"Hello {prof_name}!"
 
     if has_confirmation and not draft_parts:
         body += f"\n\nNote: {confirmation_action}"

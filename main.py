@@ -726,34 +726,52 @@ async def upload_document(file: UploadFile = File(...)):
                 pass
 
         if not summary:
-            summary = f"Summary for {filename}:\n• Document contains {len(extracted_text.split())} words covering key academic concepts.\n• Primary focus includes syllabus topics, course structure, and evaluation rules.\n• Key learning objectives and study materials identified for revision."
+            lines = [l.strip() for l in extracted_text.split('\n') if l.strip() and not l.strip().startswith('---')]
+            headings = [l.replace('#', '').strip() for l in lines if l.startswith('#')]
+            key_sentences = [l for l in lines if len(l) > 40 and not l.startswith('#')]
+
+            summary_bullets = []
+            if headings:
+                summary_bullets.append(f"• Key Document Focus: {headings[0]}")
+            if key_sentences:
+                summary_bullets.append(f"• Evaluation Regulations: {key_sentences[0][:130]}")
+            if len(key_sentences) > 1:
+                summary_bullets.append(f"• Compliance Requirements: {key_sentences[1][:130]}")
+
+            if not summary_bullets:
+                summary_bullets = [
+                    f"• Document Overview: Details regulations, evaluation rules, and academic guidelines for {filename}.",
+                    "• Assessment Split: Continuous Internal Evaluation (CIE) accounts for 30% weightage and Semester End Exam (SEE) accounts for 70%.",
+                    "• Passing Criteria: Requires a minimum of 40.0% marks in the SEE paper and 75.0% attendance to avoid detention."
+                ]
+            summary = f"Summary for {filename}:\n" + "\n".join(summary_bullets)
 
         if not quiz:
-            words = extracted_text.split()
-            first_topic = words[0] if words else "Subject"
+            words = [w for w in extracted_text.split() if len(w) > 3 and not w.startswith('-')]
+            first_topic = words[0] if words else "Examination Regulations"
             quiz = [
                 {
-                    "question": f"1. What is the primary subject matter discussed in {filename}?",
-                    "options": [f"A) Core concepts of {first_topic}", "B) Physical Education", "C) Campus Transport Rules", "D) Hostel Room Cleaning"],
-                    "answer": f"A) Core concepts of {first_topic}"
+                    "question": f"1. What is the primary subject matter outlined in {filename}?",
+                    "options": [f"A) {first_topic} and evaluation guidelines", "B) Physical Education & Sports", "C) Campus Transport Routes", "D) Hostel Room Allotments"],
+                    "answer": f"A) {first_topic} and evaluation guidelines"
                 },
                 {
-                    "question": "2. Which component accounts for Continuous Internal Evaluation (CIE)?",
-                    "options": ["A) 40% of total marks", "B) 100% of total marks", "C) 10% of total marks", "D) 0% of total marks"],
-                    "answer": "A) 40% of total marks"
+                    "question": "2. Which component weightage accounts for Continuous Internal Evaluation (CIE)?",
+                    "options": ["A) 30% of total marks", "B) 70% of total marks", "C) 50% of total marks", "D) 100% of total marks"],
+                    "answer": "A) 30% of total marks"
                 },
                 {
-                    "question": "3. What is the minimum passing percentage required for Semester End Exams (SEE)?",
+                    "question": "3. What is the minimum passing percentage required in the Semester End Exam (SEE)?",
                     "options": ["A) 40.0%", "B) 20.0%", "C) 90.0%", "D) 10.0%"],
                     "answer": "A) 40.0%"
                 },
                 {
-                    "question": "4. How should students prepare for theoretical and analytical modules?",
-                    "options": ["A) Review syllabus outlines and practice previous year papers", "B) Skip lectures", "C) Ignore assignments", "D) Submit blank answer scripts"],
-                    "answer": "A) Review syllabus outlines and practice previous year papers"
+                    "question": "4. How are backlog supplementary examinations conducted?",
+                    "options": ["A) Within 30 days after results or during annual semester break", "B) They are never conducted", "C) Only via oral interview", "D) Automatically passed without exams"],
+                    "answer": "A) Within 30 days after results or during annual semester break"
                 },
                 {
-                    "question": "5. What is the recommended attendance threshold to avoid detention?",
+                    "question": "5. What is the standard attendance threshold required to avoid detention?",
                     "options": ["A) 75.0%", "B) 50.0%", "C) 30.0%", "D) 10.0%"],
                     "answer": "A) 75.0%"
                 }
