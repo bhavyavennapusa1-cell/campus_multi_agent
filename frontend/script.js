@@ -686,6 +686,8 @@ document.addEventListener('DOMContentLoaded', () => {
  headers: { 'Content-Type': 'application/json' },
  body: JSON.stringify({
  message: messageText,
+ query: messageText,
+ prompt: messageText,
  session_id: currentSessionId,
  profile: {
  name: memName?.value || "Bhavya Vennapusa",
@@ -745,52 +747,97 @@ document.addEventListener('DOMContentLoaded', () => {
  }
  };
 
-            if (currentSelectedFile) {
-                const fileToUpload = currentSelectedFile;
-                currentSelectedFile = null;
-                if (fileAttachmentInput) fileAttachmentInput.value = '';
-                if (attachmentPreviewArea) attachmentPreviewArea.style.display = 'none';
+    // Core API Connection & Form Submission Logic
+    const sendBtn = document.getElementById('send-btn');
+    const typingIndicator = document.getElementById('typing-indicator');
 
-                showTypingIndicator();
-                try {
-                    const formData = new FormData();
-                    formData.append('file', fileToUpload);
-                    const uploadRes = await fetch(`${API_BASE}/api/upload-doc?session_id=${encodeURIComponent(currentSessionId)}`, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    removeTypingIndicator();
-                    const docData = await uploadRes.json();
-                    if (docData.status === "success") {
-                        const quizUrl = `${window.location.origin}/quiz/${docData.quiz_id}`;
-                        const quizShareMsg = `\n\nShareable External Quiz Link:\n${quizUrl}`;
-                        appendMessage(
-                            `Document Analysis for '${docData.filename}':\n${docData.summary}${quizShareMsg}`,
-                            'bot',
-                            ['academic'],
-                            [],
-                            false,
-                            'doc_intel',
-                            [{ type: 'link', label: 'Open External Shareable Quiz Page', url: quizUrl }]
-                        );
-                        renderTraces([
-                            { agent: 'document_intelligence', action: 'extract_text', status: 'done', message: `Extracted ${docData.extracted_text_length} chars from ${docData.filename}` },
-                            { agent: 'document_intelligence', action: 'summarize_and_quiz', status: 'done', message: `Generated grounded summary and Quiz ID ${docData.quiz_id}` }
-                        ]);
-                        if (text) {
-                            sendQuery(text);
-                        }
-                        return;
+    const handleChatSubmit = async (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const messageText = chatInput ? chatInput.value.trim() : '';
+        if (!messageText && !currentSelectedFile) return;
+
+        const sendBtnElem = document.getElementById('send-btn') || sendBtn;
+        if (chatInput) {
+            chatInput.value = '';
+            chatInput.disabled = true;
+        }
+        if (sendBtnElem) sendBtnElem.disabled = true;
+
+        if (currentSelectedFile) {
+            const fileToUpload = currentSelectedFile;
+            currentSelectedFile = null;
+            if (fileUploadInput) fileUploadInput.value = '';
+            if (attachmentPreviewArea) attachmentPreviewArea.style.display = 'none';
+
+            showTypingIndicator();
+            try {
+                const formData = new FormData();
+                formData.append('file', fileToUpload);
+                const uploadRes = await fetch(`${API_BASE}/api/upload-doc?session_id=${encodeURIComponent(currentSessionId)}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                removeTypingIndicator();
+                const docData = await uploadRes.json();
+                if (docData.status === "success") {
+                    const quizUrl = `${window.location.origin}/quiz/${docData.quiz_id}`;
+                    const quizShareMsg = `\n\nShareable External Quiz Link:\n${quizUrl}`;
+                    appendMessage(
+                        `Document Analysis for '${docData.filename}':\n${docData.summary}${quizShareMsg}`,
+                        'bot',
+                        ['academic'],
+                        [],
+                        false,
+                        'doc_intel',
+                        [{ type: 'link', label: 'Open External Shareable Quiz Page', url: quizUrl }]
+                    );
+                    renderTraces([
+                        { agent: 'document_intelligence', action: 'extract_text', status: 'done', message: `Extracted ${docData.extracted_text_length} chars from ${docData.filename}` },
+                        { agent: 'document_intelligence', action: 'summarize_and_quiz', status: 'done', message: `Generated grounded summary and Quiz ID ${docData.quiz_id}` }
+                    ]);
+                    if (messageText) {
+                        sendQuery(messageText);
                     }
-                } catch (err) {
-                    removeTypingIndicator();
-                    console.warn('Document upload error:', err);
+                    return;
                 }
+            } catch (err) {
+                removeTypingIndicator();
+                console.warn('Document upload error:', err);
             }
+        }
 
-            sendQuery(text);
+        if (messageText) {
+            appendMessage(messageText, 'user');
+            sendQuery(messageText);
+        }
+    };
+
+    // 1. Bind Send Button & Enter Key cleanly
+    if (sendBtn && chatInput) {
+        sendBtn.replaceWith(sendBtn.cloneNode(true));
+        const newSendBtn = document.getElementById('send-btn');
+        if (newSendBtn) {
+            newSendBtn.addEventListener('click', handleChatSubmit);
+        }
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleChatSubmit(e);
         });
     }
+
+    if (chatForm) {
+        chatForm.addEventListener('submit', handleChatSubmit);
+    }
+
+    // 2. Bind Suggestion Chips to auto-send
+    document.querySelectorAll('.quick-chips .chip, .quick-chips-container button, .suggestion-chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+            const promptText = chip.getAttribute('data-prompt') || e.target.innerText.trim();
+            if (chatInput && promptText) {
+                chatInput.value = promptText;
+                handleChatSubmit();
+            }
+        });
+    });
 
     // File Attachment UI Wiring
     const attachBtn = document.getElementById('attach-btn') || document.getElementById('attachment-btn');
