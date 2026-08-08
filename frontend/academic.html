@@ -436,6 +436,11 @@
                                     </div>
                                     ${item.percentage < 75 ? `<div style="font-size: 0.75rem; color: #c0392b; margin-top: 0.4rem; font-weight: 600;">⚠️ Warning: Below 75% mandatory threshold</div>` : ''}
                                 </div>
+                                <div style="margin-top: 1rem;">
+                                    <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="handleSyllabusDownload('${item.code || 'CS301'}', '${item.course}', this)">
+                                        View Syllabus PDF 📄
+                                    </button>
+                                </div>
                             </div>
                         `;
                     });
@@ -552,9 +557,56 @@
             }
         }
 
+        function handleSyllabusDownload(code, courseName, btn) {
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = "Downloading... ⏳";
+                setTimeout(() => {
+                    if (typeof downloadSyllabusFile === 'function') {
+                        downloadSyllabusFile(code, courseName, 'Dr. K. V. Sharma', 4);
+                    }
+                    btn.textContent = "✓ Downloaded";
+                    btn.style.background = "var(--mint-green)";
+                    btn.style.color = "var(--border-dark)";
+                    btn.disabled = false;
+                }, 1500);
+            }
+        }
+
         // Action for "Add to Calendar" button (following naming rule)
         function mockAddToCalendar(subject, date) {
-            downloadIcsFile(`${subject} Exam`, date, 'Exam Hall 102', `Official Midterm/Endterm Exam for ${subject}`);
+            console.log('[Academic .ics Export] Generating iCalendar file for:', subject);
+            if (typeof downloadIcsFile === 'function') {
+                downloadIcsFile(`${subject} Exam`, date, 'Exam Hall 102', `Official Midterm/Endterm Exam for ${subject}`);
+            } else {
+                const icsContent = [
+                    'BEGIN:VCALENDAR',
+                    'VERSION:2.0',
+                    'PRODID:-//Smart Campus Multi-Agent//NONSGML v1.0//EN',
+                    'CALSCALE:GREGORIAN',
+                    'METHOD:PUBLISH',
+                    'BEGIN:VEVENT',
+                    `SUMMARY:${subject} Exam`,
+                    `DESCRIPTION:Official Midterm/Endterm Exam for ${subject}`,
+                    `LOCATION:Exam Hall 102`,
+                    `DTSTART:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+                    `DTEND:${new Date(Date.now() + 3600000).toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+                    'STATUS:CONFIRMED',
+                    'END:VEVENT',
+                    'END:VCALENDAR'
+                ].join('\r\n');
+
+                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `${subject.replace(/[^a-zA-Z0-9]/g, '_')}_Exam_reminder.ics`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            }
         }
 
         // Form Submit Handler for Organize tab (verbatim from academic-organize.html)

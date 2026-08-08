@@ -289,15 +289,47 @@
         }
 
         // "Add to Calendar" -> Export real .ics calendar file
-        async function addToCalendar(eventName, eventDate) {
+        function addToCalendar(eventName, eventDate) {
+            console.log('[Calendar .ics Export] Generating iCalendar file for:', eventName);
             try {
-                if (window.CampusApi && window.CampusApi.scheduleCalendar) {
-                    await window.CampusApi.scheduleCalendar(eventName, eventDate);
+                if (typeof downloadIcsFile === 'function') {
+                    downloadIcsFile(eventName, eventDate, 'Campus Auditorium', `Official Campus Event: ${eventName}`);
+                } else {
+                    const icsContent = [
+                        'BEGIN:VCALENDAR',
+                        'VERSION:2.0',
+                        'PRODID:-//Smart Campus Multi-Agent//NONSGML v1.0//EN',
+                        'CALSCALE:GREGORIAN',
+                        'METHOD:PUBLISH',
+                        'BEGIN:VEVENT',
+                        `SUMMARY:${eventName}`,
+                        `DESCRIPTION:Official Campus Event: ${eventName}`,
+                        `LOCATION:Campus Auditorium`,
+                        `DTSTART:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+                        `DTEND:${new Date(Date.now() + 3600000).toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+                        'STATUS:CONFIRMED',
+                        'END:VEVENT',
+                        'END:VCALENDAR'
+                    ].join('\r\n');
+
+                    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `${eventName.replace(/[^a-zA-Z0-9]/g, '_')}_reminder.ics`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
                 }
-            } catch (e) {
-                console.warn("Calendar API fallback:", e);
+            } catch (err) {
+                console.error('[Calendar Error]:', err);
             }
-            downloadIcsFile(eventName, eventDate, 'Campus Auditorium', `Official Event: ${eventName}`);
+
+            if (window.CampusApi && window.CampusApi.scheduleCalendar) {
+                window.CampusApi.scheduleCalendar(eventName, eventDate).catch(e => console.warn("Calendar API async warning:", e));
+            }
         }
 
 
