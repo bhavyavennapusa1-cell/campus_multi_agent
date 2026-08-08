@@ -227,16 +227,16 @@ def logout(req: LogoutRequest):
 # --- Feature 1: Voice Transcription Endpoint ---
 @app.post(
     "/transcribe",
-    summary="Transcribe audio recording to text",
-    description="Accepts an audio blob (.wav, .mp3, .m4a), transcribes using Whisper, and returns extracted text.",
+    summary="Validate and store uploaded audio file",
+    description="Validates and accepts an audio blob (.wav, .mp3, .m4a, .webm). Primary speech-to-text transcription occurs client-side via the browser Web Speech API.",
     responses={
-        200: {"description": "Successful transcription", "content": {"application/json": {"example": {"text": "What is my current attendance requirement?"}}}},
+        200: {"description": "Audio file validated and accepted", "content": {"application/json": {"example": {"text": "Audio uploaded successfully. Please use Web Speech API in frontend for voice input."}}}},
         400: {"description": "Empty or non-audio file payload"},
         422: {"description": "Malformed or unprocessable audio blob"}
     }
 )
 async def transcribe_audio(audio: UploadFile = File(...)):
-    """Accepts an audio blob, writes to temp file, transcribes with Whisper, and cleans up."""
+    """Validates an uploaded audio blob (.wav, .mp3, .m4a, .webm) and confirms client-side Web Speech processing."""
     # 1. Validation: non-empty check
     contents = await audio.read()
     if not contents or len(contents) == 0:
