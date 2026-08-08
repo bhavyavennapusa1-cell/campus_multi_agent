@@ -185,7 +185,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" id="login-submit-btn" class="btn-blob" disabled style="width: 100%; margin-top: 1rem;">
+                    <button type="submit" id="login-submit-btn" class="btn-blob" onclick="handleLogin(event)" disabled style="width: 100%; margin-top: 1rem;">
                         Log In to Workspace →
                     </button>
                 </div>
@@ -208,7 +208,6 @@
         }
 
         const MOCK_SCHOOLS = [
-
             "Vasavi College of Engineering",
             "IIT Hyderabad",
             "BITS Pilani - Hyderabad Campus",
@@ -254,7 +253,7 @@
             const p = document.getElementById('login-password').value;
             const submitBtn = document.getElementById('login-submit-btn');
             if (submitBtn) {
-                submitBtn.disabled = !(r && p);
+                submitBtn.disabled = !(s && r && p);
             }
         }
 
@@ -303,7 +302,7 @@
                 localStorage.setItem('studentSession', JSON.stringify({ 
                     school: schoolVal, 
                     rollNo: rollNo,
-                    token: token
+                    loggedInAt: new Date().toISOString()
                 }));
                 
                 console.log('[Login Redirect] Storage verified. Redirecting to dashboard.html...');
@@ -320,7 +319,11 @@
                 };
                 localStorage.setItem('studentSessionToken', fallbackToken);
                 localStorage.setItem('studentProfile', JSON.stringify(fallbackUser));
-                localStorage.setItem('studentSession', JSON.stringify({ school: schoolVal, rollNo: rollNo, token: fallbackToken }));
+                localStorage.setItem('studentSession', JSON.stringify({ 
+                    school: schoolVal, 
+                    rollNo: rollNo, 
+                    loggedInAt: new Date().toISOString() 
+                }));
                 window.location.href = 'dashboard.html';
             }
         }
