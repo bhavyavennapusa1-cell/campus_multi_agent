@@ -495,28 +495,6 @@ document.addEventListener('DOMContentLoaded', () => {
  }, 150);
  }
 
-    chips.forEach(chip => {
-        chip.addEventListener('click', () => {
-            if (chatInput) {
-                chatInput.value = chip.getAttribute('data-prompt') || chip.innerText.trim();
-                chatInput.focus();
-                if (chatForm) {
-                    chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
-                }
-            }
-        });
-    });
-
-    document.querySelectorAll('.quick-chips .chip, .quick-chips-container button, .suggestion-chip').forEach(chip => {
-        chip.addEventListener('click', (e) => {
-            const inputField = document.getElementById('chat-input');
-            if (inputField) {
-                inputField.value = chip.getAttribute('data-prompt') || e.target.innerText.trim();
-                inputField.focus();
-            }
-        });
-    });
-
  const getStatusIcon = (status) => {
  switch ((status || '').toLowerCase()) {
  case 'pending': return '<div style="border: 2px solid var(--text-muted); border-radius: 50%; width: 14px; height: 14px;"></div>';
@@ -751,9 +729,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendBtn = document.getElementById('send-btn');
     const typingIndicator = document.getElementById('typing-indicator');
 
-    const handleChatSubmit = async (e) => {
+    const handleChatSubmit = async (e, overrideText = null) => {
         if (e && e.preventDefault) e.preventDefault();
-        const messageText = chatInput ? chatInput.value.trim() : '';
+        const messageText = overrideText ? overrideText.trim() : (chatInput ? chatInput.value.trim() : '');
         if (!messageText && !currentSelectedFile) return;
 
         const sendBtnElem = document.getElementById('send-btn') || sendBtn;
@@ -828,16 +806,30 @@ document.addEventListener('DOMContentLoaded', () => {
         chatForm.addEventListener('submit', handleChatSubmit);
     }
 
-    // 2. Bind Suggestion Chips to auto-send
-    document.querySelectorAll('.quick-chips .chip, .quick-chips-container button, .suggestion-chip').forEach(chip => {
-        chip.addEventListener('click', (e) => {
-            const promptText = chip.getAttribute('data-prompt') || e.target.innerText.trim();
-            if (chatInput && promptText) {
-                chatInput.value = promptText;
-                handleChatSubmit();
-            }
+    // 2. Anti-Bubbling & Cloning for Suggestion Chips (Prevents Double-Firing)
+    const bindChipsCleanly = () => {
+        const chipElements = document.querySelectorAll('.quick-chips .chip, .quick-chips-container button, .suggestion-chip');
+        chipElements.forEach(chip => {
+            chip.removeAttribute('onclick');
+            const cleanChip = chip.cloneNode(true);
+            chip.replaceWith(cleanChip);
+            cleanChip.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const promptText = this.getAttribute('data-prompt') || this.innerText.trim();
+                if (promptText) {
+                    if (chatInput) chatInput.value = promptText;
+                    handleChatSubmit(null, promptText);
+                }
+            });
         });
-    });
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindChipsCleanly);
+    } else {
+        bindChipsCleanly();
+    }
 
     // File Attachment UI Wiring
     const attachBtn = document.getElementById('attach-btn') || document.getElementById('attachment-btn');
