@@ -102,21 +102,36 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
         )]
 
     has_placement_kw = any(k in req_lower for k in ["eligib", "placement", "dream", "company", "google", "microsoft", "salesforce", "oracle", "cognizant", "tcs", "internship", "job"])
-    has_action_kw = any(k in req_lower for k in ["register", "workshop", "calendar", "remind", "reminder", "event", "schedule"])
+    has_events_kw = any(k in req_lower for k in ["workshop", "workshops", "event", "events", "hackathon", "fest"])
+    has_timetable_kw = any(k in req_lower for k in ["timetable", "today's classes", "classes today", "schedule today", "lecture", "lectures"])
     has_exam_kw = any(k in req_lower for k in ["exam", "exams", "midterm", "endterm", "regs", "regulations", "grade", "marks", "grade card"])
     has_course_kw = any(k in req_lower for k in ["resource", "resources", "material", "materials", "syllabus", "course", "courses", "subject", "subjects", "book", "books", "notes"])
     has_attend_kw = any(k in req_lower for k in ["attend", "attendance", "absent", "condon", "detain", "shortage"])
-    has_comm_kw = any(k in req_lower for k in ["email", "draft", "mail", "notify", "inform", "message", "contact"])
-    has_contact_kw = any(k in req_lower for k in ["mentor", "hod", "classmate", "classmates", "peer", "group", "advisor"])
-    has_nav_kw = any(k in req_lower for k in ["navigate", "direction", "where is", "map", "distance", "location", "way to", "building", "library"])
+    has_comm_kw = any(k in req_lower for k in ["email", "draft", "mail", "notify", "inform", "message"])
+    has_contact_kw = any(k in req_lower for k in ["mentor", "hod", "classmate", "classmates", "peer", "group", "advisor", "club", "clubs", "contact"])
+    has_nav_kw = any(k in req_lower for k in ["navigate", "direction", "where is", "map", "distance", "location", "way to", "building"])
+    has_campus_kw = any(k in req_lower for k in ["hostel", "curfew", "gate", "dorm", "warden", "mess", "library", "timings", "complaint", "maintenance", "grievance"])
 
     steps = []
     step_id = 1
 
-    # Check multi-domain queries
+    if has_timetable_kw:
+        steps.append(PlanStep(id=step_id, agent="academic", action="get_timetable", params={"query": clean_req}))
+        step_id += 1
+
     if has_placement_kw:
         company = "Google" if "google" in req_lower else ("Microsoft" if "microsoft" in req_lower else ("Oracle India" if "oracle" in req_lower else "Dream Tier"))
-        steps.append(PlanStep(id=step_id, agent="placement", action="check_eligibility", params={"company": company, "query": clean_req}))
+        if "drives" in req_lower or "opportunities" in req_lower or "drives is" in req_lower:
+            steps.append(PlanStep(id=step_id, agent="placement", action="find_opportunities", params={"role": "Software Engineer"}))
+        else:
+            steps.append(PlanStep(id=step_id, agent="placement", action="check_eligibility", params={"company": company, "query": clean_req}))
+        step_id += 1
+
+    if has_events_kw:
+        if "register" in req_lower:
+            steps.append(PlanStep(id=step_id, agent="events", action="register_event", params={"event_name": "Placement Workshop"}))
+        else:
+            steps.append(PlanStep(id=step_id, agent="events", action="get_events", params={"category": "workshops"}))
         step_id += 1
 
     if has_contact_kw:
@@ -127,15 +142,14 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
         steps.append(PlanStep(id=step_id, agent="academic", action="course_info", params={"query": clean_req, "subject": clean_req}))
         step_id += 1
 
-    if (has_exam_kw or "dbms" in req_lower) and not has_contact_kw:
-        if "timetable" in req_lower:
-            steps.append(PlanStep(id=step_id, agent="academic", action="get_timetable", params={"query": clean_req}))
-        elif "plan" in req_lower or "study" in req_lower or "dbms" in req_lower:
+    if (has_exam_kw or "dbms" in req_lower) and not has_contact_kw and not has_timetable_kw:
+        if "plan" in req_lower or "study" in req_lower or "dbms" in req_lower:
             steps.append(PlanStep(id=step_id, agent="academic", action="create_study_plan", params={"subject": "DBMS", "days_remaining": 10}))
         else:
             steps.append(PlanStep(id=step_id, agent="academic", action="get_exam_schedule", params={"query": clean_req}))
         step_id += 1
-    elif has_attend_kw and not has_placement_kw:
+
+    if has_attend_kw and not has_placement_kw:
         steps.append(PlanStep(id=step_id, agent="academic", action="get_attendance", params={"query": clean_req}))
         step_id += 1
 
@@ -143,15 +157,18 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
         steps.append(PlanStep(id=step_id, agent="navigator", action="get_directions", params={"destination": clean_req}))
         step_id += 1
 
-    if (has_comm_kw and not has_contact_kw) or (has_action_kw and has_placement_kw):
+    if has_comm_kw:
         if "reminder" in req_lower or "remind" in req_lower:
             steps.append(PlanStep(id=step_id, agent="communication", action="schedule_reminder", params={"event": clean_req}))
         else:
             steps.append(PlanStep(id=step_id, agent="communication", action="draft_email", params={"subject": "Campus Inquiry", "core_message": clean_req}))
         step_id += 1
 
-    if any(k in req_lower for k in ["hostel", "curfew", "gate", "dorm", "warden", "mess"]):
-        steps.append(PlanStep(id=step_id, agent="campus", action="get_hostel_info", params={"query": user_request}))
+    if has_campus_kw and not has_nav_kw:
+        if "complaint" in req_lower or "grievance" in req_lower:
+            steps.append(PlanStep(id=step_id, agent="campus", action="file_grievance", params={"query": user_request}))
+        else:
+            steps.append(PlanStep(id=step_id, agent="campus", action="get_hostel_info", params={"query": user_request}))
         step_id += 1
 
     if not steps:
@@ -225,9 +242,29 @@ Student context:
 
 Instructions:
 1. Identify the student's actual intent from their typed text.
-2. Select the specific agent and action that answers their query. For resource/subject/course queries, use academic agent's course_info or general_synthesis.
-3. If query spans multiple domains, return multiple actions.
-4. Always pass relevant inputs/parameters (e.g. {{"query": "{clean_req}", "subject": "{clean_req}"}}).
+2. Select the specific agent and action that answers their query.
+3. If a query requests multiple actions across domains (e.g. eligibility + event registration + email draft), return ALL required steps in sequence.
+4. Always pass relevant inputs/parameters.
+
+Few-shot examples:
+- Query: "I'm a 2nd-year CSE student. Am I eligible for the Google internship? If yes, register me for tomorrow's placement workshop, add it to my calendar, and remind me an hour before."
+  Plan: [
+    {{"agent": "placement", "action": "check_eligibility", "inputs": {{"company": "Google"}}}},
+    {{"agent": "events", "action": "register_event", "inputs": {{"event_name": "Placement Workshop"}}}},
+    {{"agent": "communication", "action": "schedule_reminder", "inputs": {{"event": "Placement Workshop", "minutes_before": 60}}}}
+  ]
+- Query: "Summarize the examination regulations, calculate my attendance eligibility, and draft an email requesting permission for a makeup exam."
+  Plan: [
+    {{"agent": "academic", "action": "course_info", "inputs": {{"query": "examination regulations"}}}},
+    {{"agent": "academic", "action": "get_attendance", "inputs": {{}}}},
+    {{"agent": "communication", "action": "draft_email", "inputs": {{"subject": "Permission for Makeup Exam", "core_message": "Requesting permission for makeup exam"}}}}
+  ]
+- Query: "Show today's classes, recommend upcoming AI workshops, and suggest clubs related to Machine Learning."
+  Plan: [
+    {{"agent": "academic", "action": "get_timetable", "inputs": {{}}}},
+    {{"agent": "events", "action": "get_events", "inputs": {{"category": "AI workshops"}}}},
+    {{"agent": "communication", "action": "get_relevant_contacts", "inputs": {{"query": "Machine Learning clubs"}}}}
+  ]
 
 Return your plan as a structured JSON array: [{{"agent": "<agent_name>", "action": "<action_name>", "inputs": {{...}}}}]"""
 
