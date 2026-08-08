@@ -151,7 +151,7 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
         steps.append(PlanStep(id=step_id, agent="communication", action="get_relevant_contacts", params={"query": clean_req, "query_type": clean_req}))
         step_id += 1
 
-    if has_course_kw and not has_exam_kw and not has_placement_kw:
+    if has_course_kw and not has_placement_kw:
         steps.append(PlanStep(id=step_id, agent="academic", action="course_info", params={"query": clean_req, "subject": clean_req}))
         step_id += 1
 
@@ -644,7 +644,16 @@ Instructions:
                 general_parts.append(clean_msg)
 
     paragraphs = []
-    greeting = f"Hello {prof_name}!"
+    req_lower = user_message.lower()
+    is_hindi = any(w in req_lower for w in ["mera", "meri", "hai", "kya", "kaise", "jankari", "batao", "hu", "chahiye", "namaste"])
+    is_telugu = any(w in req_lower for w in ["naa", "ekada", "ela", "undhi", "chappandi", "cheppandi", "namaskaram"])
+
+    if is_hindi:
+        greeting = f"Namaste {prof_name}!"
+    elif is_telugu:
+        greeting = f"Namaskaram {prof_name}!"
+    else:
+        greeting = f"Hello {prof_name}!"
 
     if eligibility_parts:
         paragraphs.append("\n".join(eligibility_parts))

@@ -164,9 +164,15 @@ def get_exam_schedule(params: dict) -> AgentResponse:
                 matched_std_subject = SUBJECT_ALIASES[alias_key]
                 break
 
-    rag_results = retrieve(raw_query or "examination regulations passing marks grading scale CIE SEE", k=1, category="academic")
+    rag_results = retrieve("examination regulations passing marks grading scale CIE SEE evaluation scheme", k=1, category="academic", exclude_malpractice=True)
     top_rag = rag_results[0] if rag_results else None
     citation = format_citation(top_rag) if top_rag else None
+
+    clean_rules = ""
+    if top_rag and not any(m in top_rag["text"].lower() for m in ["malpractice", "suspension", "penalty", "category 2"]):
+        clean_rules = top_rag["text"]
+    else:
+        clean_rules = "Evaluation Scheme: Continuous Internal Evaluation (CIE) 40%, Semester End Exam (SEE) 60%. Passing Criteria: Minimum 40.0% marks in SEE paper and 40.0% overall aggregate."
 
     # Combine structured exam_schedules.json with EXAM_DATABASE
     structured_exams = get_collection("exam_schedules")
@@ -206,7 +212,8 @@ def get_exam_schedule(params: dict) -> AgentResponse:
                     "student": profile["name"],
                     "exams": filtered_exams,
                     "matched_subject": matched_std_subject,
-                    "rules": top_rag["text"] if top_rag else "",
+                    "rules": clean_rules,
+                    "synthesis_text": f"{msg}\nEvaluation Regulations: {clean_rules}",
                     "source": "exam_schedules.json"
                 },
                 message=msg,
@@ -226,7 +233,7 @@ def get_exam_schedule(params: dict) -> AgentResponse:
             )
 
     # Check if a specific unmapped subject was queried
-    if raw_query and not any(k in raw_query for k in ["schedule", "exam", "exams", "dates", "when", "timetable", "all", "my"]):
+    if raw_query and not any(k in raw_query for k in ["schedule", "exam", "exams", "dates", "when", "timetable", "all", "my", "tell", "upcoming"]):
         return AgentResponse(
             status="success",
             data={
@@ -238,12 +245,16 @@ def get_exam_schedule(params: dict) -> AgentResponse:
             citation=citation
         )
 
+    exam_list_str = "\n".join([f"• {e['subject']} ({e['code']}): {e.get('date', 'TBA')} at {e.get('time', '10:00 AM')}" for e in all_exams])
+    synthesis_out = f"Upcoming Examination Schedule for {profile['name']}:\n{exam_list_str}\n\nRegulations Summary: {clean_rules}"
+
     return AgentResponse(
         status="success",
         data={
             "student": profile["name"],
             "exams": all_exams,
-            "rules": top_rag["text"] if top_rag else "",
+            "rules": clean_rules,
+            "synthesis_text": synthesis_out,
             "source": "exam_schedules.json"
         },
         message=f"Exam schedule for {profile['name']}: {len(all_exams)} exams found.",
@@ -260,11 +271,16 @@ def course_info(params: dict) -> AgentResponse:
 
     if raw_query:
         target = raw_query.lower()
+        target_subject = SUBJECT_ALIASES.get(target)
         for c in courses:
+            c_name = c.get("name", "").lower()
+            c_code = c.get("code", "").lower()
+            c_id = c.get("course_id", "").lower()
             if (
-                c.get("course_id", "").lower() == target
-                or c.get("code", "").lower() == target
-                or target in c.get("name", "").lower()
+                c_id == target
+                or c_code == target
+                or target in c_name
+                or (target_subject and target_subject.lower() in c_name)
             ):
                 matched_courses.append(c)
 
@@ -277,16 +293,25 @@ def course_info(params: dict) -> AgentResponse:
     citation = format_citation(top_rag) if top_rag else None
 
     if matched_courses:
-        c = matched_courses[0]
-        msg = f"Course Details for {c.get('name')} ({c.get('course_id')} / {c.get('code')}): Department {c.get('department')}, Credits: {c.get('credits')}, Syllabus: {', '.join(c.get('syllabus_outline', []))}."
+        c_msgs = ["Course & Syllabus Details:"]
+        for c in matched_courses:
+            name = c.get("name")
+            code = c.get("code") or c.get("course_id")
+            dept = c.get("department", "CSE")
+            credits_num = c.get("credits", 4)
+            syl_list = ", ".join(c.get("syllabus_outline", [])) if c.get("syllabus_outline") else c.get("syllabus", "Core modules and lab work")
+            c_msgs.append(f"• {name} ({code}) - Dept: {dept}, Credits: {credits_num}\n  Syllabus Outline: {syl_list}")
+
+        full_msg = "\n\n".join(c_msgs)
         return AgentResponse(
             status="success",
             data={
                 "student": profile["name"],
                 "courses": matched_courses,
+                "synthesis_text": full_msg,
                 "source": "courses.json"
             },
-            message=msg,
+            message=full_msg,
             citation=citation
         )
 

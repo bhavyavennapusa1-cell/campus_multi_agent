@@ -180,15 +180,19 @@ def format_citation(result: dict) -> str:
     return f"{title_name} §{sec_title} (v{version})"
 
 
-def retrieve(query: str, k: int = 3, category: str = None, session_id: str = "global_retrieval", include_related: bool = False) -> list[dict]:
+def retrieve(query: str, k: int = 3, category: str = None, session_id: str = "global_retrieval", include_related: bool = False, exclude_malpractice: bool = True) -> list[dict]:
     """
     Retrieves document chunks using lightweight BM25 keyword search with synonym expansion and passive logging.
+    By default, exclude_malpractice=True structurally prevents disciplinary punishment policies from being returned for routine queries.
     """
     if category is not None:
         category_clean = category.strip().lower()
         if category_clean not in VALID_CATEGORIES:
             raise ValueError(f"Invalid category '{category}'. Must be one of {sorted(VALID_CATEGORIES)} or None.")
         category = category_clean
+
+    query_lower = query.lower()
+    is_malpractice_query = any(w in query_lower for w in ["malpractice", "cheating", "impersonation", "suspension", "penalty", "punishment", "disciplinary committee"])
 
     # Query expansion via slang dictionary
     expanded_query = _expand_query(query)
@@ -204,11 +208,19 @@ def retrieve(query: str, k: int = 3, category: str = None, session_id: str = "gl
                 if bm25_scores[idx] <= 0.0:
                     break
                 meta = _corpus_metas[idx]
+                doc_text = _corpus_docs[idx]
+
                 if category and meta.get("category") != category:
                     continue
 
+                # Anti-Malpractice Guardrail: Never return disciplinary penalties unless explicitly requested
+                if exclude_malpractice and not is_malpractice_query:
+                    sec_lower = meta.get("section_title", "").lower()
+                    if "malpractice" in sec_lower or "category 2 malpractice" in doc_text.lower() or "academic suspension" in doc_text.lower():
+                        continue
+
                 top_results.append({
-                    "text": _corpus_docs[idx],
+                    "text": doc_text,
                     "doc_id": meta.get("doc_id", "UNKNOWN"),
                     "title": meta.get("title", ""),
                     "section_title": meta.get("section_title", "Overview"),
