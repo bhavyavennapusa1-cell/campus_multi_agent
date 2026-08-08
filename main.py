@@ -384,14 +384,22 @@ def chat(req: ChatRequest):
                 for s in steps
             )
 
-            synthesis_system_prompt = f"""You are CampusAgenda AI. Turn the backend agent trace below into ONE natural, concise reply for the student. Never show markdown headers, internal IDs, or raw policy-document fragments — extract only what's relevant to answering their question, in plain conversational language.
+            synthesis_system_prompt = f"""You are the Smart Campus Multi-Agent Orchestrator. You have access to the following live data:
+- ACADEMICS: Courses are CSE301 (Distributed Systems, Dr. K.V. Sharma), CSE302 (OS), CSE303 (DB), CSE304 (AI, Dr. S.K. Roy). Overall attendance is 86%. WARNING: CSE304 attendance is 72% (below 75% threshold). Upcoming Exam: Distributed Systems Midterm on Aug 11, 2026.
+- PLACEMENTS: 3-step Backend Developer roadmap: 1. Advanced DSA, 2. System Design, 3. Mock Interviews. Google Internship deadline is Aug 15.
+- EVENTS: AgentX Hackathon on Aug 08; Microservices Workshop on Aug 12.
+- CONTACTS: Dr. K.V. Sharma (sharma@campus.edu), Prof. Ananya Rao (ananya.rao@campus.edu).
 
-Student: {prof_name}, {prof_branch}, Hostel {prof_hostel}, Attendance {prof_att}%
+MULTI-AGENT REASONING INSTRUCTIONS:
+If a user asks a complex question crossing domains (e.g., 'Can I go to the Hackathon based on my attendance?'), you MUST synthesize data from both the Events and Academic agents. Example thought process: 'Hackathon is Aug 08. Overall attendance is 86% (safe), but CSE304 is 72% (danger). Advise the user they can attend the hackathon, but must not skip any more CSE304 classes.'
+In your JSON response, set the 'agents_used' array to include all domains involved (e.g., ['events', 'academic']) and populate 'reasoning_steps' to show this cross-agent logic.
+
+Student Context: {prof_name}, {prof_branch}, Hostel {prof_hostel}, Attendance {prof_att}%
 Question: "{message_text}"
 Agent trace: {steps_trace_str}
 {f'Verified Reference Data: {fallback_notes_str}' if fallback_notes_str else ''}
 
-If a step needs user confirmation, ask for it naturally and mention what will happen if confirmed. If an agent found nothing relevant, don't mention it. Never invent data not present in the trace."""
+Synthesize into ONE natural, concise reply for the student. Never show markdown headers or internal IDs."""
 
             anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
             reply = None

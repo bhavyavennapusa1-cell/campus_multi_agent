@@ -399,6 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const traceList = document.getElementById('trace-list');
     const chips = document.querySelectorAll('.chip');
     const btnNewChat = document.getElementById('btn-new-chat');
+    const btnTogglePrevChats = document.getElementById('btn-toggle-prev-chats');
 
     // --- Session ID & Local Storage History Management ---
     function getOrCreateSessionId() {
@@ -412,6 +413,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentSessionId = getOrCreateSessionId();
 
+    function saveMessageToLocalStorage(msgObj) {
+        let history = [];
+        try {
+            const raw = localStorage.getItem('campus_chat_history');
+            if (raw) history = JSON.parse(raw);
+        } catch (e) { history = []; }
+        history.push(msgObj);
+        localStorage.setItem('campus_chat_history', JSON.stringify(history));
+    }
+
     function saveMessageToHistory(sessionId, msgObj) {
         let history = [];
         const historyJson = sessionStorage.getItem('chat_history_' + sessionId);
@@ -420,10 +431,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         history.push(msgObj);
         sessionStorage.setItem('chat_history_' + sessionId, JSON.stringify(history));
+        saveMessageToLocalStorage(msgObj);
+    }
+
+    function loadLocalStorageChatHistory() {
+        if (!chatHistory) return false;
+        try {
+            const raw = localStorage.getItem('campus_chat_history');
+            if (!raw) return false;
+            const messages = JSON.parse(raw);
+            if (!Array.isArray(messages) || messages.length === 0) return false;
+
+            chatHistory.innerHTML = '';
+            messages.forEach(m => {
+                appendMessageToDOM(m.text, m.sender, m.agentsUsed || m.agents_used, m.reasoningSteps || m.reasoning_steps, m.requiresConfirmation || m.requires_confirmation, m.actionContext || 'default', m.actions || [], false);
+            });
+            return true;
+        } catch (e) {
+            return false;
+        }
     }
 
     function loadChatHistory(sessionId) {
         if (!chatHistory) return false;
+        const loadedLocal = loadLocalStorageChatHistory();
+        if (loadedLocal) return true;
+
         const historyJson = sessionStorage.getItem('chat_history_' + sessionId);
         if (!historyJson) return false;
         try {
@@ -443,8 +476,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-hydrate history on page load/switch
     loadChatHistory(currentSessionId);
 
+    if (btnTogglePrevChats) {
+        btnTogglePrevChats.addEventListener('click', () => {
+            const loaded = loadLocalStorageChatHistory();
+            if (!loaded && chatHistory) {
+                chatHistory.innerHTML = `<div class="message msg-bot">No previous chat history found in local storage. Start a conversation below!</div>`;
+            }
+        });
+    }
+
     if (btnNewChat) {
         btnNewChat.addEventListener('click', () => {
+            localStorage.removeItem('campus_chat_history');
             sessionStorage.removeItem('chat_session_id');
             currentSessionId = getOrCreateSessionId();
             if (chatHistory) {
