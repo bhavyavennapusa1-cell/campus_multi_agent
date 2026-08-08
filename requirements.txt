@@ -1,12 +1,9 @@
 fastapi
 uvicorn
 pydantic
-chromadb
 anthropic
 python-dotenv
-sentence-transformers
 rank-bm25
 pyyaml
 python-multipart
 requests
-openai-whisper

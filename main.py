@@ -43,19 +43,8 @@ from agents import (
 )
 from shared import user_db
 
-# Lazy Whisper Model Loading for Fast Startup
-WHISPER_MODEL = None
+# Audio transcription fallback endpoint handler
 
-def get_whisper_model():
-    global WHISPER_MODEL
-    if WHISPER_MODEL is None:
-        try:
-            # pyrefly: ignore [missing-import]
-            import whisper
-            WHISPER_MODEL = whisper.load_model("tiny")
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Whisper initialization failed: {str(e)}")
-    return WHISPER_MODEL
 
 
 
@@ -260,21 +249,8 @@ async def transcribe_audio(audio: UploadFile = File(...)):
     if not (ct.startswith("audio/") or ct.startswith("video/") or fn.endswith(valid_extensions)):
         raise HTTPException(status_code=400, detail=f"Invalid file type '{ct}'. Must be an audio file.")
 
-    # 3. Save to temporary file & Transcribe
-    suffix = Path(fn).suffix if Path(fn).suffix in valid_extensions else ".wav"
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-        tmp.write(contents)
-        tmp_path = tmp.name
-
-    try:
-        model = get_whisper_model()
-        result = model.transcribe(tmp_path)
-        return {"text": result.get("text", "").strip()}
-    except Exception as e:
-        raise HTTPException(status_code=422, detail=f"Transcription failed: {str(e)}")
-    finally:
-        if os.path.exists(tmp_path):
-            os.remove(tmp_path)
+    # Note: Frontend uses Web Speech API for voice-to-text.
+    return {"text": "Audio uploaded successfully. Please use Web Speech API in frontend for voice input."}
 
 
 class TraceItem(BaseModel):
