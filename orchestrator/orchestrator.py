@@ -173,11 +173,18 @@ def keyword_plan(clean_req: str, user_request: str) -> list[PlanStep]:
             steps.append(PlanStep(id=step_id, agent="communication", action="draft_email", params={"subject": "Campus Inquiry", "core_message": clean_req}))
         step_id += 1
 
+    has_general_search_kw = any(k in req_lower for k in ["normalization", "interview prep", "interview process", "interview rounds", "raft", "explain", "what is", "how to", "difference between", "search web", "best resources", "youtube", "tutorial"])
+
     if has_campus_kw and not has_nav_kw:
         if "complaint" in req_lower or "grievance" in req_lower:
             steps.append(PlanStep(id=step_id, agent="campus", action="file_grievance", params={"query": user_request}))
         else:
             steps.append(PlanStep(id=step_id, agent="campus", action="get_hostel_info", params={"query": user_request}))
+        step_id += 1
+
+    if not steps or has_general_search_kw:
+        steps.append(PlanStep(id=step_id, agent="academic", action="web_search_grounding", params={"query": clean_req}))
+        step_id += 1
         step_id += 1
 
     if not steps:
@@ -658,7 +665,7 @@ Instructions:
     if draft_parts:
         paragraphs.append("\n".join(draft_parts))
 
-    if general_parts and not (eligibility_parts or registration_parts or draft_parts):
+    if general_parts:
         paragraphs.append("\n\n".join(general_parts))
 
     body = "\n\n".join(paragraphs) if paragraphs else "Here are your requested campus details."

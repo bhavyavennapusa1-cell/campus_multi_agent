@@ -511,6 +511,34 @@ def general_synthesis(params: dict) -> AgentResponse:
     )
 
 
+def web_search_action(params: dict) -> AgentResponse:
+    """
+    Fix 2: Web Search Grounding Action for General / External / Technical Queries.
+    Calls knowledge.web_search.search_web_grounding to retrieve grounded search facts & citations.
+    """
+    from knowledge.web_search import search_web_grounding
+    query = params.get("query") or params.get("subject") or "general campus query"
+    res = search_web_grounding(query)
+
+    facts_str = "\n".join([f"• {f}" for f in res.get("key_facts", [])])
+    synthesis_out = f"Web Search Grounding for '{query}':\n{res['snippet']}\n\nKey Findings:\n{facts_str}\n\nReference Link: {res['url']}"
+
+    return AgentResponse(
+        status="success",
+        data={
+            "query": query,
+            "title": res["title"],
+            "snippet": res["snippet"],
+            "url": res["url"],
+            "key_facts": res["key_facts"],
+            "synthesis_text": synthesis_out,
+            "source": res["source"]
+        },
+        message=synthesis_out,
+        citation=f"{res['title']} ({res['url']})"
+    )
+
+
 ACTIONS = {
     "get_attendance": get_attendance,
     "get_timetable": get_timetable,
@@ -523,6 +551,7 @@ ACTIONS = {
     "create_study_plan": create_study_plan,
     "get_roadmap": get_roadmap,
     "general_synthesis": general_synthesis,
+    "web_search_grounding": web_search_action,
 }
 
 
