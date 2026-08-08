@@ -495,16 +495,27 @@ document.addEventListener('DOMContentLoaded', () => {
  }, 150);
  }
 
- chips.forEach(chip => {
- chip.addEventListener('click', () => {
- if (chatInput) {
- chatInput.value = chip.getAttribute('data-prompt');
- if (chatForm) {
- chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
- }
- }
- });
- });
+    chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            if (chatInput) {
+                chatInput.value = chip.getAttribute('data-prompt') || chip.innerText.trim();
+                chatInput.focus();
+                if (chatForm) {
+                    chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.quick-chips .chip, .quick-chips-container button, .suggestion-chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+            const inputField = document.getElementById('chat-input');
+            if (inputField) {
+                inputField.value = chip.getAttribute('data-prompt') || e.target.innerText.trim();
+                inputField.focus();
+            }
+        });
+    });
 
  const getStatusIcon = (status) => {
  switch ((status || '').toLowerCase()) {
@@ -782,20 +793,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // File Attachment UI Wiring
-    const attachmentBtn = document.getElementById('attachment-btn');
-    const fileAttachmentInput = document.getElementById('file-attachment-input');
+    const attachBtn = document.getElementById('attach-btn') || document.getElementById('attachment-btn');
+    const fileUploadInput = document.getElementById('file-upload') || document.getElementById('file-attachment-input');
     const attachmentPreviewArea = document.getElementById('attachment-preview-area');
     const attachmentFilename = document.getElementById('attachment-filename');
     const removeAttachmentBtn = document.getElementById('remove-attachment-btn');
 
     let currentSelectedFile = null;
 
-    if (attachmentBtn && fileAttachmentInput) {
-        attachmentBtn.addEventListener('click', () => {
-            fileAttachmentInput.click();
+    if (attachBtn && fileUploadInput) {
+        attachBtn.addEventListener('click', () => {
+            fileUploadInput.click();
         });
 
-        fileAttachmentInput.addEventListener('change', (e) => {
+        fileUploadInput.addEventListener('change', (e) => {
             if (e.target.files && e.target.files[0]) {
                 currentSelectedFile = e.target.files[0];
                 if (attachmentFilename) attachmentFilename.innerText = `📎 ${currentSelectedFile.name}`;
@@ -806,7 +817,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (removeAttachmentBtn) {
             removeAttachmentBtn.addEventListener('click', () => {
                 currentSelectedFile = null;
-                if (fileAttachmentInput) fileAttachmentInput.value = '';
+                if (fileUploadInput) fileUploadInput.value = '';
                 if (attachmentPreviewArea) attachmentPreviewArea.style.display = 'none';
             });
         }
