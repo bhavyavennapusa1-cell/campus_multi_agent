@@ -65,7 +65,6 @@ User request → Orchestrator (plans + routes) → specialized agents → shared
   - *Student Memory State* — the profile injected into orchestrator context, personalized to the logged-in user
   - *Chat* — free-text queries (LLM-routed) plus quick-prompt chips for guaranteed demo scenarios
   - *Live Agent Trace* — real-time view of which agent is running, what it's doing, and the result
-- **Architecture page** (`about.html`) — the agent swarm and RAG/memory layer explained for a non-technical reviewer
 - **Sign up / Log in / Log out** — accounts are stored persistently; profile data is per-user, not a shared placeholder
 - **Real tool actions** — "Add to calendar" generates a real `.ics` file; downloads (e.g. syllabus) deliver real files, not simulated success messages
 
