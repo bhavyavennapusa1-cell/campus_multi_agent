@@ -325,6 +325,14 @@ def get_student_memory(session_id: str) -> dict | None:
     return prof
 
 
+VALID_STUDENT_PROFILE_COLS = {
+    "session_id", "student_id", "name", "year", "semester", "branch", "section",
+    "cgpa", "backlog_count", "attendance_pct", "hostel_block", "placement_status",
+    "mentor_id", "hod_id", "last_updated", "career_goal", "skills",
+    "academic_interests", "courses_in_progress", "current_projects",
+    "events_interested_in", "learning_goals"
+}
+
 def update_student_profile(session_id: str, profile_updates: dict) -> dict:
     """
     Updates specific student memory fields (serializing lists to JSON) and sets last_updated.
@@ -339,21 +347,21 @@ def update_student_profile(session_id: str, profile_updates: dict) -> dict:
     fields = {"last_updated": now_iso}
 
     for k, v in norm_updates.items():
-        if isinstance(v, (list, dict)):
-            fields[k] = json.dumps(v)
-        else:
-            fields[k] = v
+        if k in VALID_STUDENT_PROFILE_COLS and k != "session_id":
+            if isinstance(v, (list, dict)):
+                fields[k] = json.dumps(v)
+            else:
+                fields[k] = v
 
+    if len(fields) > 1:
+        set_clauses = [f"{k} = ?" for k in fields.keys()]
+        values = list(fields.values()) + [session_id]
+        sql = f"UPDATE student_profile SET {', '.join(set_clauses)} WHERE session_id = ?;"
 
-    set_clauses = [f"{k} = ?" for k in fields.keys()]
-    values = list(fields.values()) + [session_id]
-
-    sql = f"UPDATE student_profile SET {', '.join(set_clauses)} WHERE session_id = ?;"
-
-    with get_db_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(sql, values)
-        conn.commit()
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(sql, values)
+            conn.commit()
 
     return get_student_memory(session_id)
 
