@@ -136,13 +136,19 @@
  <div class="chip" data-prompt="Show today's classes, recommend upcoming AI workshops, and suggest clubs related to Machine Learning."> Classes, AI Workshops & ML Clubs</div>
  </div>
 
- <div class="chat-input-area">
- <form id="chat-form" class="input-wrapper">
- <input type="text" id="chat-input" placeholder="Type your multi-step request..." autocomplete="off" required>
- <button type="button" id="mic-btn" class="btn-pill" style="padding: 0.4rem 0.8rem; font-size: 1rem; background: var(--soft-yellow); color: var(--text-main);" title="Voice Search">Voice</button>
- <button type="submit" class="btn-pill" style="padding: 0.4rem 1.25rem; font-size: 0.9rem;">Send</button>
- </form>
- </div>
+            <div class="chat-input-area">
+                <div id="attachment-preview-area" style="display: none; padding: 0.4rem 0.8rem; margin-bottom: 0.5rem; background: var(--surface); border: 2px solid var(--border-dark); border-radius: 12px; width: fit-content; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600;">
+                    <span id="attachment-filename">filename.pdf</span>
+                    <button type="button" id="remove-attachment-btn" style="background: none; border: none; font-weight: 700; cursor: pointer; color: #c0392b;">[X]</button>
+                </div>
+                <form id="chat-form" class="input-wrapper">
+                    <input type="file" id="file-attachment-input" accept=".pdf,.jpg,.jpeg,.png,.docx,.pptx" style="display: none;">
+                    <button type="button" id="attachment-btn" class="btn-pill" style="padding: 0.4rem 0.8rem; font-size: 0.9rem; background: var(--lavender); color: var(--text-main);" title="Attach Document (PDF, DOCX, PPTX, Images)">Attach</button>
+                    <input type="text" id="chat-input" placeholder="Type your multi-step request..." autocomplete="off" required>
+                    <button type="button" id="mic-btn" class="btn-pill" style="padding: 0.4rem 0.8rem; font-size: 1rem; background: var(--soft-yellow); color: var(--text-main);" title="Voice Search">Voice</button>
+                    <button type="submit" class="btn-pill" style="padding: 0.4rem 1.25rem; font-size: 0.9rem;">Send</button>
+                </form>
+            </div>
  </main>
 
  <!-- 3. Live Agent Trace Panel -->

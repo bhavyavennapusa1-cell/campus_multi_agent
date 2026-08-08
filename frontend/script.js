@@ -734,22 +734,83 @@ document.addEventListener('DOMContentLoaded', () => {
  }
  };
 
- if (chatForm && chatInput) {
- chatForm.addEventListener('submit', (e) => {
- e.preventDefault();
- const text = chatInput.value.trim();
- if (!text) return;
+            if (currentSelectedFile) {
+                const fileToUpload = currentSelectedFile;
+                currentSelectedFile = null;
+                if (fileAttachmentInput) fileAttachmentInput.value = '';
+                if (attachmentPreviewArea) attachmentPreviewArea.style.display = 'none';
 
- const sendBtn = chatForm.querySelector('button[type="submit"]');
+                showTypingIndicator();
+                try {
+                    const formData = new FormData();
+                    formData.append('file', fileToUpload);
+                    const uploadRes = await fetch(`${API_BASE}/api/upload-doc?session_id=${encodeURIComponent(currentSessionId)}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    removeTypingIndicator();
+                    const docData = await uploadRes.json();
+                    if (docData.status === "success") {
+                        const quizUrl = `${window.location.origin}/quiz/${docData.quiz_id}`;
+                        const quizShareMsg = `\n\nShareable External Quiz Link:\n${quizUrl}`;
+                        appendMessage(
+                            `Document Analysis for '${docData.filename}':\n${docData.summary}${quizShareMsg}`,
+                            'bot',
+                            ['academic'],
+                            [],
+                            false,
+                            'doc_intel',
+                            [{ type: 'link', label: 'Open External Shareable Quiz Page', url: quizUrl }]
+                        );
+                        renderTraces([
+                            { agent: 'document_intelligence', action: 'extract_text', status: 'done', message: `Extracted ${docData.extracted_text_length} chars from ${docData.filename}` },
+                            { agent: 'document_intelligence', action: 'summarize_and_quiz', status: 'done', message: `Generated grounded summary and Quiz ID ${docData.quiz_id}` }
+                        ]);
+                        if (text) {
+                            sendQuery(text);
+                        }
+                        return;
+                    }
+                } catch (err) {
+                    removeTypingIndicator();
+                    console.warn('Document upload error:', err);
+                }
+            }
 
- appendMessage(text, 'user');
- chatInput.value = '';
- chatInput.disabled = true;
- if (sendBtn) sendBtn.disabled = true;
+            sendQuery(text);
+        });
+    }
 
- sendQuery(text);
- });
- }
+    // File Attachment UI Wiring
+    const attachmentBtn = document.getElementById('attachment-btn');
+    const fileAttachmentInput = document.getElementById('file-attachment-input');
+    const attachmentPreviewArea = document.getElementById('attachment-preview-area');
+    const attachmentFilename = document.getElementById('attachment-filename');
+    const removeAttachmentBtn = document.getElementById('remove-attachment-btn');
+
+    let currentSelectedFile = null;
+
+    if (attachmentBtn && fileAttachmentInput) {
+        attachmentBtn.addEventListener('click', () => {
+            fileAttachmentInput.click();
+        });
+
+        fileAttachmentInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                currentSelectedFile = e.target.files[0];
+                if (attachmentFilename) attachmentFilename.innerText = `📎 ${currentSelectedFile.name}`;
+                if (attachmentPreviewArea) attachmentPreviewArea.style.display = 'flex';
+            }
+        });
+
+        if (removeAttachmentBtn) {
+            removeAttachmentBtn.addEventListener('click', () => {
+                currentSelectedFile = null;
+                if (fileAttachmentInput) fileAttachmentInput.value = '';
+                if (attachmentPreviewArea) attachmentPreviewArea.style.display = 'none';
+            });
+        }
+    }
 
  // Web Speech API - Voice to Text Integration
  const micBtn = document.getElementById('mic-btn');

@@ -23,7 +23,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Query, Body
 from fastapi.middleware.cors import CORSMiddleware
 # pyrefly: ignore [missing-import]
 from fastapi.staticfiles import StaticFiles
-# pyrefly: ignore [missing-import]
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 try:
@@ -694,6 +694,92 @@ def grade_quiz(req: QuizGradeRequest):
 def document_qa(req: DocumentQARequest):
     from shared.document_intelligence import answer_document_qa
     return answer_document_qa(req.session_id, req.query)
+
+
+@app.get("/quiz/{quiz_id}", response_class=HTMLResponse)
+def render_external_quiz_page(quiz_id: str):
+    from shared.document_intelligence import QUIZ_STORE
+    if quiz_id not in QUIZ_STORE:
+        return HTMLResponse(content=f"<html><body style='font-family:sans-serif;padding:2rem;'><h2>Quiz Expired or Not Found</h2><p>Quiz ID '{quiz_id}' was not found.</p></body></html>", status_code=404)
+
+    q_data = QUIZ_STORE[quiz_id]
+    q_html_blocks = []
+    for qid, q in q_data.items():
+        opts_html = ""
+        if q["type"] == "mcq":
+            for opt in q["options"]:
+                opts_html += f'<div style="margin: 0.3rem 0;"><label><input type="radio" name="q_{qid}" value="{opt[0]}"> {opt}</label></div>'
+        else:
+            opts_html = f'<input type="text" id="q_{qid}_text" placeholder="Type your answer..." style="padding: 0.5rem; width: 100%; border: 2px solid #2C3E50; border-radius: 8px;">'
+
+        q_html_blocks.append(f"""
+        <div style="background: #fff; border: 2px solid #2C3E50; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 3px 3px 0px #2C3E50;">
+            <h4 style="margin-top:0;">Question {qid}: {q['question']}</h4>
+            {opts_html}
+            <div id="feedback_{qid}" style="margin-top: 0.5rem; font-weight: 600; display: none;"></div>
+        </div>
+        """)
+
+    full_html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <title>Synapse | Document Study Quiz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {{ font-family: 'Inter', sans-serif; background: #E8F4F8; color: #2C3E50; max-width: 800px; margin: 0 auto; padding: 2rem 1rem; }}
+        h1 {{ font-family: 'Space Grotesk', sans-serif; color: #4A90E2; }}
+        .btn {{ background: #A8E6CF; border: 2px solid #2C3E50; padding: 0.75rem 1.5rem; font-weight: 700; border-radius: 20px; cursor: pointer; box-shadow: 3px 3px 0px #2C3E50; }}
+        .btn:hover {{ transform: translateY(-2px); }}
+    </style>
+</head>
+<body>
+    <h1>Synapse Document Quiz</h1>
+    <p>Grounded self-assessment for Quiz ID: <code>{quiz_id}</code></p>
+    <form id="quiz-form" onsubmit="submitQuiz(event)">
+        {''.join(q_html_blocks)}
+        <button type="submit" class="btn">Submit & Grade Quiz</button>
+    </form>
+    <div id="quiz-score" style="margin-top: 1.5rem; font-size: 1.2rem; font-weight: 700;"></div>
+    <script>
+        async function submitQuiz(e) {{
+            e.preventDefault();
+            let correctCount = 0;
+            let total = {len(q_data)};
+            const qids = {json.dumps(list(q_data.keys()))};
+
+            for (let qid of qids) {{
+                let userAns = "";
+                const rad = document.querySelector(`input[name="q_${{qid}}"]:checked`);
+                if (rad) userAns = rad.value;
+                else {{
+                    const txtInput = document.getElementById(`q_${{qid}}_text`);
+                    if (txtInput) userAns = txtInput.value;
+                }}
+
+                const res = await fetch('/api/document/quiz/grade', {{
+                    method: 'POST',
+                    headers: {{ 'Content-Type': 'application/json' }},
+                    body: JSON.stringify({{ quiz_id: '{quiz_id}', question_id: qid, student_answer: userAns }})
+                }});
+                const data = await res.json();
+                const fb = document.getElementById(`feedback_${{qid}}`);
+                fb.style.display = 'block';
+                if (data.is_correct) {{
+                    correctCount++;
+                    fb.style.color = '#27ae60';
+                    fb.innerText = data.feedback;
+                }} else {{
+                    fb.style.color = '#c0392b';
+                    fb.innerText = data.feedback;
+                }}
+            }}
+            document.getElementById('quiz-score').innerText = `Final Score: ${{correctCount}} / ${{total}} (${{Math.round(correctCount/total*100)}}%)`;
+        }}
+    </script>
+</body>
+</html>"""
+    return HTMLResponse(content=full_html)
 
 
 # Mount static frontend files from frontend directory
