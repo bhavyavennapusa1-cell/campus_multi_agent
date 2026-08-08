@@ -748,6 +748,68 @@ document.addEventListener('DOMContentLoaded', () => {
             sendQuery(text);
         });
     }
+
+    // Web Speech API - Voice to Text Integration
+    const micBtn = document.getElementById('mic-btn');
+    if (micBtn && chatInput) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            let isListening = false;
+
+            const resetMicBtn = () => {
+                isListening = false;
+                micBtn.style.background = 'var(--soft-yellow)';
+                micBtn.style.color = 'var(--text-main)';
+                micBtn.innerHTML = '🎙️';
+            };
+
+            recognition.onstart = () => {
+                isListening = true;
+                micBtn.style.background = '#e74c3c';
+                micBtn.style.color = '#ffffff';
+                micBtn.innerHTML = '🔴 Listening...';
+            };
+
+            recognition.onresult = (event) => {
+                if (event.results && event.results[0] && event.results[0][0]) {
+                    const transcript = event.results[0][0].transcript;
+                    chatInput.value = transcript;
+                    chatInput.focus();
+                }
+            };
+
+            recognition.onerror = (err) => {
+                console.warn('Speech recognition error:', err);
+                resetMicBtn();
+            };
+
+            recognition.onend = () => {
+                resetMicBtn();
+            };
+
+            micBtn.addEventListener('click', () => {
+                if (isListening) {
+                    recognition.stop();
+                } else {
+                    try {
+                        recognition.start();
+                    } catch (err) {
+                        console.warn('Speech recognition start error:', err);
+                        resetMicBtn();
+                    }
+                }
+            });
+        } else {
+            micBtn.addEventListener('click', () => {
+                alert('Speech recognition is not supported in this browser.');
+            });
+        }
+    }
 });
 
 window.handleConfirm = (isConfirmed, context, btnElement) => {
