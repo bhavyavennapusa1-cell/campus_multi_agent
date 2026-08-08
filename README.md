@@ -48,7 +48,7 @@ flowchart TD
     O --> AC[Academic Agent<br/>timetable, attendance, exams]
     O --> PL[Placement Agent<br/>eligibility, drives]
     O --> EV[Events Agent<br/>workshops, registration, calendar]
-    AC --> K[Knowledge Agent — RAG<br/>policies, handbooks, circulars]
+    O ----> K[Knowledge Agent — RAG<br/>policies, handbooks, circulars]
     PL --> K
     EV --> K
     K --> D[Tools, APIs & Memory Store<br/>calendar export, downloads, student profile DB]
