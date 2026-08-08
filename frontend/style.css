@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Kalam:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 :root {
   --bg-gingham: #E8F4F8;
@@ -14,9 +14,14 @@
   --text-muted: #7F8C8D;
   --border-dark: #2C3E50;
 
-  --font-heading: 'Fredoka', cursive, sans-serif;
-  --font-script: 'Kalam', cursive;
-  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-script: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.03em;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
