@@ -901,18 +901,18 @@ window.handleConfirm = (isConfirmed, context, btnElement) => {
  }, 800);
 };
 
-// Interactive Mouse Parallax for Background & Decorative Elements
+// Subdued Mouse Parallax for Background Decorative Elements Only
 document.addEventListener('mousemove', (e) => {
- const centerX = window.innerWidth / 2;
- const centerY = window.innerHeight / 2;
- const mouseX = (e.clientX - centerX) / centerX;
- const mouseY = (e.clientY - centerY) / centerY;
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const mouseX = (e.clientX - centerX) / centerX;
+    const mouseY = (e.clientY - centerY) / centerY;
 
- const decorElems = document.querySelectorAll('.sticker-tag, .widget-sticker, .floating-shape, .bg-shape, .decorative-shape, .badge-floating');
- decorElems.forEach((elem, index) => {
- const depth = (index % 3 + 1) * 4; // 4px to 12px shift
- const moveX = (mouseX * depth).toFixed(2);
- const moveY = (mouseY * depth).toFixed(2);
- elem.style.transform = `translate3d(${moveX}px, ${moveY}px, 0px)`;
- });
+    const decorElems = document.querySelectorAll('.widget-sticker, .floating-shape, .bg-shape, .decorative-shape');
+    decorElems.forEach((elem, index) => {
+        const depth = (index % 3 + 1) * 0.8; // 0.8px to 2.4px subtle shift
+        const moveX = (mouseX * depth).toFixed(2);
+        const moveY = (mouseY * depth).toFixed(2);
+        elem.style.transform = `translate3d(${moveX}px, ${moveY}px, 0px)`;
+    });
 });

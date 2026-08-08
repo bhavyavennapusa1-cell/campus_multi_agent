@@ -271,28 +271,42 @@ label {
   100% { transform: translateY(0px); }
 }
 
-/* Continuous Floating Animations */
-@keyframes floatShape {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-15px) rotate(4deg); }
+/* Strip Floating Animations from Interactive Buttons, Chips & Cards */
+button, .btn, .btn-pill, .chip, .sticker-tag, .card, .status-card, .nav-card, .checklist-day-card, .academic-card, .feature-card, .group-card, .widget-card, .info-card, .hero-card {
+  animation: none !important;
 }
 
-.sticker-tag, .widget-sticker, .floating-shape, .bg-shape, .decorative-shape, .badge-floating {
-  animation: floatShape 6s ease-in-out infinite;
+button, .btn, .btn-pill, .chip {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+button:hover, .btn:hover, .btn-pill:hover, .chip:hover {
+  transform: translateY(-2px);
+}
+
+/* Subdued Background Float (-6px, 12s duration) */
+@keyframes floatShape {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.widget-sticker, .floating-shape, .bg-shape, .decorative-shape {
+  animation: floatShape 12s ease-in-out infinite !important;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   display: inline-block;
 }
 
-.sticker-tag:nth-child(even), .widget-sticker:nth-child(even), .floating-shape:nth-child(even), .bg-shape:nth-child(even), .decorative-shape:nth-child(even) {
-  animation-delay: -3s;
+.widget-sticker:nth-child(even), .floating-shape:nth-child(even), .bg-shape:nth-child(even), .decorative-shape:nth-child(even) {
+  animation-delay: -6s !important;
 }
 
-/* Enhanced Card Micro-Interactions */
+/* Card Hover Micro-Interactions */
 .card, .status-card, .nav-card, .checklist-day-card, .academic-card, .feature-card, .group-card, .widget-card, .info-card, .hero-card {
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .card:hover, .status-card:hover, .nav-card:hover, .checklist-day-card:hover, .academic-card:hover, .feature-card:hover, .group-card:hover, .widget-card:hover, .info-card:hover, .hero-card:hover {
-  transform: translateY(-4px) scale(1.01);
+  transform: translateY(-3px);
   box-shadow: 6px 6px 0px var(--border-dark, #2C3E50);
 }
 
