@@ -604,23 +604,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getFallbackResponse = (messageText) => {
         const textLower = messageText.toLowerCase();
-        let replyText = "Based on institutional regulations, your request has been processed across campus agent pipelines.";
+        const rawName = document.getElementById('mem-name')?.value || "Student";
+        const studentName = rawName.trim().split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+
+        let replyText = `Hello ${studentName}! Here are your requested campus details.`;
         let agent = "academic";
         let action = "data_retrieval";
         let actions = [];
 
-        if (textLower.includes("eligib") || textLower.includes("google")) {
+        if (textLower.includes("workshop") || textLower.includes("event") || textLower.includes("hackathon") || textLower.includes("fest")) {
+            agent = "events";
+            action = "get_events";
+            replyText = `Hello ${studentName}!\n\n1. Distributed Microservices & Kubernetes Workshop (Aug 12, 2026, 2:00 PM - Tech Tower Lab 2, 15 seats left)\n2. AgentX National AI Hackathon (Aug 08, 2026, 10:00 AM - Main Campus Auditorium)`;
+        } else if (textLower.includes("placement") || textLower.includes("drive") || textLower.includes("eligib") || textLower.includes("google") || textLower.includes("company") || textLower.includes("companies")) {
             agent = "placement";
-            action = "check_eligibility";
-            replyText = "Student is ELIGIBLE for Dream Tier placement drives (Google, Microsoft). Policy reference: Placement Policy §2.1.";
+            action = "find_opportunities";
+            replyText = `Hello ${studentName}!\n\nEligible Placement Drives for CSE:\n- Software Engineer (5 open positions) at TechCorp - Application Deadline: Aug 15\n- Backend Systems Engineer at CloudScale - Application Deadline: Aug 20\nRoadmap: 1. Advanced DSA & LeetCode, 2. Microservices & System Design, 3. Mock Interviews.`;
         } else if (textLower.includes("email") || textLower.includes("draft")) {
             agent = "communication";
             action = "draft_email";
-            replyText = "Email drafted for academic office inquiry. Would you like me to send this official email to academic_office@vasavi.ac.in?";
+            replyText = `Hello ${studentName}! Email drafted for academic office inquiry. Would you like me to send this official email to academic_office@vasavi.ac.in?`;
         } else if (textLower.includes("direction") || textLower.includes("where") || textLower.includes("library") || textLower.includes("navigate")) {
             agent = "navigator";
             action = "get_directions";
-            replyText = "Directions to Central Library: Walk straight from Hostel Block B past SAC circle to Central Library Building, 2nd Floor.";
+            replyText = `Hello ${studentName}! Directions to Central Library: Walk straight from Hostel Block B past SAC circle to Central Library Building, 2nd Floor.`;
             actions = [{"type": "link", "label": "Get Directions", "url": "https://www.google.com/maps/dir/?api=1&destination=17.4458,78.3482"}];
         }
 

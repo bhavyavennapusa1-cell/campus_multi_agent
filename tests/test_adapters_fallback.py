@@ -27,7 +27,7 @@ def test_github_fallback():
     assert res.status == "success"
     assert res.data.get("source") == "mock"
     assert "public_repos" in res.data
-    assert "Retrieved GitHub profile metrics" in res.message
+    assert "GitHub Profile metrics" in res.message
 
 
 def test_jobs_api_fallback():

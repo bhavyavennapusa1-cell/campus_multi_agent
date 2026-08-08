@@ -62,18 +62,23 @@ def get_events(params: dict) -> AgentResponse:
     top_rag = rag_results[0] if rag_results else None
     citation = format_citation(top_rag) if top_rag else None
 
+    events_message = (
+        "1. Distributed Microservices & Kubernetes Workshop (Aug 12, 2026, 2:00 PM - Tech Tower Lab 2, 15 seats left)\n"
+        "2. AgentX National AI Hackathon (Aug 08, 2026, 10:00 AM - Main Campus Auditorium)"
+    )
+
     return AgentResponse(
         status="success",
         data={
             "student": profile["name"],
             "events": [
-                {"title": "AgentX National Hackathon 2026", "date": "April 10-11, 2026"},
-                {"title": "Annual Cultural Fest Mantra 2026", "date": "April 22-23, 2026"}
+                {"title": "Distributed Microservices & Kubernetes Workshop", "date": "Aug 12, 2026, 2:00 PM"},
+                {"title": "AgentX National AI Hackathon", "date": "Aug 08, 2026, 10:00 AM"}
             ],
             "details": top_rag["text"] if top_rag else "",
             "source": "mock"
         },
-        message=f"Retrieved upcoming campus hackathons and fests for {profile['name']}.",
+        message=events_message,
         citation=citation
     )
 

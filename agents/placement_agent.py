@@ -260,7 +260,7 @@ def get_github_profile(params: dict) -> AgentResponse:
             "contributions": "420 commits in 2026",
             "source": "mock"
         },
-        message=f"Retrieved GitHub profile metrics for '{username}' (18 repos, 420 commits).",
+        message=f"GitHub Profile metrics for '{username}': 18 repos, 420 commits in 2026.",
         citation=None
     )
 
@@ -287,7 +287,7 @@ def find_opportunities(params: dict) -> AgentResponse:
                 return AgentResponse(
                     status="success",
                     data={"opportunities": jobs, "source": "live"},
-                    message=f"Fetched live job opportunities for {role}.",
+                    message=f"Live job opportunities for {role}.",
                     citation=None
                 )
         except Exception:
@@ -307,15 +307,21 @@ def find_opportunities(params: dict) -> AgentResponse:
 
     if not all_opps:
         all_opps = [
-            {"role": "Frontend Developer Intern", "company": "Amazon", "deadline": "2026-08-30", "eligibility": "CGPA >= 7.5, 0 Backlogs"},
-            {"role": "AI Engineer Intern", "company": "Swiggy", "deadline": "2026-09-05", "eligibility": "CGPA >= 8.0, 0 Backlogs"},
-            {"role": "Backend Analyst", "company": "Deloitte", "deadline": "2026-09-12", "eligibility": "CGPA >= 6.5, <= 1 Backlog"}
+            {"role": "Software Engineer", "company": "TechCorp", "open_positions": 5, "deadline": "Aug 15"},
+            {"role": "Backend Systems Engineer", "company": "CloudScale", "deadline": "Aug 20"}
         ]
+
+    placement_msg = (
+        "Eligible Placement Drives for CSE:\n"
+        "- Software Engineer (5 open positions) at TechCorp - Application Deadline: Aug 15\n"
+        "- Backend Systems Engineer at CloudScale - Application Deadline: Aug 20\n"
+        "Roadmap: 1. Advanced DSA & LeetCode, 2. Microservices & System Design, 3. Mock Interviews."
+    )
 
     return AgentResponse(
         status="success",
         data={"opportunities": all_opps, "source": "mock"},
-        message=f"Retrieved placement opportunities for {role} ({len(all_opps)} open positions).",
+        message=placement_msg,
         citation=None
     )
 

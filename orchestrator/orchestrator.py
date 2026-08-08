@@ -431,7 +431,8 @@ def synthesize_response(user_message: str, steps: list[PlanStep], profile: dict 
     Synthesizes multiple agent execution outputs into ONE natural, coherent, personalized response.
     Uses Anthropic Claude API (claude-3-5-sonnet-20241022) with smart rule-based fallback.
     """
-    prof_name = (profile.get("name") if profile else None) or "Student"
+    raw_prof_name = (profile.get("name") if profile else None) or "Student"
+    prof_name = " ".join(w.capitalize() for w in raw_prof_name.strip().split()) if raw_prof_name else "Student"
     prof_branch = (profile.get("branch") or profile.get("branch_year", "CSE - 3rd Year")) if profile else "CSE - 3rd Year"
     prof_hostel = (profile.get("hostel_block") or profile.get("hostel", "Block B")) if profile else "Block B"
     prof_att = (profile.get("attendance") or profile.get("attendance_pct", "88%")) if profile else "88%"
@@ -461,13 +462,13 @@ Agent results:
 {agent_results_str}
 
 Instructions:
-1. Address the student by name naturally where it fits — don't force it into every sentence.
+1. Address the student by name naturally using capitalized format (e.g., "Hello {prof_name}!").
 2. Synthesize across agents into a single flowing answer, weaving multiple agent results together logically rather than concatenating.
-3. If any agent result has status "needs_confirmation" or "failed", surface that clearly and tell the student what to do next.
-4. If a data value is missing or an agent had nothing relevant, omit it gracefully rather than saying "no data found."
-5. Never invent facts, dates, names, or numbers not present in the agent results.
-6. Keep tone conversational and concise. No headers, no bullet dumps unless the content is genuinely a list (e.g. a timetable).
-7. If nothing in the agent results actually answers the question, say so honestly and suggest a rephrasing."""
+3. NEVER output meta-text or meta-phrases such as 'Retrieved upcoming...', 'Processed query...', 'Fetched placement...', or 'Retrieved data...'. Always return CONCRETE, SPECIFIC details directly in the reply!
+4. If any agent result has status "needs_confirmation" or "failed", surface that clearly and tell the student what to do next.
+5. If a data value is missing or an agent had nothing relevant, omit it gracefully rather than saying "no data found."
+6. Never invent facts, dates, names, or numbers not present in the agent results.
+7. Keep tone conversational and concise."""
 
     anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
 
@@ -500,7 +501,7 @@ Instructions:
                 messages.append(s.result.message)
 
     greeting = f"Hello {prof_name}!"
-    body = " ".join(messages) if messages else "Your request has been processed across campus agent pipelines."
+    body = " ".join(messages) if messages else "Here are your details."
 
     if has_confirmation:
         body += f" Note: {confirmation_action}"
