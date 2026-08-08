@@ -11,7 +11,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "memory.db")
 
-SAMPLE_NAMES = ["Bhavya Vennapusa", "Rahul Sharma", "Ananya Rao", "Siddharth Verma", "Priya Reddy", "Vikram Patel", "Sneha Kulkarni", "Karthik Nair"]
+SAMPLE_NAMES = ["Priya Kumar", "Arjun Reddy", "Ananya Rao", "Siddharth Verma", "Priya Reddy", "Vikram Patel", "Sneha Kulkarni", "Karthik Nair"]
 SAMPLE_BRANCHES = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "IT"]
 SAMPLE_HOSTEL_BLOCKS = ["Block-A", "Block-B", "Block-C", "Day Scholar"]
 SAMPLE_PLACEMENT_STATUSES = ["not_placed", "not_placed", "not_placed", "placed_core", "placed_mass"]
@@ -197,7 +197,7 @@ def create_session(session_id: str, profile_overrides: dict = None) -> dict:
         default_profile = {
             "session_id": session_id,
             "student_id": matched_student.get("student_id", "STU001"),
-            "name": matched_student.get("name", "Bhavya Vennapusa"),
+            "name": matched_student.get("name", "Priya Kumar"),
             "year": matched_student.get("year", 3),
             "semester": matched_student.get("semester", 6),
             "branch": matched_student.get("branch", "CSE"),

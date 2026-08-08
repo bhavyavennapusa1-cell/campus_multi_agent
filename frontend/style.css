@@ -145,6 +145,67 @@ ul { list-style: none; }
 
 .footer { background: var(--surface); border-top: 3px dashed var(--border-dark); padding: 1.25rem 5%; text-align: center; font-size: 0.9rem; color: var(--text-muted); margin-top: auto; }
 
+/* Page Section Subtle Entrance & Smooth Scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+.app-container,
+.dashboard-main,
+.container,
+.main-content,
+main:not(.navbar) {
+  animation: pageContentFadeIn 0.25s ease-out forwards;
+}
+
+@keyframes pageContentFadeIn {
+  0% { opacity: 0.85; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Cards Hover Lift Effects */
+.card,
+.service-card,
+.placement-card,
+.status-card,
+.module-card,
+.priority-item,
+.badge-bubble {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.service-card:hover,
+.placement-card:hover,
+.status-card:hover,
+.module-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 6px 6px 0px var(--border-dark);
+}
+
+/* Checkbox Pop Animation & Label Transitions */
+input[type="checkbox"] {
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+
+input[type="checkbox"]:active {
+  transform: scale(0.85);
+}
+
+input[type="checkbox"]:checked {
+  animation: checkPop 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+
+label {
+  transition: opacity 0.2s ease, color 0.2s ease, text-decoration 0.2s ease;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: var(--surface); border-bottom: 3px solid var(--border-dark); padding: 1rem; }
@@ -174,5 +235,15 @@ ul { list-style: none; }
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
   100% { transform: translateY(0px); }
+}
+
+/* Accessibility Reduced Motion Rule */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 

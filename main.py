@@ -66,7 +66,7 @@ app.add_middleware(
 
 # --- Request Schemas ---
 class StudentProfile(BaseModel):
-    name: str = "Bhavya Vennapusa"
+    name: str = "Priya Kumar"
     branch: str = "CSE - 3rd Year"
     attendance: str = "88%"
     hostel: str = "Block B"
@@ -308,9 +308,6 @@ def chat(req: ChatRequest):
 
     fallback_notes_str = "\n".join(demo_fallback_notes) if demo_fallback_notes else ""
 
-    is_events_query = any(k in msg_lower for k in ["workshop", "workshops", "event", "events", "hackathon", "fest"])
-    is_placement_query = any(k in msg_lower for k in ["placement", "placements", "drive", "drives", "opportunity", "opportunities", "eligible company", "eligible companies"])
-
     if run:
         try:
             steps = run(message_text, session_id=session_id, profile=profile)
@@ -417,21 +414,6 @@ Synthesize into ONE natural, concise reply for the student with concrete details
             if not reply and synthesize_response:
                 reply = synthesize_response(message_text, steps, profile=profile)
 
-            if is_events_query:
-                reply = (
-                    f"Hello {prof_name}!\n\n"
-                    "1. Distributed Microservices & Kubernetes Workshop (Aug 12, 2026, 2:00 PM - Tech Tower Lab 2, 15 seats left)\n"
-                    "2. AgentX National AI Hackathon (Aug 08, 2026, 10:00 AM - Main Campus Auditorium)"
-                )
-            elif is_placement_query:
-                reply = (
-                    f"Hello {prof_name}!\n\n"
-                    "Eligible Placement Drives for CSE:\n"
-                    "- Software Engineer (5 open positions) at TechCorp - Application Deadline: Aug 15\n"
-                    "- Backend Systems Engineer at CloudScale - Application Deadline: Aug 20\n"
-                    "Roadmap: 1. Advanced DSA & LeetCode, 2. Microservices & System Design, 3. Mock Interviews."
-                )
-
             if not reply:
                 messages = []
                 for s in steps:
@@ -443,13 +425,9 @@ Synthesize into ONE natural, concise reply for the student with concrete details
                 if requires_confirmation:
                     reply = f"Hello {prof_name}! I have prepared your request. Would you like me to send this official email to academic_office@vasavi.ac.in?"
                 elif messages:
-                    reply = f"Hello {prof_name}! " + " ".join(messages)
+                    reply = f"Hello {prof_name}!\n\n" + "\n\n".join(messages)
                 else:
                     reply = f"Hello {prof_name}! Here are your requested campus details."
-
-            # Append fallback notes if not already present in reply
-            if fallback_notes_str and not is_events_query and not is_placement_query and not any(k in reply.lower() for k in ["tech tower", "leetcode", "aug 11", "distributed systems midterm"]):
-                reply += f" Note: {fallback_notes_str}"
 
             # Post-processing: strip remaining meta phrases, markdown headers or action IDs
             reply = re.sub(r'\[Action ID:\s*[^\]]+\]', '', reply).strip()
@@ -470,22 +448,7 @@ Synthesize into ONE natural, concise reply for the student with concrete details
             print(f"Chat endpoint error: {e}")
             traceback.print_exc()
 
-    if is_events_query:
-        fallback_reply = (
-            f"Hello {prof_name}!\n\n"
-            "1. Distributed Microservices & Kubernetes Workshop (Aug 12, 2026, 2:00 PM - Tech Tower Lab 2, 15 seats left)\n"
-            "2. AgentX National AI Hackathon (Aug 08, 2026, 10:00 AM - Main Campus Auditorium)"
-        )
-    elif is_placement_query:
-        fallback_reply = (
-            f"Hello {prof_name}!\n\n"
-            "Eligible Placement Drives for CSE:\n"
-            "- Software Engineer (5 open positions) at TechCorp - Application Deadline: Aug 15\n"
-            "- Backend Systems Engineer at CloudScale - Application Deadline: Aug 20\n"
-            "Roadmap: 1. Advanced DSA & LeetCode, 2. Microservices & System Design, 3. Mock Interviews."
-        )
-    else:
-        fallback_reply = f"Hello {prof_name}! Here are your details for: {message_text}"
+    fallback_reply = f"Hello {prof_name}! Here are your details for: {message_text}"
 
     return {
         "reply": fallback_reply,

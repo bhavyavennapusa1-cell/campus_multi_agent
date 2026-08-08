@@ -5,7 +5,7 @@
       "branch": "CSE",
       "year": 3,
       "section": "A",
-      "class_representative": "Bhavya Vennapusa (STU001)",
+      "class_representative": "Priya Kumar (STU001)",
       "classmates": ["STU001", "STU002", "STU008"]
     },
     {
@@ -25,8 +25,8 @@
       "mentor_id": "FAC101",
       "mentor_name": "Dr. P. V. Sudha",
       "members": [
-        { "student_id": "STU001", "name": "Bhavya Vennapusa", "role": "Data, Memory & RAG Lead" },
-        { "student_id": "STU002", "name": "Rahul Sharma", "role": "Orchestrator Lead" }
+        { "student_id": "STU001", "name": "Priya Kumar", "role": "Data, Memory & RAG Lead" },
+        { "student_id": "STU002", "name": "Arjun Reddy", "role": "Orchestrator Lead" }
       ]
     },
     {

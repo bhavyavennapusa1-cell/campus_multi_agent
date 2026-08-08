@@ -45,26 +45,38 @@
       "learning_goals": ["Apply for Medical Condonation to Reach 65%", "Clear 2 Active Backlogs in Supplementary Exams"]
     },
     {
-      "persona_id": "PER_BACKLOG_03",
-      "scenario": "Backlog-Heavy Mass-Tier Only Candidate",
-      "session_id": "demo_mass_tier_only",
+      "persona_id": "persona_002",
       "student_id": "STU002",
-      "name": "Rahul Sharma",
-      "year": 3,
-      "branch": "CSE",
+      "name": "Arjun Reddy",
+      "branch_year": "CSE - 3rd Year",
       "cgpa": 7.4,
-      "backlog_count": 3,
+      "backlog_count": 1,
       "attendance_pct": 72.0,
       "hostel_block": "Block-A",
-      "placement_status": "not_placed",
-      "last_updated": "2026-08-07T10:00:00Z",
-      "career_goal": "Full-Stack Web Developer in Mass/Pool Tier IT Services Company",
-      "skills": ["JavaScript", "HTML/CSS", "React", "Node.js", "MySQL"],
-      "academic_interests": ["Web Technologies", "Database Management"],
-      "courses_in_progress": ["CS302 Database Management Systems", "CS303 Operating Systems"],
-      "current_projects": ["Student Event Portal Web Application"],
-      "events_interested_in": ["TCS NQT Preparation Bootcamp", "Mass Placement Mock Drives"],
-      "learning_goals": ["Clear 3 Backlogs Before 4th Year Registration", "Qualify TCS Digital / Cognizant Drives"]
+      "placement_tier_target": "Core Tier",
+      "eligible_drives": ["Cognizant", "Infosys"],
+      "ineligible_drives": ["Google", "Microsoft"],
+      "recommended_actions": [
+        "Attend DBMS makeup classes to reach 75% attendance.",
+        "Clear 1 backlog before 7th semester placement registration."
+      ]
+    },
+    {
+      "persona_id": "persona_003",
+      "student_id": "STU001",
+      "name": "Priya Kumar",
+      "branch_year": "CSE - 3rd Year",
+      "cgpa": 8.8,
+      "backlog_count": 0,
+      "attendance_pct": 88.0,
+      "hostel_block": "Block-B",
+      "placement_tier_target": "Dream Tier",
+      "eligible_drives": ["Google", "Microsoft", "Salesforce", "Oracle"],
+      "ineligible_drives": [],
+      "recommended_actions": [
+        "Register for Google SWE Internship drive before Aug 15.",
+        "Complete System Design mock interview."
+      ]
     },
     {
       "persona_id": "PER_FRESH_04",

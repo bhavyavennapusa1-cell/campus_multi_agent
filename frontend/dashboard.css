@@ -44,6 +44,11 @@
   color: var(--text-main);
 }
 
+.sidebar-item:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 1px 1px 0px var(--border-dark);
+}
+
 .sidebar-icon {
   font-size: 1.25rem;
 }
@@ -78,11 +83,12 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .status-card:hover {
   transform: translateY(-3px);
+  box-shadow: 6px 6px 0px var(--border-dark);
 }
 
 .status-card-header {

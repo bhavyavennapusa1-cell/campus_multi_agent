@@ -129,19 +129,74 @@ def get_directions(params: dict) -> AgentResponse:
 
 
 
+CAMPUS_FACILITIES = {
+    "food": [
+        {"name": "Central Food Court & Multi-Cuisine Canteen", "location": "Student Activity Center (SAC) Ground Floor", "distance": "120m"},
+        {"name": "Hostel Night Canteen & Juice Bar", "location": "Hostel Block B Courtyard", "distance": "50m"},
+        {"name": "Amul Ice Cream & Bakery Outlet", "location": "Near Tech Block A Entrance", "distance": "180m"}
+    ],
+    "study": [
+        {"name": "Central Library 24/7 Digital Study Lounge", "location": "Central Library Building, 2nd Floor", "distance": "150m"},
+        {"name": "Silent Reading Nook & Discussion Rooms", "location": "Knowledge Center, 3rd Floor", "distance": "200m"},
+        {"name": "Hostel Common Study Hall", "location": "Hostel Block B, Ground Floor", "distance": "40m"}
+    ],
+    "atm": [
+        {"name": "SBI Campus 24/7 ATM", "location": "Near Main Gate 1", "distance": "200m"},
+        {"name": "HDFC Bank ATM & Cash Deposit Kiosk", "location": "SAC Complex, East Wing", "distance": "160m"}
+    ],
+    "lab": [
+        {"name": "AI & Distributed Systems Research Lab", "location": "Tech Block A, Floor 3", "distance": "100m"},
+        {"name": "Central Computing Center", "location": "Tech Block B, Ground Floor", "distance": "140m"}
+    ]
+}
+
+
 def find_nearby_facilities(params: dict) -> AgentResponse:
-    facility_type = params.get("facility_type", "ATM / Printing Shop")
+    query_text = (params.get("query") or params.get("facility") or params.get("facility_type") or "").lower()
+
+    matched_facilities = []
+    categories = []
+
+    if any(k in query_text for k in ["food", "canteen", "eat", "cafe", "cafeteria", "dining"]):
+        matched_facilities.extend(CAMPUS_FACILITIES["food"])
+        categories.append("Food Court & Canteen")
+
+    if any(k in query_text for k in ["study", "library", "reading", "nook", "quiet", "spot"]):
+        matched_facilities.extend(CAMPUS_FACILITIES["study"])
+        categories.append("Study Spot & Reading Lounge")
+
+    if any(k in query_text for k in ["atm", "cash", "bank", "money"]):
+        matched_facilities.extend(CAMPUS_FACILITIES["atm"])
+        categories.append("ATM & Banking")
+
+    if any(k in query_text for k in ["lab", "computer", "computing"]):
+        matched_facilities.extend(CAMPUS_FACILITIES["lab"])
+        categories.append("Research Lab & Computing Center")
+
+    if not matched_facilities:
+        matched_facilities = [
+            {"name": "SBI Campus 24/7 ATM", "location": "Near Main Gate 1", "distance": "200m"},
+            {"name": "Central Food Court", "location": "SAC Ground Floor", "distance": "120m"},
+            {"name": "Library Study Lounge", "location": "Central Library 2nd Floor", "distance": "150m"}
+        ]
+        category_title = "Campus Facilities"
+    else:
+        category_title = " & ".join(categories)
+
+    formatted_list = [f"• {f['name']} ({f['location']} - {f['distance']})" for f in matched_facilities]
+    fac_text = "\n".join(formatted_list)
+    msg = f"Nearby {category_title} Facilities:\n{fac_text}"
+
     return AgentResponse(
         status="success",
         data={
-            "facility_type": facility_type,
-            "facilities": [
-                {"name": "SBI Campus ATM", "location": "Near Gate 1", "distance": "200m"},
-                {"name": "Xerox & Stationery Store", "location": "SAC Complex", "distance": "150m"}
-            ],
+            "facility_type": category_title,
+            "facilities": matched_facilities,
+            "synthesis_text": msg,
+            "directions": formatted_list,
             "source": "mock"
         },
-        message=f"Found nearby {facility_type} facilities on campus.",
+        message=msg,
         citation=None
     )
 
