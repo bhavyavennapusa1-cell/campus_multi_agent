@@ -60,6 +60,15 @@ window.CampusApi = {
         });
         return await res.json();
     },
+    async organizeStudyPlan(subject = "Database Management Systems", targetDate = "2026-08-20") {
+        const res = await fetch(`${API_BASE}/api/academic/organize`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ subject: subject, target_date: targetDate })
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+    },
     async getAcademicTimetable(sessionId = "demo_session_frontend") {
         const res = await fetch(`${API_BASE}/academic/timetable?session_id=${encodeURIComponent(sessionId)}`);
         return await res.json();

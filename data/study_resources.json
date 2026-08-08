@@ -1,0 +1,302 @@
+{
+  "Database Management Systems": {
+    "aliases": ["dbms", "database", "database management systems", "databases", "sql"],
+    "subtopics": [
+      {
+        "subtopic_id": 1,
+        "title": "ER Modeling & Relational Schema Design",
+        "priority": "High (Exam Weightage: 20%)",
+        "weight_pct": 20,
+        "hours": 3.0,
+        "resources": [
+          { "type": "video", "title": "ER Diagram Tutorial & Relational Mapping", "provider": "Gate Smashers", "url": "https://www.youtube.com/watch?v=QpdhBUYk7Kk" },
+          { "type": "textbook", "title": "Korth, Database System Concepts (7th Ed), Ch. 2: Entity-Relationship Model", "url": "https://db-book.com/ch2-er-model" }
+        ]
+      },
+      {
+        "subtopic_id": 2,
+        "title": "Relational Algebra & Advanced SQL Queries",
+        "priority": "High (Exam Weightage: 25%)",
+        "weight_pct": 25,
+        "hours": 3.5,
+        "resources": [
+          { "type": "video", "title": "SQL Joins, Group By & Relational Algebra", "provider": "Kunal Kushwaha", "url": "https://www.youtube.com/watch?v=2HVMiPPuPIM" },
+          { "type": "textbook", "title": "Elmasri & Navathe, Fundamentals of Database Systems, Ch. 8: SQL-99 & Complex Queries", "url": "https://www.pearson.com/elmasri-ch8-sql" }
+        ]
+      },
+      {
+        "subtopic_id": 3,
+        "title": "Functional Dependencies & Normalization (1NF to BCNF)",
+        "priority": "Critical (Exam Weightage: 25%)",
+        "weight_pct": 25,
+        "hours": 3.5,
+        "resources": [
+          { "type": "video", "title": "Normalization in DBMS (1NF, 2NF, 3NF, BCNF)", "provider": "Gate Smashers", "url": "https://www.youtube.com/watch?v=5Qj8n8L907k" },
+          { "type": "textbook", "title": "Korth, Database System Concepts, Ch. 7: Relational Database Design", "url": "https://db-book.com/ch7-normalization" }
+        ]
+      },
+      {
+        "subtopic_id": 4,
+        "title": "ACID Transactions & Concurrency Control (2PL & Timestamping)",
+        "priority": "High (Exam Weightage: 15%)",
+        "weight_pct": 15,
+        "hours": 2.5,
+        "resources": [
+          { "type": "video", "title": "Transactions, Serializability & Concurrency Control", "provider": "MIT OpenCourseWare", "url": "https://www.youtube.com/watch?v=Tbp9a4i394s" },
+          { "type": "textbook", "title": "Korth, Database System Concepts, Ch. 14: Transactions & Concurrency Control", "url": "https://db-book.com/ch14-transactions" }
+        ]
+      },
+      {
+        "subtopic_id": 5,
+        "title": "B+ Tree Indexing & Query Optimization",
+        "priority": "Medium (Exam Weightage: 15%)",
+        "weight_pct": 15,
+        "hours": 2.0,
+        "resources": [
+          { "type": "video", "title": "B+ Trees and Index Structure in Databases", "provider": "CMU Database Group", "url": "https://www.youtube.com/watch?v=aZjYr87r1b8" },
+          { "type": "textbook", "title": "Ramakrishnan & Gehrke, Database Management Systems, Ch. 8: Storage and Indexing", "url": "https://www.mheducation.com/ramakrishnan-ch8-indexing" }
+        ]
+      }
+    ]
+  },
+  "Operating Systems": {
+    "aliases": ["os", "operating systems", "operating system"],
+    "subtopics": [
+      {
+        "subtopic_id": 1,
+        "title": "Process Management & CPU Scheduling Algorithms (FCFS, SJF, RR)",
+        "priority": "High (Exam Weightage: 25%)",
+        "weight_pct": 25,
+        "hours": 3.0,
+        "resources": [
+          { "type": "video", "title": "CPU Scheduling Algorithms (FCFS, SJF, Round Robin)", "provider": "Gate Smashers", "url": "https://www.youtube.com/watch?v=ew3-324rly8" },
+          { "type": "textbook", "title": "Silberschatz, Operating System Concepts (10th Ed), Ch. 5: CPU Scheduling", "url": "https://www.os-book.com/ch5-cpu-scheduling" }
+        ]
+      },
+      {
+        "subtopic_id": 2,
+        "title": "Process Synchronization, Semaphores & Critical Section Problem",
+        "priority": "Critical (Exam Weightage: 20%)",
+        "weight_pct": 20,
+        "hours": 3.0,
+        "resources": [
+          { "type": "video", "title": "Process Synchronization & Mutex Semaphores", "provider": "Jenny's Lectures", "url": "https://www.youtube.com/watch?v=phx3S11h_u4" },
+          { "type": "textbook", "title": "Silberschatz, Operating System Concepts, Ch. 6: Synchronization Tools", "url": "https://www.os-book.com/ch6-synchronization" }
+        ]
+      },
+      {
+        "subtopic_id": 3,
+        "title": "Deadlock Prevention, Avoidance (Banker's Algorithm) & Detection",
+        "priority": "High (Exam Weightage: 20%)",
+        "weight_pct": 20,
+        "hours": 2.5,
+        "resources": [
+          { "type": "video", "title": "Banker's Algorithm for Deadlock Avoidance", "provider": "Gate Smashers", "url": "https://www.youtube.com/watch?v=7g5C4U5j178" },
+          { "type": "textbook", "title": "Silberschatz, Operating System Concepts, Ch. 8: Deadlocks", "url": "https://www.os-book.com/ch8-deadlocks" }
+        ]
+      },
+      {
+        "subtopic_id": 4,
+        "title": "Virtual Memory, Paging & Page Replacement (LRU, FIFO)",
+        "priority": "High (Exam Weightage: 20%)",
+        "weight_pct": 20,
+        "hours": 3.0,
+        "resources": [
+          { "type": "video", "title": "Page Replacement Algorithms (LRU, FIFO, Optimal)", "provider": "Gate Smashers", "url": "https://www.youtube.com/watch?v=4U_1dM9lG-k" },
+          { "type": "textbook", "title": "Silberschatz, Operating System Concepts, Ch. 9: Main Memory & Ch. 10: Virtual Memory", "url": "https://www.os-book.com/ch9-virtual-memory" }
+        ]
+      },
+      {
+        "subtopic_id": 5,
+        "title": "Storage Structure, File Systems & Disk Scheduling (SCAN, C-LOOK)",
+        "priority": "Medium (Exam Weightage: 15%)",
+        "weight_pct": 15,
+        "hours": 2.0,
+        "resources": [
+          { "type": "video", "title": "Disk Scheduling Algorithms & File System Inodes", "provider": "NPTEL IIT Kharagpur", "url": "https://www.youtube.com/watch?v=vV_X1o3R3c8" },
+          { "type": "textbook", "title": "Tanenbaum, Modern Operating Systems (4th Ed), Ch. 4: File Systems", "url": "https://www.pearson.com/tanenbaum-ch4-filesystems" }
+        ]
+      }
+    ]
+  },
+  "Data Structures & Algorithms": {
+    "aliases": ["dsa", "ds", "data structures", "algorithms", "data structures & algorithms"],
+    "subtopics": [
+      {
+        "subtopic_id": 1,
+        "title": "Asymptotic Notation & Recurrence Relations (Master Theorem)",
+        "priority": "High (Exam Weightage: 15%)",
+        "weight_pct": 15,
+        "hours": 2.0,
+        "resources": [
+          { "type": "video", "title": "Big O Notation & Master Theorem Analysis", "provider": "Abdul Bari", "url": "https://www.youtube.com/watch?v=9TlHvipP5yA" },
+          { "type": "textbook", "title": "Cormen (CLRS), Introduction to Algorithms (4th Ed), Ch. 3: Growth of Functions", "url": "https://mitpress.mit.edu/clrs-ch3-asymptotics" }
+        ]
+      },
+      {
+        "subtopic_id": 2,
+        "title": "Dynamic Programming (0/1 Knapsack, LCS, LIS)",
+        "priority": "Critical (Exam Weightage: 25%)",
+        "weight_pct": 25,
+        "hours": 4.0,
+        "resources": [
+          { "type": "video", "title": "0/1 Knapsack & Dynamic Programming Patterns", "provider": "Abdul Bari", "url": "https://www.youtube.com/watch?v=nLmhmB6NzcM" },
+          { "type": "textbook", "title": "CLRS, Introduction to Algorithms, Ch. 15: Dynamic Programming", "url": "https://mitpress.mit.edu/clrs-ch15-dp" }
+        ]
+      },
+      {
+        "subtopic_id": 3,
+        "title": "Graph Algorithms (BFS, DFS, Dijkstra & Prim-Kruskal)",
+        "priority": "Critical (Exam Weightage: 25%)",
+        "weight_pct": 25,
+        "hours": 3.5,
+        "resources": [
+          { "type": "video", "title": "Dijkstra Shortest Path & Graph Traversal", "provider": "WilliamFiset", "url": "https://www.youtube.com/watch?v=pcKY4hjLqaA" },
+          { "type": "textbook", "title": "CLRS, Introduction to Algorithms, Ch. 22: Elementary Graph Algorithms", "url": "https://mitpress.mit.edu/clrs-ch22-graphs" }
+        ]
+      },
+      {
+        "subtopic_id": 4,
+        "title": "Self-Balancing Binary Search Trees (AVL & Red-Black Trees)",
+        "priority": "High (Exam Weightage: 20%)",
+        "weight_pct": 20,
+        "hours": 2.5,
+        "resources": [
+          { "type": "video", "title": "AVL Tree Rotations and Balance Factor", "provider": "Abdul Bari", "url": "https://www.youtube.com/watch?v=JsgqnCfKb0Y" },
+          { "type": "textbook", "title": "Weiss, Data Structures and Algorithm Analysis in C++, Ch. 4: Trees", "url": "https://www.pearson.com/weiss-ch4-trees" }
+        ]
+      },
+      {
+        "subtopic_id": 5,
+        "title": "Binary Heap & Priority Queue Operations",
+        "priority": "Medium (Exam Weightage: 15%)",
+        "weight_pct": 15,
+        "hours": 2.0,
+        "resources": [
+          { "type": "video", "title": "Heapify & Heap Sort Algorithm", "provider": "Abdul Bari", "url": "https://www.youtube.com/watch?v=HqPJF2L5h9U" },
+          { "type": "textbook", "title": "CLRS, Introduction to Algorithms, Ch. 6: Heapsort", "url": "https://mitpress.mit.edu/clrs-ch6-heapsort" }
+        ]
+      }
+    ]
+  },
+  "Artificial Intelligence & Machine Learning": {
+    "aliases": ["ai", "ml", "aiml", "machine learning", "artificial intelligence"],
+    "subtopics": [
+      {
+        "subtopic_id": 1,
+        "title": "Informed Search Algorithms & A* Heuristics",
+        "priority": "High (Exam Weightage: 20%)",
+        "weight_pct": 20,
+        "hours": 2.5,
+        "resources": [
+          { "type": "video", "title": "A* Search Algorithm Explanation & Heuristics", "provider": "Computerphile", "url": "https://www.youtube.com/watch?v=ySN5Wnu88nE" },
+          { "type": "textbook", "title": "Russell & Norvig, AI: A Modern Approach (4th Ed), Ch. 3: Informed Search", "url": "https://aima.cs.berkeley.edu/ch3-search.pdf" }
+        ]
+      },
+      {
+        "subtopic_id": 2,
+        "title": "Supervised Learning: Linear & Logistic Regression",
+        "priority": "Critical (Exam Weightage: 25%)",
+        "weight_pct": 25,
+        "hours": 3.0,
+        "resources": [
+          { "type": "video", "title": "Logistic Regression Fundamentals", "provider": "StatQuest with Josh Starmer", "url": "https://www.youtube.com/watch?v=yIYKR4sgzI8" },
+          { "type": "textbook", "title": "Bishop, Pattern Recognition and Machine Learning, Ch. 3: Linear Models", "url": "https://www.microsoft.com/en-us/research/prml-ch3" }
+        ]
+      },
+      {
+        "subtopic_id": 3,
+        "title": "Neural Networks, Backpropagation & Loss Optimization",
+        "priority": "Critical (Exam Weightage: 25%)",
+        "weight_pct": 25,
+        "hours": 3.5,
+        "resources": [
+          { "type": "video", "title": "What is Backpropagation Really Doing?", "provider": "3Blue1Brown", "url": "https://www.youtube.com/watch?v=Ilg3gGewQ5U" },
+          { "type": "textbook", "title": "Goodfellow, Deep Learning, Ch. 6: Deep Feedforward Networks", "url": "https://www.deeplearningbook.org/contents/mlp.html" }
+        ]
+      },
+      {
+        "subtopic_id": 4,
+        "title": "Decision Trees, Random Forests & Ensemble Methods",
+        "priority": "High (Exam Weightage: 15%)",
+        "weight_pct": 15,
+        "hours": 2.5,
+        "resources": [
+          { "type": "video", "title": "Random Forests & Decision Tree Tuning", "provider": "StatQuest", "url": "https://www.youtube.com/watch?v=J4Wje7xb648" },
+          { "type": "textbook", "title": "Hastie, Elements of Statistical Learning, Ch. 9: Decision Trees", "url": "https://hastie.su.domains/ElemStatLearn/ch9-trees.pdf" }
+        ]
+      },
+      {
+        "subtopic_id": 5,
+        "title": "Transformer Architectures & Self-Attention Mechanisms",
+        "priority": "Medium (Exam Weightage: 15%)",
+        "weight_pct": 15,
+        "hours": 2.5,
+        "resources": [
+          { "type": "video", "title": "Attention in Neural Networks & Transformers Visually Explained", "provider": "3Blue1Brown", "url": "https://www.youtube.com/watch?v=eMlx5fFNoYc" },
+          { "type": "textbook", "title": "Vaswani et al., Attention Is All You Need (NIPS 2017) & Stanford CS224N", "url": "https://arxiv.org/abs/1706.03762" }
+        ]
+      }
+    ]
+  },
+  "Computer Networks": {
+    "aliases": ["cn", "networks", "computer networks", "networking"],
+    "subtopics": [
+      {
+        "subtopic_id": 1,
+        "title": "OSI 7-Layer Architecture vs TCP/IP Protocol Stack",
+        "priority": "High (Exam Weightage: 20%)",
+        "weight_pct": 20,
+        "hours": 2.5,
+        "resources": [
+          { "type": "video", "title": "OSI Model Layers & Protocol Encapsulation", "provider": "NetworkChuck", "url": "https://www.youtube.com/watch?v=vv4y_uOneC0" },
+          { "type": "textbook", "title": "Kurose & Ross, Computer Networking (8th Ed), Ch. 1: Computer Networks and Internet", "url": "https://www.pearson.com/kurose-ch1-intro" }
+        ]
+      },
+      {
+        "subtopic_id": 2,
+        "title": "Transport Layer: TCP 3-Way Handshake & Flow Control",
+        "priority": "Critical (Exam Weightage: 25%)",
+        "weight_pct": 25,
+        "hours": 3.0,
+        "resources": [
+          { "type": "video", "title": "TCP 3-Way Handshake & Sliding Window Protocol", "provider": "Gate Smashers", "url": "https://www.youtube.com/watch?v=bW_ugSQTfn0" },
+          { "type": "textbook", "title": "Kurose & Ross, Computer Networking, Ch. 3: Transport Layer Protocols", "url": "https://www.pearson.com/kurose-ch3-transport" }
+        ]
+      },
+      {
+        "subtopic_id": 3,
+        "title": "Network Layer: IPv4 Subnetting & CIDR Address Calculation",
+        "priority": "Critical (Exam Weightage: 25%)",
+        "weight_pct": 25,
+        "hours": 3.0,
+        "resources": [
+          { "type": "video", "title": "Subnetting Made Easy & CIDR Notation", "provider": "Practical Networking", "url": "https://www.youtube.com/watch?v=ecCuyq-Wprc" },
+          { "type": "textbook", "title": "Kurose & Ross, Computer Networking, Ch. 4: Network Layer Data Plane", "url": "https://www.pearson.com/kurose-ch4-network" }
+        ]
+      },
+      {
+        "subtopic_id": 4,
+        "title": "Routing Algorithms (Distance Vector vs Link State / OSPF)",
+        "priority": "High (Exam Weightage: 15%)",
+        "weight_pct": 15,
+        "hours": 2.5,
+        "resources": [
+          { "type": "video", "title": "Dijkstra Link State Routing Algorithm", "provider": "Gate Smashers", "url": "https://www.youtube.com/watch?v=VBlFqai8MJc" },
+          { "type": "textbook", "title": "Kurose & Ross, Computer Networking, Ch. 5: Network Layer Control Plane", "url": "https://www.pearson.com/kurose-ch5-routing" }
+        ]
+      },
+      {
+        "subtopic_id": 5,
+        "title": "Application Layer: HTTP/2, DNS Resolution & TLS Handshake",
+        "priority": "Medium (Exam Weightage: 15%)",
+        "weight_pct": 15,
+        "hours": 2.0,
+        "resources": [
+          { "type": "video", "title": "How DNS Works Step-by-Step", "provider": "ByteByteGo", "url": "https://www.youtube.com/watch?v=27r4Bzuj5NQ" },
+          { "type": "textbook", "title": "Kurose & Ross, Computer Networking, Ch. 2: Application Layer", "url": "https://www.pearson.com/kurose-ch2-applayer" }
+        ]
+      }
+    ]
+  }
+}

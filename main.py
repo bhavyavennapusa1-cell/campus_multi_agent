@@ -576,6 +576,13 @@ def placement_eligible_companies(session_id: str = "demo_session_frontend"):
     return res.to_dict()
 
 
+class OrganizeRequest(BaseModel):
+    subject: str = "Database Management Systems"
+    target_date: Optional[str] = None
+    days_remaining: Optional[int] = None
+    topic: Optional[str] = None
+
+
 @app.get("/academic/tasks")
 def get_academic_tasks():
     res = academic_agent.get_tasks({})
@@ -586,6 +593,16 @@ def get_academic_tasks():
 def create_academic_task(req: TaskCreateRequest):
     res = academic_agent.create_task({"content": req.content, "due_string": req.due_string})
     return res.to_dict()
+
+
+@app.post("/api/academic/organize")
+@app.post("/academic/organize")
+def api_academic_organize(req: OrganizeRequest):
+    from shared.study_plan_engine import generate_study_plan
+    sub = req.subject or req.topic or "Database Management Systems"
+    target = req.target_date or req.days_remaining or 10
+    plan = generate_study_plan(subject=sub, target_deadline=target)
+    return plan
 
 
 @app.get("/academic/timetable")

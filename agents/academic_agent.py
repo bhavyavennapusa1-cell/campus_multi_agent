@@ -411,57 +411,53 @@ def complete_task(params: dict) -> AgentResponse:
 
 def create_study_plan(params: dict) -> AgentResponse:
     """
-    Feature 2 Integration & Demo Flow:
-    Accepts subject and days_remaining (e.g. 'DBMS', 10 days).
-    Generates study plan, materializes Todoist tasks, and schedules Google Calendar sessions.
+    Shared Study Plan Generation Entrypoint for Academic Agent.
+    Calls shared study_plan_engine.generate_study_plan() to produce subject-specific topic breakdowns,
+    verified YouTube/Textbook resources, and scaled deadline milestones.
     """
-    subject = params.get("subject", "DBMS")
-    days_remaining = params.get("days_remaining", 10)
+    from shared.study_plan_engine import generate_study_plan as shared_generate_study_plan
 
-    # 1. Pull syllabus / exam details via RAG
-    rag_results = retrieve(f"{subject} syllabus exam topics preparation", k=1, category="academic")
+    subject = params.get("subject") or params.get("topic") or "Database Management Systems"
+    days_remaining = params.get("days_remaining") or params.get("target_date") or 10
+
+    plan_result = shared_generate_study_plan(subject=subject, target_deadline=days_remaining)
+
+    disp_subject = plan_result["subject"]
+    days_num = plan_result["days_remaining"]
+    subtopics = plan_result["subtopics"]
+    created_tasks = plan_result["created_tasks"]
+    calendar_events = plan_result["calendar_events"]
+
+    rag_results = retrieve(f"{disp_subject} syllabus exam topics preparation", k=1, category="academic")
     top_rag = rag_results[0] if rag_results else None
     citation = format_citation(top_rag) if top_rag else None
 
-    # 2. Generate structured study plan milestones
-    milestones = [
-        {"day": 1, "topic": f"{subject} Unit 1: Relational Algebra & ER Modeling", "hours": 2},
-        {"day": 3, "topic": f"{subject} Unit 2: SQL Queries & Normalization (1NF to BCNF)", "hours": 3},
-        {"day": 5, "topic": f"{subject} Unit 3: Transaction Management & ACID Properties", "hours": 3},
-        {"day": 7, "topic": f"{subject} Unit 4: Indexing, Hashing & Concurrency Control", "hours": 2.5},
-        {"day": 9, "topic": f"{subject} Final Mock Test & Previous Year Question Review", "hours": 4},
-    ]
+    # Build concise text summary for response
+    summary_lines = [f"Study Plan for {disp_subject} ({plan_result['plan_type']} - {days_num} days remaining):"]
+    for st in subtopics:
+        res_str = ", ".join([f"{r['title']} ({r['url']})" for r in st.get("resources", [])])
+        summary_lines.append(f"• Day {st['target_day']}: {st['title']} [{st['priority']}] — Resources: {res_str}")
 
-    # 3. Materialize tasks into Todoist & Google Calendar
-    created_tasks = []
-    calendar_events = []
-    today = datetime.now()
-
-    for m in milestones:
-        due_date = (today + timedelta(days=m["day"])).strftime("%Y-%m-%d")
-        t_res = create_task({"content": f"[{subject}] {m['topic']}", "due_string": due_date})
-        created_tasks.append(t_res.data.get("task"))
-
-        calendar_events.append({
-            "summary": f"Study Session: {m['topic']}",
-            "date": due_date,
-            "duration": f"{m['hours']} hours"
-        })
-
+    full_text_msg = "\n".join(summary_lines)
     demo_trace = f"a2a_calls: academic.get_exam_schedule -> academic.create_study_plan -> todoist.create_task ({len(created_tasks)} tasks) -> gcal.add_event ({len(calendar_events)} events)"
 
     return AgentResponse(
         status="success",
         data={
-            "subject": subject,
-            "days_remaining": days_remaining,
-            "milestones": milestones,
+            "subject": disp_subject,
+            "days_remaining": days_num,
+            "target_deadline": plan_result["target_deadline"],
+            "plan_type": plan_result["plan_type"],
+            "plan_metadata": plan_result["plan_metadata"],
+            "subtopics": subtopics,
+            "milestones": subtopics,
             "created_tasks": created_tasks,
             "calendar_events": calendar_events,
+            "synthesis_text": full_text_msg,
             "trace_log": demo_trace,
-            "source": "mock"
+            "source": "study_resources.json"
         },
-        message=f"Generated {days_remaining}-day study plan for {subject}. Materialized {len(created_tasks)} Todoist tasks and Calendar sessions.",
+        message=f"Generated {days_num}-day study plan for {disp_subject}. Materialized {len(created_tasks)} tasks with verified resources.",
         citation=citation
     )
 

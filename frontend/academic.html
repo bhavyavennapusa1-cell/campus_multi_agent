@@ -616,7 +616,7 @@
             }
         }
 
-        // Form Submit Handler for Organize tab (verbatim from academic-organize.html)
+        // Form Submit Handler for Organize tab (calls shared generate_study_plan endpoint)
         async function handleOrganizeSubmit(event) {
             event.preventDefault();
             const topic = document.getElementById('target-topic').value.trim();
@@ -630,60 +630,85 @@
             resultViewport.innerHTML = `
                 <div style="text-align: center; padding: 2rem; background: var(--surface); border: 3px solid var(--border-dark); border-radius: 20px;">
                     <div style="width: 32px; height: 32px; border: 3px solid var(--border-dark); border-top-color: var(--primary-blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 0.75rem;"></div>
-                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Generating study plan and creating tasks...</h3>
+                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Decomposing ${topic} & fetching verified academic resources...</h3>
                 </div>
             `;
 
             try {
+                let planData = null;
+                if (window.CampusApi && window.CampusApi.organizeStudyPlan) {
+                    planData = await window.CampusApi.organizeStudyPlan(topic, date);
+                } else {
+                    const res = await fetch('/api/academic/organize', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ subject: topic, target_date: date })
+                    });
+                    planData = await res.json();
+                }
+
                 if (window.CampusApi && window.CampusApi.createAcademicTask) {
                     await window.CampusApi.createAcademicTask(`Study ${topic}`, date);
                 }
+                renderAcademicPlan(planData, resultViewport);
             } catch (err) {
-                console.warn("Backend task creation fallback:", err);
+                console.warn("Organize API fallback:", err);
+                resultViewport.innerHTML = `<div style="padding: 1.5rem; background: var(--soft-pink); border: 2px solid var(--border-dark); border-radius: 12px; color: #c0392b;">Failed to generate plan. Please try again.</div>`;
             } finally {
                 submitBtn.disabled = false;
-                const data = {
-                    studyPlan: [
-                        { day: "Day 1", tasks: [`Review syllabus boundaries for ${topic}`, "Solve 5 foundation problems"] },
-                        { day: "Day 2", tasks: ["Deep dive into architecture & design patterns", "Implement code exercises"] },
-                        { day: "Day 3", tasks: ["Practice previous year papers under timed conditions", "Review mistake log with AI Assistant"] },
-                        { day: "Day 4", tasks: [`Final revision before ${date}`, "Rest well & organize admission pass"] }
-                    ],
-                    todoistTasksCreated: 8,
-                    calendarEventsCreated: 4
-                };
-                renderAcademicPlan(data, resultViewport);
             }
         }
 
 
         function renderAcademicPlan(data, viewport) {
-            // Naming rule: "Tasks" and "Calendar", not API names
+            const subject = data.subject || "Subject";
+            const planType = data.plan_type || "Exam Preparation Schedule";
+            const daysRemaining = data.days_remaining || 10;
+            const subtopics = data.subtopics || [];
+            const taskCount = (data.created_tasks && data.created_tasks.length) || subtopics.length;
+            const calCount = (data.calendar_events && data.calendar_events.length) || subtopics.length;
+
             let html = `
                 <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-                    <span class="sticker-tag" style="background: var(--mint-green); margin: 0;">✓ ${data.todoistTasksCreated} Tasks Created</span>
-                    <span class="sticker-tag" style="background: var(--soft-yellow); margin: 0;">✓ ${data.calendarEventsCreated} Reminders Added to Calendar</span>
+                    <span class="sticker-tag" style="background: var(--mint-green); margin: 0;">✓ ${taskCount} Tasks Materialized</span>
+                    <span class="sticker-tag" style="background: var(--soft-yellow); margin: 0;">✓ ${calCount} Calendar Sessions Added</span>
+                    <span class="sticker-tag" style="background: var(--lavender); margin: 0;">🎯 ${planType} (${daysRemaining} Days)</span>
                 </div>
-                <h3 style="font-family: var(--font-heading); font-size: 1.4rem; color: var(--primary-blue); margin-bottom: 1rem;">📖 Your Day-by-Day Study Plan</h3>
+                <h3 style="font-family: var(--font-heading); font-size: 1.4rem; color: var(--primary-blue); margin-bottom: 1rem;">📖 Subject-Specific Breakdown: ${subject}</h3>
             `;
-            data.studyPlan.forEach(dayBlock => {
+
+            subtopics.forEach((st, idx) => {
+                const dayLabel = `Day ${st.target_day || (idx + 1)} (${st.target_date || 'Target'})`;
+                const title = st.title || `Subtopic ${idx + 1}`;
+                const priority = st.priority || "High";
+                const hours = st.estimated_hours || 2.5;
+                const resources = st.resources || [];
+
                 html += `
-                    <div class="checklist-day-card">
-                        <div class="day-header">
-                            <span>📅</span>
-                            <span>${dayBlock.day}</span>
+                    <div class="checklist-day-card" style="margin-bottom: 1.25rem;">
+                        <div class="day-header" style="display: flex; justify-content: space-between; align-items: center; background: var(--lavender); padding: 0.6rem 1rem; border-radius: 10px; margin-bottom: 0.75rem;">
+                            <span style="font-weight: 700; color: var(--primary-blue);">📅 ${dayLabel} — ${title}</span>
+                            <span style="font-size: 0.8rem; background: var(--surface); padding: 0.2rem 0.5rem; border: 1px solid var(--border-dark); border-radius: 6px; font-weight: 600;">⏱️ ${hours} hrs | ${priority}</span>
                         </div>
-                        <div>
-                            ${dayBlock.tasks.map((taskText, idx) => `
-                                <div class="task-item">
-                                    <input type="checkbox" id="task-${dayBlock.day.replace(/\s+/g, '')}-${idx}">
-                                    <label for="task-${dayBlock.day.replace(/\s+/g, '')}-${idx}">${taskText}</label>
-                                </div>
-                            `).join('')}
+                        <div style="padding: 0.5rem 0.5rem 0;">
+                            <div class="task-item" style="margin-bottom: 0.75rem;">
+                                <input type="checkbox" id="task-subtopic-${idx}">
+                                <label for="task-subtopic-${idx}"><strong>Study Milestone:</strong> Complete core concepts & problem set for ${title}</label>
+                            </div>
+                            <div style="margin-top: 0.5rem; padding-left: 1.75rem;">
+                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem;">VERIFIED ACADEMIC RESOURCES:</div>
+                                ${resources.map(r => `
+                                    <div style="display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 2px solid var(--border-dark); padding: 0.4rem 0.75rem; border-radius: 8px; margin-bottom: 0.4rem; font-size: 0.85rem;">
+                                        <span>${r.type === 'video' ? '📺' : '📖'} <strong>${r.provider ? r.provider + ': ' : ''}</strong>${r.title}</span>
+                                        <a href="${r.url}" target="_blank" rel="noopener" class="btn-pill" style="font-size: 0.75rem; padding: 0.2rem 0.6rem; background: ${r.type === 'video' ? '#e74c3c' : 'var(--primary-blue)'}; color: #ffffff; text-decoration: none;">Open ${r.type === 'video' ? 'Video ↗' : 'Textbook ↗'}</a>
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
                 `;
             });
+
             viewport.innerHTML = html;
         }
 
