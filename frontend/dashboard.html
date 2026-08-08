@@ -2,459 +2,459 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synapse | Dashboard</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dashboard.css">
-    <style>
-        /* Today's Priorities Checklist - Simple checkable list items */
-        .priorities-list {
-            list-style: none;
-            padding: 0;
-            margin: 0.75rem 0 1.5rem;
-        }
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Synapse | Dashboard</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="style.css">
+ <link rel="stylesheet" href="dashboard.css">
+ <style>
+ /* Today's Priorities Checklist - Simple checkable list items */
+ .priorities-list {
+ list-style: none;
+ padding: 0;
+ margin: 0.75rem 0 1.5rem;
+ }
 
-        .priority-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.4rem 0;
-            font-size: 0.95rem;
-            color: var(--text-main);
-            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
-        }
+ .priority-item {
+ display: flex;
+ align-items: center;
+ gap: 0.75rem;
+ padding: 0.4rem 0;
+ font-size: 0.95rem;
+ color: var(--text-main);
+ border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+ }
 
-        .priority-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: var(--primary-blue);
-        }
+ .priority-item input[type="checkbox"] {
+ width: 18px;
+ height: 18px;
+ cursor: pointer;
+ accent-color: var(--primary-blue);
+ }
 
-        /* AI Recommendation Box */
-        .ai-recommendation-box {
-            background: var(--soft-yellow);
-            border: 2px solid var(--border-dark);
-            border-radius: 16px;
-            padding: 0.85rem 1.25rem;
-            box-shadow: 3px 3px 0px var(--border-dark);
-            font-family: var(--font-heading);
-            font-size: 0.95rem;
-            color: var(--text-main);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
+ /* AI Recommendation Box */
+ .ai-recommendation-box {
+ background: var(--soft-yellow);
+ border: 2px solid var(--border-dark);
+ border-radius: 16px;
+ padding: 0.85rem 1.25rem;
+ box-shadow: 3px 3px 0px var(--border-dark);
+ font-family: var(--font-heading);
+ font-size: 0.95rem;
+ color: var(--text-main);
+ margin-bottom: 1.5rem;
+ display: flex;
+ align-items: center;
+ gap: 0.6rem;
+ }
 
-        /* Upcoming Horizontal/Grid Row */
-        .upcoming-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
+ /* Upcoming Horizontal/Grid Row */
+ .upcoming-row {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 0.75rem;
+ margin-bottom: 1.5rem;
+ }
 
-        .badge-bubble {
-            background: var(--bubble-pink);
-            color: var(--text-main);
-            border: 1px solid var(--border-dark);
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin-left: 0.4rem;
-        }
-    </style>
+ .badge-bubble {
+ background: var(--bubble-pink);
+ color: var(--text-main);
+ border: 1px solid var(--border-dark);
+ border-radius: 50%;
+ width: 20px;
+ height: 20px;
+ display: inline-flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 0.75rem;
+ font-weight: 700;
+ margin-left: 0.4rem;
+ }
+ </style>
 </head>
 
 <body>
-    <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
-    <div class="fixed-background-widgets">
-        <!-- Left Side Spread -->
-        <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
-            <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
+ <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
+ <div class="fixed-background-widgets">
+ <!-- Left Side Spread -->
+ <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
+ <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
 
-        <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
-        <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
-        </svg>
+ <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
+ <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
+ </svg>
 
-        <!-- Right Side Spread -->
-        <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-    </div>
+ <!-- Right Side Spread -->
+ <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ </div>
 
-    <!-- Top Navigation (Reused exactly as-is) -->
-    <nav class="navbar">
-        <div class="nav-brand">🔗 Synapse</div>
-        <button class="hamburger" id="hamburger">☰</button>
-        <div class="nav-links" id="nav-links">
-            <a href="index.html">Home</a>
-            <a href="dashboard.html" class="active">Dashboard</a>
-            <a href="chat.html">Assistant</a>
-            <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out 🚪</a>
-        </div>
-    </nav>
+ <!-- Top Navigation (Reused exactly as-is) -->
+ <nav class="navbar">
+ <div class="nav-brand"> Synapse</div>
+ <button class="hamburger" id="hamburger"></button>
+ <div class="nav-links" id="nav-links">
+ <a href="index.html">Home</a>
+ <a href="dashboard.html" class="active">Dashboard</a>
+ <a href="chat.html">Assistant</a>
+ <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out </a>
+ </div>
+ </nav>
 
-    <div class="dashboard-layout" style="position: relative; z-index: 10;">
+ <div class="dashboard-layout" style="position: relative; z-index: 10;">
 
-        <!-- Left Sidebar / Mobile Bottom Tab Bar -->
-        <aside class="sidebar">
-            <a href="chat.html" class="sidebar-item">
-                <span class="sidebar-icon">💬</span>
-                <span>AI Chat</span>
-            </a>
-            <a href="placement.html" class="sidebar-item">
-                <span class="sidebar-icon">💼</span>
-                <span>Placement</span>
-            </a>
-            <a href="academic.html" class="sidebar-item">
-                <span class="sidebar-icon">🎓</span>
-                <span>Academic</span>
-            </a>
-            <a href="campus-navigator.html" class="sidebar-item">
-                <span class="sidebar-icon">🗺️</span>
-                <span>Campus Navigator</span>
-            </a>
-            <a href="events.html" class="sidebar-item">
-                <span class="sidebar-icon">🎉</span>
-                <span>Events</span>
-            </a>
-            <a href="student-services.html" class="sidebar-item">
-                <span class="sidebar-icon">🏢</span>
-                <span>Student Services</span>
-            </a>
-            <a href="communication.html" class="sidebar-item">
-                <span class="sidebar-icon">✉️</span>
-                <span>Communication</span>
-            </a>
-            <a href="profile.html" class="sidebar-item">
-                <span class="sidebar-icon">👤</span>
-                <span>Profile</span>
-            </a>
-            <a href="notifications.html" class="sidebar-item">
-                <span class="sidebar-icon">🔔</span>
-                <span>Notifications</span>
-                <span class="badge-bubble">3</span>
-            </a>
-            <a href="#" class="sidebar-item" onclick="handleLogout(event)">
-                <span class="sidebar-icon">🚪</span>
-                <span>Logout</span>
-            </a>
-        </aside>
+ <!-- Left Sidebar / Mobile Bottom Tab Bar -->
+ <aside class="sidebar">
+ <a href="chat.html" class="sidebar-item">
+ <span class="sidebar-icon"></span>
+ <span>AI Chat</span>
+ </a>
+ <a href="placement.html" class="sidebar-item">
+ <span class="sidebar-icon"></span>
+ <span>Placement</span>
+ </a>
+ <a href="academic.html" class="sidebar-item">
+ <span class="sidebar-icon"></span>
+ <span>Academic</span>
+ </a>
+ <a href="campus-navigator.html" class="sidebar-item">
+ <span class="sidebar-icon">️</span>
+ <span>Campus Navigator</span>
+ </a>
+ <a href="events.html" class="sidebar-item">
+ <span class="sidebar-icon"></span>
+ <span>Events</span>
+ </a>
+ <a href="student-services.html" class="sidebar-item">
+ <span class="sidebar-icon"></span>
+ <span>Student Services</span>
+ </a>
+ <a href="communication.html" class="sidebar-item">
+ <span class="sidebar-icon">️</span>
+ <span>Communication</span>
+ </a>
+ <a href="profile.html" class="sidebar-item">
+ <span class="sidebar-icon"></span>
+ <span>Profile</span>
+ </a>
+ <a href="notifications.html" class="sidebar-item">
+ <span class="sidebar-icon"></span>
+ <span>Notifications</span>
+ <span class="badge-bubble">3</span>
+ </a>
+ <a href="#" class="sidebar-item" onclick="handleLogout(event)">
+ <span class="sidebar-icon"></span>
+ <span>Logout</span>
+ </a>
+ </aside>
 
-        <!-- Main Workspace Area -->
-        <main class="dashboard-main">
-            <!-- Hero Card with Welcome Message & Quick Journey -->
-            <div class="cloud-container hero-prompt-card">
-                <div
-                    style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
-                    <!-- 1. Welcome Message -->
-                    <!-- TODO: Replace mock name with real fetch('/student/dashboard') data -->
-                    <h1 id="welcome-message"
-                        style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--primary-blue);">
-                        Good morning, Student 👋
-                    </h1>
-                    <a href="chat.html?prompt=Guide%20me%20on%20my%20career%20%26%20learning%20path" class="sticker-tag route-to-chat" data-prompt="Guide me on my career & learning path" style="background: var(--bubble-pink); margin: 0; text-decoration: none; cursor: pointer; display: inline-block;">🚀 Career & Learning
-                        Path</a>
-                </div>
+ <!-- Main Workspace Area -->
+ <main class="dashboard-main">
+ <!-- Hero Card with Welcome Message & Quick Journey -->
+ <div class="cloud-container hero-prompt-card">
+ <div
+ style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+ <!-- 1. Welcome Message -->
+ <!-- TODO: Replace mock name with real fetch('/student/dashboard') data -->
+ <h1 id="welcome-message"
+ style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--primary-blue);">
+ Good morning, Student 
+ </h1>
+ <a href="chat.html?prompt=Guide%20me%20on%20my%20career%20%26%20learning%20path" class="sticker-tag route-to-chat" data-prompt="Guide me on my career & learning path" style="background: var(--bubble-pink); margin: 0; text-decoration: none; cursor: pointer; display: inline-block;"> Career & Learning
+ Path</a>
+ </div>
 
-                <p style="color: var(--text-muted); margin-bottom: 1.25rem; max-width: 650px;">
-                    Trigger our multi-agent network to curate roadmap electives, check internship eligibility, and
-                    generate targeted prep schedules instantly.
-                </p>
+ <p style="color: var(--text-muted); margin-bottom: 1.25rem; max-width: 650px;">
+ Trigger our multi-agent network to curate roadmap electives, check internship eligibility, and
+ generate targeted prep schedules instantly.
+ </p>
 
-                <!-- 2. AI Recommendation Box -->
-                <!-- TODO: Replace with real fetch('/student/dashboard') recommendation string -->
-                <a href="chat.html?prompt=Help%20me%20study%20SQL%20and%20Distributed%20Systems%20concurrency" class="ai-recommendation-box route-to-chat" data-prompt="Help me study SQL and Distributed Systems concurrency" style="text-decoration: none; cursor: pointer; display: flex;">
-                    <span>💡</span>
-                    <span><strong>AI Recommendation:</strong> You may want to focus on SQL & Distributed Systems
-                        concurrency this week.</span>
-                </a>
+ <!-- 2. AI Recommendation Box -->
+ <!-- TODO: Replace with real fetch('/student/dashboard') recommendation string -->
+ <a href="chat.html?prompt=Help%20me%20study%20SQL%20and%20Distributed%20Systems%20concurrency" class="ai-recommendation-box route-to-chat" data-prompt="Help me study SQL and Distributed Systems concurrency" style="text-decoration: none; cursor: pointer; display: flex;">
+ <span></span>
+ <span><strong>AI Recommendation:</strong> You may want to focus on SQL & Distributed Systems
+ concurrency this week.</span>
+ </a>
 
-                <!-- 3. Today's Priorities Checklist (Simple fast glance list) -->
-                <!-- TODO: Replace with real fetch('/student/dashboard') tasks array -->
-                <div style="margin-bottom: 1.5rem;">
-                    <div
-                        style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-main); font-weight: 700;">
-                        📋 Today's Priorities
-                    </div>
-                    <ul class="priorities-list" id="priorities-list">
-                        <li class="priority-item">
-                            <input type="checkbox" id="p-1">
-                            <label for="p-1">Complete Distributed Systems concurrency lab exercise</label>
-                        </li>
-                        <li class="priority-item">
-                            <input type="checkbox" id="p-2">
-                            <label for="p-2">Submit Google Internship eligibility verification document</label>
-                        </li>
-                        <li class="priority-item">
-                            <input type="checkbox" id="p-3">
-                            <label for="p-3">Review SQL indexing & query optimization notes</label>
-                        </li>
-                    </ul>
-                </div>
+ <!-- 3. Today's Priorities Checklist (Simple fast glance list) -->
+ <!-- TODO: Replace with real fetch('/student/dashboard') tasks array -->
+ <div style="margin-bottom: 1.5rem;">
+ <div
+ style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-main); font-weight: 700;">
+ Today's Priorities
+ </div>
+ <ul class="priorities-list" id="priorities-list">
+ <li class="priority-item">
+ <input type="checkbox" id="p-1">
+ <label for="p-1">Complete Distributed Systems concurrency lab exercise</label>
+ </li>
+ <li class="priority-item">
+ <input type="checkbox" id="p-2">
+ <label for="p-2">Submit Google Internship eligibility verification document</label>
+ </li>
+ <li class="priority-item">
+ <input type="checkbox" id="p-3">
+ <label for="p-3">Review SQL indexing & query optimization notes</label>
+ </li>
+ </ul>
+ </div>
 
-                <!-- 4. Upcoming Items Section (3 items with 📚🎪💼 icons & sticker tags) -->
-                <!-- TODO: Replace with real fetch('/student/dashboard') upcoming items -->
-                <div style="margin-bottom: 1.75rem;">
-                    <div
-                        style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.6rem;">
-                        ⏰ Upcoming Highlights
-                    </div>
-                    <div class="upcoming-row">
-                        <a href="academic.html" class="sticker-tag" style="background: var(--mint-green); margin: 0; font-size: 0.85rem; text-decoration: none; cursor: pointer; display: inline-block;">
-                            📚 Exam: Systems Midterm in 4 Days
-                        </a>
-                        <a href="events.html" class="sticker-tag"
-                            style="background: var(--soft-yellow); margin: 0; font-size: 0.85rem; text-decoration: none; cursor: pointer; display: inline-block;">
-                            🎪 Event: AgentX Hackathon Tomorrow, 10 AM
-                        </a>
-                        <a href="placement.html" class="sticker-tag" style="background: var(--lavender); margin: 0; font-size: 0.85rem; text-decoration: none; cursor: pointer; display: inline-block;">
-                            💼 Placement: Google Drive Deadline Aug 15
-                        </a>
-                    </div>
-                </div>
+ <!-- 4. Upcoming Items Section (3 items with icons & sticker tags) -->
+ <!-- TODO: Replace with real fetch('/student/dashboard') upcoming items -->
+ <div style="margin-bottom: 1.75rem;">
+ <div
+ style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-main); font-weight: 700; margin-bottom: 0.6rem;">
+ Upcoming Highlights
+ </div>
+ <div class="upcoming-row">
+ <a href="academic.html" class="sticker-tag" style="background: var(--mint-green); margin: 0; font-size: 0.85rem; text-decoration: none; cursor: pointer; display: inline-block;">
+ Exam: Systems Midterm in 4 Days
+ </a>
+ <a href="events.html" class="sticker-tag"
+ style="background: var(--soft-yellow); margin: 0; font-size: 0.85rem; text-decoration: none; cursor: pointer; display: inline-block;">
+ Event: AgentX Hackathon Tomorrow, 10 AM
+ </a>
+ <a href="placement.html" class="sticker-tag" style="background: var(--lavender); margin: 0; font-size: 0.85rem; text-decoration: none; cursor: pointer; display: inline-block;">
+ Placement: Google Drive Deadline Aug 15
+ </a>
+ </div>
+ </div>
 
-                <!-- Example Prompt Button linking to chat.html -->
-                <a href="chat.html?prompt=I%20want%20to%20become%20a%20backend%20developer"
-                    class="btn-blob route-to-chat" data-prompt="I want to become a backend developer">
-                    I want to become a backend developer →
-                </a>
-            </div>
+ <!-- Example Prompt Button linking to chat.html -->
+ <a href="chat.html?prompt=I%20want%20to%20become%20a%20backend%20developer"
+ class="btn-blob route-to-chat" data-prompt="I want to become a backend developer">
+ I want to become a backend developer →
+ </a>
+ </div>
 
-            <!-- Small Status Cards Section -->
-            <div class="status-grid">
-                <!-- Status Card 1: Upcoming Exam Countdown -->
-                <div class="status-card" id="card-exam">
-                    <!-- TODO: replace with real fetch('/student/dashboard') -->
-                    <div class="status-card-header">
-                        <span class="sticker-tag"
-                            style="background: var(--mint-green); margin: 0; transform: rotate(2deg);">Academics</span>
-                        <span class="status-icon">📝</span>
-                    </div>
-                    <h4 class="status-title">Upcoming Exam</h4>
-                    <div class="status-value">4 Days Left</div>
-                    <p class="status-desc">Distributed Systems & Cloud Architecture Midterm</p>
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; align-items: center;">
-                        <a href="academic.html?tab=organize" class="btn-pill"
-                            style="font-size: 0.8rem; padding: 0.3rem 0.8rem;">Organize Plan →</a>
-                        <a href="docs/course_info.pdf" download="Distributed_Systems_Syllabus.pdf" id="btn-dashboard-pdf-download" class="btn-pill"
-                            style="background: var(--soft-yellow); color: var(--text-main); font-size: 0.8rem; padding: 0.3rem 0.8rem; text-decoration: none;" onclick="if(typeof downloadSyllabusFile === 'function'){ downloadSyllabusFile('CSE301', 'Distributed Systems & Cloud Computing'); }">Download Syllabus PDF 📄</a>
-                    </div>
-                </div>
+ <!-- Small Status Cards Section -->
+ <div class="status-grid">
+ <!-- Status Card 1: Upcoming Exam Countdown -->
+ <div class="status-card" id="card-exam">
+ <!-- TODO: replace with real fetch('/student/dashboard') -->
+ <div class="status-card-header">
+ <span class="sticker-tag"
+ style="background: var(--mint-green); margin: 0; transform: rotate(2deg);">Academics</span>
+ <span class="status-icon"></span>
+ </div>
+ <h4 class="status-title">Upcoming Exam</h4>
+ <div class="status-value">4 Days Left</div>
+ <p class="status-desc">Distributed Systems & Cloud Architecture Midterm</p>
+ <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; align-items: center;">
+ <a href="academic.html?tab=organize" class="btn-pill"
+ style="font-size: 0.8rem; padding: 0.3rem 0.8rem;">Organize Plan →</a>
+ <a href="docs/course_info.pdf" download="Distributed_Systems_Syllabus.pdf" id="btn-dashboard-pdf-download" class="btn-pill"
+ style="background: var(--soft-yellow); color: var(--text-main); font-size: 0.8rem; padding: 0.3rem 0.8rem; text-decoration: none;" onclick="if(typeof downloadSyllabusFile === 'function'){ downloadSyllabusFile('CSE301', 'Distributed Systems & Cloud Computing'); }">Download Syllabus PDF </a>
+ </div>
+ </div>
 
-                <!-- Status Card 2: Next Event -->
-                <div class="status-card" id="card-event">
-                    <!-- TODO: replace with real fetch('/student/dashboard') -->
-                    <div class="status-card-header">
-                        <span class="sticker-tag"
-                            style="background: var(--soft-yellow); margin: 0; transform: rotate(-3deg);">Upcoming
-                            Event</span>
-                        <span class="status-icon">⚡</span>
-                    </div>
-                    <h4 class="status-title">Hackathon Registration</h4>
-                    <div class="status-value">Tomorrow, 10:00 AM</div>
-                    <p class="status-desc">AgentX National Hackathon 2026 Opening Keynote & Team Formation</p>
-                    <a href="events.html" class="btn-pill"
-                        style="margin-top: 1rem; align-self: flex-start; font-size: 0.8rem; padding: 0.3rem 0.8rem;">View
-                        Events →</a>
-                </div>
+ <!-- Status Card 2: Next Event -->
+ <div class="status-card" id="card-event">
+ <!-- TODO: replace with real fetch('/student/dashboard') -->
+ <div class="status-card-header">
+ <span class="sticker-tag"
+ style="background: var(--soft-yellow); margin: 0; transform: rotate(-3deg);">Upcoming
+ Event</span>
+ <span class="status-icon"></span>
+ </div>
+ <h4 class="status-title">Hackathon Registration</h4>
+ <div class="status-value">Tomorrow, 10:00 AM</div>
+ <p class="status-desc">AgentX National Hackathon 2026 Opening Keynote & Team Formation</p>
+ <a href="events.html" class="btn-pill"
+ style="margin-top: 1rem; align-self: flex-start; font-size: 0.8rem; padding: 0.3rem 0.8rem;">View
+ Events →</a>
+ </div>
 
-                <!-- Status Card 3: Unread Announcements -->
-                <div class="status-card" id="card-announcements">
-                    <!-- TODO: replace with real fetch('/student/dashboard') -->
-                    <div class="status-card-header">
-                        <span class="sticker-tag"
-                            style="background: var(--lavender); margin: 0; transform: rotate(1deg);">Inbox</span>
-                        <span class="status-icon">📫</span>
-                    </div>
-                    <h4 class="status-title">Unread Announcements</h4>
-                    <div class="status-value">3 New Notices</div>
-                    <p class="status-desc">Google Backend Internship Eligibility verified; Library book return due.</p>
-                    <a href="notifications.html" class="btn-pill"
-                        style="margin-top: 1rem; align-self: flex-start; font-size: 0.8rem; padding: 0.3rem 0.8rem;">Check
-                        Updates →</a>
-                </div>
-            </div>
-        </main>
-    </div>
+ <!-- Status Card 3: Unread Announcements -->
+ <div class="status-card" id="card-announcements">
+ <!-- TODO: replace with real fetch('/student/dashboard') -->
+ <div class="status-card-header">
+ <span class="sticker-tag"
+ style="background: var(--lavender); margin: 0; transform: rotate(1deg);">Inbox</span>
+ <span class="status-icon"></span>
+ </div>
+ <h4 class="status-title">Unread Announcements</h4>
+ <div class="status-value">3 New Notices</div>
+ <p class="status-desc">Google Backend Internship Eligibility verified; Library book return due.</p>
+ <a href="notifications.html" class="btn-pill"
+ style="margin-top: 1rem; align-self: flex-start; font-size: 0.8rem; padding: 0.3rem 0.8rem;">Check
+ Updates →</a>
+ </div>
+ </div>
+ </main>
+ </div>
 
-    <footer class="footer">
-        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a
-                href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank"
-                style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
-    </footer>
+ <footer class="footer">
+ <p>Built with ️ for AgentX National Hackathon 2026 | <a
+ href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank"
+ style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+ </footer>
 
-    <script src="script.js"></script>
-    <script>
-        const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-            ? 'http://localhost:8000' : '';
+ <script src="script.js"></script>
+ <script>
+ const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+ ? 'http://localhost:8000' : '';
 
-        // Session Token Guard
-        const sessionToken = localStorage.getItem('studentSessionToken');
-        if (!sessionToken) {
-            window.location.replace('login.html');
-        }
+ // Session Token Guard
+ const sessionToken = localStorage.getItem('studentSessionToken');
+ if (!sessionToken) {
+ window.location.replace('login.html');
+ }
 
-        // Responsive Mobile Navbar Toggle
-        document.getElementById('hamburger').addEventListener('click', () => {
-            document.getElementById('nav-links').classList.toggle('active');
-        });
+ // Responsive Mobile Navbar Toggle
+ document.getElementById('hamburger').addEventListener('click', () => {
+ document.getElementById('nav-links').classList.toggle('active');
+ });
 
-        // Hydrate Student Name from real saved backend profile or localStorage
-        async function loadDashboardUser() {
-            const savedProfile = localStorage.getItem('studentProfile');
-            if (savedProfile) {
-                try {
-                    const data = JSON.parse(savedProfile);
-                    if (data.name) {
-                        document.getElementById('welcome-message').textContent = `Good morning, ${data.name} 👋`;
-                    }
-                } catch (e) { }
-            }
+ // Hydrate Student Name from real saved backend profile or localStorage
+ async function loadDashboardUser() {
+ const savedProfile = localStorage.getItem('studentProfile');
+ if (savedProfile) {
+ try {
+ const data = JSON.parse(savedProfile);
+ if (data.name) {
+ document.getElementById('welcome-message').textContent = `Good morning, ${data.name} `;
+ }
+ } catch (e) { }
+ }
 
-            if (sessionToken) {
-                try {
-                    const res = await fetch(`${API_BASE}/auth/me?token=${encodeURIComponent(sessionToken)}`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.user && data.user.name) {
-                            localStorage.setItem('studentProfile', JSON.stringify(data.user));
-                            document.getElementById('welcome-message').textContent = `Good morning, ${data.user.name} 👋`;
-                        }
-                    } else if (res.status === 401) {
-                        handleLogout();
-                    }
-                } catch (err) {
-                    console.warn("Auth me fallback:", err);
-                }
-            }
-        }
-        loadDashboardUser();
+ if (sessionToken) {
+ try {
+ const res = await fetch(`${API_BASE}/auth/me?token=${encodeURIComponent(sessionToken)}`);
+ if (res.ok) {
+ const data = await res.json();
+ if (data.user && data.user.name) {
+ localStorage.setItem('studentProfile', JSON.stringify(data.user));
+ document.getElementById('welcome-message').textContent = `Good morning, ${data.user.name} `;
+ }
+ } else if (res.status === 401) {
+ handleLogout();
+ }
+ } catch (err) {
+ console.warn("Auth me fallback:", err);
+ }
+ }
+ }
+ loadDashboardUser();
 
-        // Today's Priorities Checklist - Strikethrough & localStorage persistence
-        const prioritiesList = document.getElementById('priorities-list');
-        if (prioritiesList) {
-            const STORAGE_KEY = 'dashboardPriorities';
-            
-            // Load saved state from localStorage
-            let savedState = {};
-            try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (raw) savedState = JSON.parse(raw);
-            } catch (err) {
-                console.warn("Failed to parse dashboardPriorities from localStorage:", err);
-            }
+ // Today's Priorities Checklist - Strikethrough & localStorage persistence
+ const prioritiesList = document.getElementById('priorities-list');
+ if (prioritiesList) {
+ const STORAGE_KEY = 'dashboardPriorities';
+ 
+ // Load saved state from localStorage
+ let savedState = {};
+ try {
+ const raw = localStorage.getItem(STORAGE_KEY);
+ if (raw) savedState = JSON.parse(raw);
+ } catch (err) {
+ console.warn("Failed to parse dashboardPriorities from localStorage:", err);
+ }
 
-            const syncPriorityItem = (checkbox) => {
-                const label = document.querySelector(`label[for="${checkbox.id}"]`) || checkbox.nextElementSibling;
-                if (label && label.tagName === 'LABEL') {
-                    if (checkbox.checked) {
-                        label.style.textDecoration = 'line-through';
-                        label.style.opacity = '0.7';
-                        label.classList.add('completed');
-                    } else {
-                        label.style.textDecoration = 'none';
-                        label.style.opacity = '1';
-                        label.classList.remove('completed');
-                    }
-                }
-            };
+ const syncPriorityItem = (checkbox) => {
+ const label = document.querySelector(`label[for="${checkbox.id}"]`) || checkbox.nextElementSibling;
+ if (label && label.tagName === 'LABEL') {
+ if (checkbox.checked) {
+ label.style.textDecoration = 'line-through';
+ label.style.opacity = '0.7';
+ label.classList.add('completed');
+ } else {
+ label.style.textDecoration = 'none';
+ label.style.opacity = '1';
+ label.classList.remove('completed');
+ }
+ }
+ };
 
-            const saveState = () => {
-                const state = {};
-                prioritiesList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                    state[cb.id] = cb.checked;
-                });
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            };
+ const saveState = () => {
+ const state = {};
+ prioritiesList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+ state[cb.id] = cb.checked;
+ });
+ localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+ };
 
-            const checkboxes = prioritiesList.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(checkbox => {
-                // Restore saved checked state if present in localStorage
-                if (Object.prototype.hasOwnProperty.call(savedState, checkbox.id)) {
-                    checkbox.checked = Boolean(savedState[checkbox.id]);
-                }
-                syncPriorityItem(checkbox);
+ const checkboxes = prioritiesList.querySelectorAll('input[type="checkbox"]');
+ checkboxes.forEach(checkbox => {
+ // Restore saved checked state if present in localStorage
+ if (Object.prototype.hasOwnProperty.call(savedState, checkbox.id)) {
+ checkbox.checked = Boolean(savedState[checkbox.id]);
+ }
+ syncPriorityItem(checkbox);
 
-                // Add change listener per checkbox
-                checkbox.addEventListener('change', () => {
-                    syncPriorityItem(checkbox);
-                    saveState();
-                });
-            });
-        }
+ // Add change listener per checkbox
+ checkbox.addEventListener('change', () => {
+ syncPriorityItem(checkbox);
+ saveState();
+ });
+ });
+ }
 
-        // Prompt button event binding to safely handle routing
-        document.querySelectorAll('.route-to-chat').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const promptText = btn.getAttribute('data-prompt');
-                window.location.href = `chat.html?prompt=${encodeURIComponent(promptText)}`;
-            });
-        });
+ // Prompt button event binding to safely handle routing
+ document.querySelectorAll('.route-to-chat').forEach(btn => {
+ btn.addEventListener('click', (e) => {
+ e.preventDefault();
+ const promptText = btn.getAttribute('data-prompt');
+ window.location.href = `chat.html?prompt=${encodeURIComponent(promptText)}`;
+ });
+ });
 
-        async function handleLogout(e) {
-            if (e) e.preventDefault();
-            const currentToken = localStorage.getItem('studentSessionToken');
-            if (currentToken) {
-                try {
-                    await fetch(`${API_BASE}/auth/logout`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ token: currentToken })
-                    });
-                } catch (err) {}
-            }
-            localStorage.removeItem('studentSessionToken');
-            localStorage.removeItem('studentProfile');
-            localStorage.removeItem('studentSession');
-            window.location.replace('login.html');
-        }
-    </script>
+ async function handleLogout(e) {
+ if (e) e.preventDefault();
+ const currentToken = localStorage.getItem('studentSessionToken');
+ if (currentToken) {
+ try {
+ await fetch(`${API_BASE}/auth/logout`, {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ token: currentToken })
+ });
+ } catch (err) {}
+ }
+ localStorage.removeItem('studentSessionToken');
+ localStorage.removeItem('studentProfile');
+ localStorage.removeItem('studentSession');
+ window.location.replace('login.html');
+ }
+ </script>
 </body>
 
 </html>

@@ -49,7 +49,13 @@ body {
 
 ::selection { background: var(--soft-yellow, #fef08a); color: #000; }
 
-/* Input Focus States */
+/* Input Focus States & Pre-wrap Chat Bubble Formatting */
+.message, .chat-message, .bubble, #chat-history .message {
+  white-space: pre-wrap !important;
+  line-height: 1.6 !important;
+  color: var(--text-main) !important;
+}
+
 input:focus, textarea:focus, select:focus, #chat-input:focus {
   outline: none !important;
   border-color: var(--primary-blue, #6366f1) !important;

@@ -1,741 +1,741 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synapse | Academic Hub</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dashboard.css">
-    <style>
-        .academic-hub-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 2rem 5%;
-        }
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Synapse | Academic Hub</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="style.css">
+ <link rel="stylesheet" href="dashboard.css">
+ <style>
+ .academic-hub-container {
+ max-width: 1100px;
+ margin: 0 auto;
+ padding: 2rem 5%;
+ }
 
-        .pill-tabs-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-            margin-bottom: 2rem;
-            justify-content: center;
-        }
+ .pill-tabs-bar {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 0.6rem;
+ margin-bottom: 2rem;
+ justify-content: center;
+ }
 
-        .pill-tab {
-            font-family: var(--font-heading);
-            background: var(--surface);
-            color: var(--text-main);
-            border: 2px solid var(--border-dark);
-            border-radius: 50px;
-            padding: 0.55rem 1.3rem;
-            font-size: 0.9rem;
-            cursor: pointer;
-            box-shadow: 3px 3px 0px var(--border-dark);
-            transition: all 0.15s ease;
-        }
+ .pill-tab {
+ font-family: var(--font-heading);
+ background: var(--surface);
+ color: var(--text-main);
+ border: 2px solid var(--border-dark);
+ border-radius: 50px;
+ padding: 0.55rem 1.3rem;
+ font-size: 0.9rem;
+ cursor: pointer;
+ box-shadow: 3px 3px 0px var(--border-dark);
+ transition: all 0.15s ease;
+ }
 
-        .pill-tab:hover {
-            transform: translateY(-2px);
-            background: var(--soft-yellow);
-        }
+ .pill-tab:hover {
+ transform: translateY(-2px);
+ background: var(--soft-yellow);
+ }
 
-        .pill-tab.active {
-            background: var(--primary-blue);
-            color: #ffffff;
-            box-shadow: 4px 4px 0px var(--border-dark);
-        }
+ .pill-tab.active {
+ background: var(--primary-blue);
+ color: #ffffff;
+ box-shadow: 4px 4px 0px var(--border-dark);
+ }
 
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
+ .cards-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+ gap: 1.5rem;
+ }
 
-        .academic-card {
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow: 4px 4px 0px var(--border-dark);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s;
-        }
+ .academic-card {
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 20px;
+ padding: 1.5rem;
+ box-shadow: 4px 4px 0px var(--border-dark);
+ display: flex;
+ flex-direction: column;
+ justify-content: space-between;
+ transition: transform 0.2s;
+ }
 
-        .academic-card:hover {
-            transform: translateY(-3px);
-        }
+ .academic-card:hover {
+ transform: translateY(-3px);
+ }
 
-        /* Timetable Weekly Table Grid */
-        .timetable-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 4px 4px 0px var(--border-dark);
-        }
+ /* Timetable Weekly Table Grid */
+ .timetable-table {
+ width: 100%;
+ border-collapse: separate;
+ border-spacing: 0;
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 16px;
+ overflow: hidden;
+ box-shadow: 4px 4px 0px var(--border-dark);
+ }
 
-        .timetable-table th {
-            background: var(--primary-blue);
-            color: white;
-            font-family: var(--font-heading);
-            padding: 0.85rem;
-            font-size: 0.9rem;
-            border-bottom: 2px solid var(--border-dark);
-            border-right: 1px solid rgba(255,255,255,0.2);
-        }
+ .timetable-table th {
+ background: var(--primary-blue);
+ color: white;
+ font-family: var(--font-heading);
+ padding: 0.85rem;
+ font-size: 0.9rem;
+ border-bottom: 2px solid var(--border-dark);
+ border-right: 1px solid rgba(255,255,255,0.2);
+ }
 
-        .timetable-table td {
-            padding: 0.85rem;
-            font-size: 0.85rem;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            border-right: 1px solid rgba(0,0,0,0.06);
-            text-align: center;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
+ .timetable-table td {
+ padding: 0.85rem;
+ font-size: 0.85rem;
+ border-bottom: 1px solid rgba(0,0,0,0.1);
+ border-right: 1px solid rgba(0,0,0,0.06);
+ text-align: center;
+ cursor: pointer;
+ transition: background 0.15s;
+ }
 
-        .timetable-table td:hover {
-            background: var(--soft-yellow);
-        }
+ .timetable-table td:hover {
+ background: var(--soft-yellow);
+ }
 
-        /* Attendance Bar */
-        .attendance-bar-bg {
-            width: 100%;
-            background: var(--bg-gingham);
-            border: 2px solid var(--border-dark);
-            border-radius: 20px;
-            height: 22px;
-            overflow: hidden;
-            box-shadow: 2px 2px 0px var(--border-dark);
-            margin-top: 0.5rem;
-        }
+ /* Attendance Bar */
+ .attendance-bar-bg {
+ width: 100%;
+ background: var(--bg-gingham);
+ border: 2px solid var(--border-dark);
+ border-radius: 20px;
+ height: 22px;
+ overflow: hidden;
+ box-shadow: 2px 2px 0px var(--border-dark);
+ margin-top: 0.5rem;
+ }
 
-        .attendance-bar-fill {
-            height: 100%;
-            border-right: 2px solid var(--border-dark);
-            transition: width 0.4s ease;
-        }
+ .attendance-bar-fill {
+ height: 100%;
+ border-right: 2px solid var(--border-dark);
+ transition: width 0.4s ease;
+ }
 
-        /* Organize Form Styles (Nested from academic-organize.html) */
-        .organize-form-card {
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 5px 5px 0px var(--border-dark);
-            margin-bottom: 2rem;
-        }
+ /* Organize Form Styles (Nested from academic-organize.html) */
+ .organize-form-card {
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 20px;
+ padding: 2rem;
+ box-shadow: 5px 5px 0px var(--border-dark);
+ margin-bottom: 2rem;
+ }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
-        }
+ .form-group {
+ display: flex;
+ flex-direction: column;
+ gap: 0.5rem;
+ margin-bottom: 1.25rem;
+ }
 
-        .form-group label {
-            font-family: var(--font-heading);
-            font-size: 1.1rem;
-            color: var(--text-main);
-        }
+ .form-group label {
+ font-family: var(--font-heading);
+ font-size: 1.1rem;
+ color: var(--text-main);
+ }
 
-        .form-input {
-            width: 100%;
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 16px;
-            padding: 0.75rem 1rem;
-            font-family: var(--font-body);
-            font-size: 1rem;
-            outline: none;
-            box-shadow: 3px 3px 0px var(--border-dark);
-        }
+ .form-input {
+ width: 100%;
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 16px;
+ padding: 0.75rem 1rem;
+ font-family: var(--font-body);
+ font-size: 1rem;
+ outline: none;
+ box-shadow: 3px 3px 0px var(--border-dark);
+ }
 
-        .checklist-day-card {
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 1.25rem;
-            box-shadow: 4px 4px 0px var(--border-dark);
-        }
+ .checklist-day-card {
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 20px;
+ padding: 1.5rem;
+ margin-bottom: 1.25rem;
+ box-shadow: 4px 4px 0px var(--border-dark);
+ }
 
-        .day-header {
-            font-family: var(--font-heading);
-            font-size: 1.25rem;
-            color: var(--primary-blue-dark);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px dashed var(--border-dark);
-        }
+ .day-header {
+ font-family: var(--font-heading);
+ font-size: 1.25rem;
+ color: var(--primary-blue-dark);
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ margin-bottom: 1rem;
+ padding-bottom: 0.5rem;
+ border-bottom: 2px dashed var(--border-dark);
+ }
 
-        .task-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-            font-size: 0.95rem;
-        }
-    </style>
+ .task-item {
+ display: flex;
+ align-items: center;
+ gap: 0.75rem;
+ padding: 0.5rem 0;
+ font-size: 0.95rem;
+ }
+ </style>
 </head>
 <body>
-    <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
-    <div class="fixed-background-widgets">
-        <!-- Left Side Spread -->
-        <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
-            <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
+ <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
+ <div class="fixed-background-widgets">
+ <!-- Left Side Spread -->
+ <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
+ <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
 
-        <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
-        <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
-        </svg>
+ <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
+ <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
+ </svg>
 
-        <!-- Right Side Spread -->
-        <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-    </div>
+ <!-- Right Side Spread -->
+ <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ </div>
 
-    <!-- Navbar Reused -->
-    <nav class="navbar">
-        <div class="nav-brand">🔗 Synapse</div>
-        <button class="hamburger" id="hamburger">☰</button>
-        <div class="nav-links" id="nav-links">
-            <a href="index.html">Home</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="chat.html">Assistant</a>
-            <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out 🚪</a>
-        </div>
-    </nav>
+ <!-- Navbar Reused -->
+ <nav class="navbar">
+ <div class="nav-brand"> Synapse</div>
+ <button class="hamburger" id="hamburger"></button>
+ <div class="nav-links" id="nav-links">
+ <a href="index.html">Home</a>
+ <a href="dashboard.html">Dashboard</a>
+ <a href="chat.html">Assistant</a>
+ <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out </a>
+ </div>
+ </nav>
 
-    <main class="academic-hub-container" style="position: relative; z-index: 10;">
+ <main class="academic-hub-container" style="position: relative; z-index: 10;">
 
-        <!-- Hero Header -->
-        <div class="cloud-container" style="padding: 2rem; margin-bottom: 2rem;">
-            <a href="chat.html?prompt=Help%20me%20with%20academic%20planning%20and%20course%20schedules" class="sticker-tag route-to-chat" data-prompt="Help me with academic planning and course schedules" style="background: var(--mint-green); text-decoration: none; cursor: pointer; display: inline-block;">🎓 Academic Intelligence Hub</a>
-            <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue);">Academics</h1>
-            <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0;">
-                Access course syllabi, weekly timetables, attendance thresholds, exam countdowns, study agenda generation, and elective selection.
-            </p>
-        </div>
+ <!-- Hero Header -->
+ <div class="cloud-container" style="padding: 2rem; margin-bottom: 2rem;">
+ <a href="chat.html?prompt=Help%20me%20with%20academic%20planning%20and%20course%20schedules" class="sticker-tag route-to-chat" data-prompt="Help me with academic planning and course schedules" style="background: var(--mint-green); text-decoration: none; cursor: pointer; display: inline-block;"> Academic Intelligence Hub</a>
+ <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue);">Academics</h1>
+ <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0;">
+ Access course syllabi, weekly timetables, attendance thresholds, exam countdowns, study agenda generation, and elective selection.
+ </p>
+ </div>
 
-        <!-- 6 Pill Tabs -->
-        <div class="pill-tabs-bar">
-            <button class="pill-tab active" onclick="switchAcademicTab('courses', this)">Course Info</button>
-            <button class="pill-tab" onclick="switchAcademicTab('timetable', this)">Timetable</button>
-            <button class="pill-tab" onclick="switchAcademicTab('attendance', this)">Attendance</button>
-            <button class="pill-tab" onclick="switchAcademicTab('exams', this)">Exams</button>
-            <button class="pill-tab" onclick="switchAcademicTab('organize', this)">Organize</button>
-            <button class="pill-tab" onclick="switchAcademicTab('electives', this)">Electives</button>
-        </div>
+ <!-- 6 Pill Tabs -->
+ <div class="pill-tabs-bar">
+ <button class="pill-tab active" onclick="switchAcademicTab('courses', this)">Course Info</button>
+ <button class="pill-tab" onclick="switchAcademicTab('timetable', this)">Timetable</button>
+ <button class="pill-tab" onclick="switchAcademicTab('attendance', this)">Attendance</button>
+ <button class="pill-tab" onclick="switchAcademicTab('exams', this)">Exams</button>
+ <button class="pill-tab" onclick="switchAcademicTab('organize', this)">Organize</button>
+ <button class="pill-tab" onclick="switchAcademicTab('electives', this)">Electives</button>
+ </div>
 
-        <!-- Tab Content Viewport -->
-        <div id="academic-viewport">
-            <!-- Dynamic tab content rendered here -->
-        </div>
-    </main>
+ <!-- Tab Content Viewport -->
+ <div id="academic-viewport">
+ <!-- Dynamic tab content rendered here -->
+ </div>
+ </main>
 
-    <footer class="footer">
-        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
-    </footer>
+ <footer class="footer">
+ <p>Built with ️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+ </footer>
 
-    <script>
-        // Navbar toggle
-        document.getElementById('hamburger').addEventListener('click', () => {
-            document.getElementById('nav-links').classList.toggle('active');
-        });
+ <script>
+ // Navbar toggle
+ document.getElementById('hamburger').addEventListener('click', () => {
+ document.getElementById('nav-links').classList.toggle('active');
+ });
 
-        let currentTab = 'courses';
+ let currentTab = 'courses';
 
-        // --- MOCK DATA FOR DOCUMENTED ENDPOINTS ---
+ // --- MOCK DATA FOR DOCUMENTED ENDPOINTS ---
 
-        // TODO: replace with real GET /academic/courses
-        const mockCourses = [
-            { course: "Distributed Systems & Cloud Computing", code: "CSE301", faculty: "Dr. K. V. Sharma", credits: 4, syllabusUrl: "docs/course_info.pdf" },
-            { course: "Advanced Operating Systems", code: "CSE302", faculty: "Prof. Ananya Rao", credits: 4, syllabusUrl: "docs/course_info.pdf" },
-            { course: "Database Management & Query Tuning", code: "CSE303", faculty: "Dr. Ramesh Gupta", credits: 3, syllabusUrl: "docs/course_info.pdf" },
-            { course: "Artificial Intelligence & Multi-Agent Systems", code: "CSE304", faculty: "Dr. S. K. Roy", credits: 4, syllabusUrl: "docs/course_info.pdf" }
-        ];
+ // TODO: replace with real GET /academic/courses
+ const mockCourses = [
+ { course: "Distributed Systems & Cloud Computing", code: "CSE301", faculty: "Dr. K. V. Sharma", credits: 4, syllabusUrl: "docs/course_info.pdf" },
+ { course: "Advanced Operating Systems", code: "CSE302", faculty: "Prof. Ananya Rao", credits: 4, syllabusUrl: "docs/course_info.pdf" },
+ { course: "Database Management & Query Tuning", code: "CSE303", faculty: "Dr. Ramesh Gupta", credits: 3, syllabusUrl: "docs/course_info.pdf" },
+ { course: "Artificial Intelligence & Multi-Agent Systems", code: "CSE304", faculty: "Dr. S. K. Roy", credits: 4, syllabusUrl: "docs/course_info.pdf" }
+ ];
 
-        // TODO: replace with real GET /academic/timetable
-        const mockTimetable = [
-            { time: "09:00 - 10:00", mon: "CSE301 (Hall 1)", tue: "CSE302 (Lab 2)", wed: "CSE301 (Hall 1)", thu: "CSE304 (Hall 3)", fri: "CSE303 (Lab 1)" },
-            { time: "10:15 - 11:15", mon: "CSE303 (Hall 2)", tue: "CSE301 (Hall 1)", wed: "CSE304 (Lab 3)", thu: "CSE302 (Hall 2)", fri: "CSE301 (Hall 1)" },
-            { time: "11:30 - 12:30", mon: "CSE304 (Hall 3)", tue: "CSE303 (Hall 2)", wed: "CSE302 (Lab 2)", thu: "CSE301 (Hall 1)", fri: "CSE304 (Hall 3)" },
-            { time: "02:00 - 04:00", mon: "AI Lab Session", tue: "Cloud Workshop", wed: "OS Lab Session", thu: "Placement Prep", fri: "Seminar" }
-        ];
+ // TODO: replace with real GET /academic/timetable
+ const mockTimetable = [
+ { time: "09:00 - 10:00", mon: "CSE301 (Hall 1)", tue: "CSE302 (Lab 2)", wed: "CSE301 (Hall 1)", thu: "CSE304 (Hall 3)", fri: "CSE303 (Lab 1)" },
+ { time: "10:15 - 11:15", mon: "CSE303 (Hall 2)", tue: "CSE301 (Hall 1)", wed: "CSE304 (Lab 3)", thu: "CSE302 (Hall 2)", fri: "CSE301 (Hall 1)" },
+ { time: "11:30 - 12:30", mon: "CSE304 (Hall 3)", tue: "CSE303 (Hall 2)", wed: "CSE302 (Lab 2)", thu: "CSE301 (Hall 1)", fri: "CSE304 (Hall 3)" },
+ { time: "02:00 - 04:00", mon: "AI Lab Session", tue: "Cloud Workshop", wed: "OS Lab Session", thu: "Placement Prep", fri: "Seminar" }
+ ];
 
-        // TODO: replace with real GET /academic/attendance
-        const mockAttendance = {
-            overallPercentage: 86,
-            courses: [
-                { course: "Distributed Systems", percentage: 88 },
-                { course: "Advanced Operating Systems", percentage: 92 },
-                { course: "Database Management", percentage: 80 },
-                { course: "Multi-Agent Systems", percentage: 72 } // Below 75% red warning
-            ]
-        };
+ // TODO: replace with real GET /academic/attendance
+ const mockAttendance = {
+ overallPercentage: 86,
+ courses: [
+ { course: "Distributed Systems", percentage: 88 },
+ { course: "Advanced Operating Systems", percentage: 92 },
+ { course: "Database Management", percentage: 80 },
+ { course: "Multi-Agent Systems", percentage: 72 } // Below 75% red warning
+ ]
+ };
 
-        // TODO: replace with real GET /academic/exams
-        const mockExams = [
-            { subject: "Distributed Systems & Cloud", date: "2026-08-11", time: "10:00 AM", venue: "Tech Tower Hall 3", countdown: "In 4 Days" },
-            { subject: "Advanced Operating Systems", date: "2026-08-14", time: "02:00 PM", venue: "Academic Block 1", countdown: "In 7 Days" },
-            { subject: "Database Query Optimization", date: "2026-08-18", time: "10:00 AM", venue: "Main Lab", countdown: "In 11 Days" }
-        ];
+ // TODO: replace with real GET /academic/exams
+ const mockExams = [
+ { subject: "Distributed Systems & Cloud", date: "2026-08-11", time: "10:00 AM", venue: "Tech Tower Hall 3", countdown: "In 4 Days" },
+ { subject: "Advanced Operating Systems", date: "2026-08-14", time: "02:00 PM", venue: "Academic Block 1", countdown: "In 7 Days" },
+ { subject: "Database Query Optimization", date: "2026-08-18", time: "10:00 AM", venue: "Main Lab", countdown: "In 11 Days" }
+ ];
 
-        // TODO: replace with real GET /academic/electives
-        const mockElectives = [
-            { name: "High-Performance GPU Computing", description: "CUDA programming, parallel algorithms, and deep learning acceleration.", seatsAvailable: 12, recommendedFor: "Backend & Systems Engineers" },
-            { name: "Distributed Ledger & Blockchain Protocols", description: "Consensus mechanics, smart contract auditing, and P2P networks.", seatsAvailable: 5, recommendedFor: "Security & Backend Engineers" },
-            { name: "Natural Language Processing with LLMs", description: "Transformers, fine-tuning, RAG architectures, and vector databases.", seatsAvailable: 8, recommendedFor: "AI & Data Engineers" }
-        ];
+ // TODO: replace with real GET /academic/electives
+ const mockElectives = [
+ { name: "High-Performance GPU Computing", description: "CUDA programming, parallel algorithms, and deep learning acceleration.", seatsAvailable: 12, recommendedFor: "Backend & Systems Engineers" },
+ { name: "Distributed Ledger & Blockchain Protocols", description: "Consensus mechanics, smart contract auditing, and P2P networks.", seatsAvailable: 5, recommendedFor: "Security & Backend Engineers" },
+ { name: "Natural Language Processing with LLMs", description: "Transformers, fine-tuning, RAG architectures, and vector databases.", seatsAvailable: 8, recommendedFor: "AI & Data Engineers" }
+ ];
 
-        // Render Tab Viewport
-        function renderAcademicTab(tabName) {
-            const viewport = document.getElementById('academic-viewport');
+ // Render Tab Viewport
+ function renderAcademicTab(tabName) {
+ const viewport = document.getElementById('academic-viewport');
 
-            switch(tabName) {
-                case 'courses': {
-                    // Course Info Tab
-                    // TODO: Replace with GET /academic/courses
-                    let html = `<div class="cards-grid">`;
-                    mockCourses.forEach(c => {
-                        html += `
-                            <div class="academic-card">
-                                <div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                        <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.8rem; margin: 0;">${c.code}</span>
-                                        <span class="sticker-tag" style="background: var(--mint-green); font-size: 0.8rem; margin: 0;">${c.credits} Credits</span>
-                                    </div>
-                                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue); margin-bottom: 0.4rem;">${c.course}</h3>
-                                    <p style="font-size: 0.85rem; color: var(--text-muted);">👨‍🏫 Faculty: <strong>${c.faculty}</strong></p>
-                                </div>
-                                <div style="margin-top: 1.25rem;">
-                                    <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="downloadSyllabusFile('${c.code}', '${c.course}', '${c.faculty}', ${c.credits})">
-                                        View Syllabus PDF 📄
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += `</div>`;
-                    viewport.innerHTML = html;
-                    break;
-                }
-                case 'timetable': {
-                    // Timetable Tab
-                    // TODO: Replace with GET /academic/timetable
-                    let html = `
-                        <div style="margin-bottom: 1rem; font-family: var(--font-heading); color: var(--text-main); font-size: 1.1rem;">
-                            📅 Weekly Schedule (Click any slot for course & room details)
-                        </div>
-                        <div style="overflow-x: auto;">
-                            <table class="timetable-table">
-                                <thead>
-                                    <tr>
-                                        <th>Time Slot</th>
-                                        <th>Monday</th>
-                                        <th>Tuesday</th>
-                                        <th>Wednesday</th>
-                                        <th>Thursday</th>
-                                        <th>Friday</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${mockTimetable.map(row => `
-                                        <tr>
-                                            <td style="font-weight: 700; background: var(--bg-gingham);">${row.time}</td>
-                                            <td onclick="showSlotDetails('${row.mon}', 'Monday', '${row.time}')">${row.mon}</td>
-                                            <td onclick="showSlotDetails('${row.tue}', 'Tuesday', '${row.time}')">${row.tue}</td>
-                                            <td onclick="showSlotDetails('${row.wed}', 'Wednesday', '${row.time}')">${row.wed}</td>
-                                            <td onclick="showSlotDetails('${row.thu}', 'Thursday', '${row.time}')">${row.thu}</td>
-                                            <td onclick="showSlotDetails('${row.fri}', 'Friday', '${row.time}')">${row.fri}</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                    viewport.innerHTML = html;
-                    break;
-                }
-                case 'attendance': {
-                    // Attendance Tab
-                    // TODO: Replace with GET /academic/attendance
-                    const data = mockAttendance;
-                    let html = `
-                        <div class="cloud-container" style="padding: 1.5rem; text-align: left; margin-bottom: 1.5rem;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <div class="sticker-tag" style="background: var(--mint-green); margin-bottom: 0.3rem;">📊 Attendance Metric</div>
-                                    <h2 style="font-family: var(--font-heading); color: var(--primary-blue);">Overall Attendance</h2>
-                                </div>
-                                <div style="font-family: var(--font-heading); font-size: 2.8rem; color: #27ae60;">
-                                    ${data.overallPercentage}%
-                                </div>
-                            </div>
-                        </div>
-                        <div class="cards-grid">
-                    `;
-                    data.courses.forEach(item => {
-                        let barColor = 'var(--mint-green)';
-                        let textColor = '#27ae60';
-                        if (item.percentage < 75) { barColor = '#e74c3c'; textColor = '#c0392b'; }
-                        else if (item.percentage < 85) { barColor = 'var(--soft-yellow)'; textColor = '#d35400'; }
+ switch(tabName) {
+ case 'courses': {
+ // Course Info Tab
+ // TODO: Replace with GET /academic/courses
+ let html = `<div class="cards-grid">`;
+ mockCourses.forEach(c => {
+ html += `
+ <div class="academic-card">
+ <div>
+ <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+ <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.8rem; margin: 0;">${c.code}</span>
+ <span class="sticker-tag" style="background: var(--mint-green); font-size: 0.8rem; margin: 0;">${c.credits} Credits</span>
+ </div>
+ <h3 style="font-family: var(--font-heading); color: var(--primary-blue); margin-bottom: 0.4rem;">${c.course}</h3>
+ <p style="font-size: 0.85rem; color: var(--text-muted);">‍ Faculty: <strong>${c.faculty}</strong></p>
+ </div>
+ <div style="margin-top: 1.25rem;">
+ <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="downloadSyllabusFile('${c.code}', '${c.course}', '${c.faculty}', ${c.credits})">
+ View Syllabus PDF 
+ </button>
+ </div>
+ </div>
+ `;
+ });
+ html += `</div>`;
+ viewport.innerHTML = html;
+ break;
+ }
+ case 'timetable': {
+ // Timetable Tab
+ // TODO: Replace with GET /academic/timetable
+ let html = `
+ <div style="margin-bottom: 1rem; font-family: var(--font-heading); color: var(--text-main); font-size: 1.1rem;">
+ Weekly Schedule (Click any slot for course & room details)
+ </div>
+ <div style="overflow-x: auto;">
+ <table class="timetable-table">
+ <thead>
+ <tr>
+ <th>Time Slot</th>
+ <th>Monday</th>
+ <th>Tuesday</th>
+ <th>Wednesday</th>
+ <th>Thursday</th>
+ <th>Friday</th>
+ </tr>
+ </thead>
+ <tbody>
+ ${mockTimetable.map(row => `
+ <tr>
+ <td style="font-weight: 700; background: var(--bg-gingham);">${row.time}</td>
+ <td onclick="showSlotDetails('${row.mon}', 'Monday', '${row.time}')">${row.mon}</td>
+ <td onclick="showSlotDetails('${row.tue}', 'Tuesday', '${row.time}')">${row.tue}</td>
+ <td onclick="showSlotDetails('${row.wed}', 'Wednesday', '${row.time}')">${row.wed}</td>
+ <td onclick="showSlotDetails('${row.thu}', 'Thursday', '${row.time}')">${row.thu}</td>
+ <td onclick="showSlotDetails('${row.fri}', 'Friday', '${row.time}')">${row.fri}</td>
+ </tr>
+ `).join('')}
+ </tbody>
+ </table>
+ </div>
+ `;
+ viewport.innerHTML = html;
+ break;
+ }
+ case 'attendance': {
+ // Attendance Tab
+ // TODO: Replace with GET /academic/attendance
+ const data = mockAttendance;
+ let html = `
+ <div class="cloud-container" style="padding: 1.5rem; text-align: left; margin-bottom: 1.5rem;">
+ <div style="display: flex; justify-content: space-between; align-items: center;">
+ <div>
+ <div class="sticker-tag" style="background: var(--mint-green); margin-bottom: 0.3rem;"> Attendance Metric</div>
+ <h2 style="font-family: var(--font-heading); color: var(--primary-blue);">Overall Attendance</h2>
+ </div>
+ <div style="font-family: var(--font-heading); font-size: 2.8rem; color: #27ae60;">
+ ${data.overallPercentage}%
+ </div>
+ </div>
+ </div>
+ <div class="cards-grid">
+ `;
+ data.courses.forEach(item => {
+ let barColor = 'var(--mint-green)';
+ let textColor = '#27ae60';
+ if (item.percentage < 75) { barColor = '#e74c3c'; textColor = '#c0392b'; }
+ else if (item.percentage < 85) { barColor = 'var(--soft-yellow)'; textColor = '#d35400'; }
 
-                        html += `
-                            <div class="academic-card">
-                                <div>
-                                    <h3 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.1rem;">${item.course}</h3>
-                                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 700; margin-top: 0.75rem; color: ${textColor};">
-                                        <span>Attendance Percentage</span>
-                                        <span>${item.percentage}%</span>
-                                    </div>
-                                    <div class="attendance-bar-bg">
-                                        <div class="attendance-bar-fill" style="width: ${item.percentage}%; background: ${barColor};"></div>
-                                    </div>
-                                    ${item.percentage < 75 ? `<div style="font-size: 0.75rem; color: #c0392b; margin-top: 0.4rem; font-weight: 600;">⚠️ Warning: Below 75% mandatory threshold</div>` : ''}
-                                </div>
-                                <div style="margin-top: 1rem;">
-                                    <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="handleSyllabusDownload('${item.code || 'CS301'}', '${item.course}', this)">
-                                        View Syllabus PDF 📄
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += `</div>`;
-                    viewport.innerHTML = html;
-                    break;
-                }
-                case 'exams': {
-                    // Exams Tab (with live countdown & Add to Calendar button)
-                    // TODO: Replace with GET /academic/exams
-                    let html = `<div class="cards-grid">`;
-                    mockExams.forEach(item => {
-                        html += `
-                            <div class="academic-card">
-                                <div>
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-                                        <span class="sticker-tag" style="background: var(--bubble-pink); font-size: 0.8rem; margin: 0;">⏳ ${item.countdown}</span>
-                                        <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-blue);">📝 ${item.date}</span>
-                                    </div>
-                                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue); font-size: 1.2rem;">${item.subject}</h3>
-                                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">⏰ Time: ${item.time}</p>
-                                    <p style="font-size: 0.85rem; color: var(--text-muted);">📍 Venue: ${item.venue}</p>
-                                </div>
-                                <div style="margin-top: 1.25rem;">
-                                    <!-- Naming rule: "Add to Calendar", not API name -->
-                                    <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="mockAddToCalendar('${item.subject}', '${item.date}')">
-                                        Add to Calendar 📅
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += `</div>`;
-                    viewport.innerHTML = html;
-                    break;
-                }
-                case 'organize': {
-                    // Organize Tab (Verbatim reuse of academic-organize logic)
-                    // TODO: Replace mock with real POST /academic/tasks and GET /academic/tasks
-                    viewport.innerHTML = `
-                        <div class="organize-form-card">
-                            <form id="academic-organize-form" onsubmit="handleOrganizeSubmit(event)">
-                                <div class="form-group">
-                                    <label for="target-topic">What do you need to prepare for?</label>
-                                    <input type="text" id="target-topic" class="form-input" placeholder="e.g. Operating Systems Final Exam & Lab Viva" required>
-                                </div>
+ html += `
+ <div class="academic-card">
+ <div>
+ <h3 style="font-family: var(--font-heading); color: var(--text-main); font-size: 1.1rem;">${item.course}</h3>
+ <div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 700; margin-top: 0.75rem; color: ${textColor};">
+ <span>Attendance Percentage</span>
+ <span>${item.percentage}%</span>
+ </div>
+ <div class="attendance-bar-bg">
+ <div class="attendance-bar-fill" style="width: ${item.percentage}%; background: ${barColor};"></div>
+ </div>
+ ${item.percentage < 75 ? `<div style="font-size: 0.75rem; color: #c0392b; margin-top: 0.4rem; font-weight: 600;">️ Warning: Below 75% mandatory threshold</div>` : ''}
+ </div>
+ <div style="margin-top: 1rem;">
+ <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="handleSyllabusDownload('${item.code || 'CS301'}', '${item.course}', this)">
+ View Syllabus PDF 
+ </button>
+ </div>
+ </div>
+ `;
+ });
+ html += `</div>`;
+ viewport.innerHTML = html;
+ break;
+ }
+ case 'exams': {
+ // Exams Tab (with live countdown & Add to Calendar button)
+ // TODO: Replace with GET /academic/exams
+ let html = `<div class="cards-grid">`;
+ mockExams.forEach(item => {
+ html += `
+ <div class="academic-card">
+ <div>
+ <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+ <span class="sticker-tag" style="background: var(--bubble-pink); font-size: 0.8rem; margin: 0;"> ${item.countdown}</span>
+ <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-blue);"> ${item.date}</span>
+ </div>
+ <h3 style="font-family: var(--font-heading); color: var(--primary-blue); font-size: 1.2rem;">${item.subject}</h3>
+ <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;"> Time: ${item.time}</p>
+ <p style="font-size: 0.85rem; color: var(--text-muted);"> Venue: ${item.venue}</p>
+ </div>
+ <div style="margin-top: 1.25rem;">
+ <!-- Naming rule: "Add to Calendar", not API name -->
+ <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="mockAddToCalendar('${item.subject}', '${item.date}')">
+ Add to Calendar 
+ </button>
+ </div>
+ </div>
+ `;
+ });
+ html += `</div>`;
+ viewport.innerHTML = html;
+ break;
+ }
+ case 'organize': {
+ // Organize Tab (Verbatim reuse of academic-organize logic)
+ // TODO: Replace mock with real POST /academic/tasks and GET /academic/tasks
+ viewport.innerHTML = `
+ <div class="organize-form-card">
+ <form id="academic-organize-form" onsubmit="handleOrganizeSubmit(event)">
+ <div class="form-group">
+ <label for="target-topic">What do you need to prepare for?</label>
+ <input type="text" id="target-topic" class="form-input" placeholder="e.g. Operating Systems Final Exam & Lab Viva" required>
+ </div>
 
-                                <div class="form-group">
-                                    <label for="target-date">Target Date / Exam Date</label>
-                                    <input type="date" id="target-date" class="form-input" required>
-                                </div>
+ <div class="form-group">
+ <label for="target-date">Target Date / Exam Date</label>
+ <input type="date" id="target-date" class="form-input" required>
+ </div>
 
-                                <div style="margin-top: 1.5rem; text-align: right;">
-                                    <button type="submit" id="submit-btn" class="btn-blob" style="background: var(--mint-green);">Generate Study Plan ✨</button>
-                                </div>
-                            </form>
-                        </div>
-                        <div id="organize-result-viewport"></div>
-                    `;
+ <div style="margin-top: 1.5rem; text-align: right;">
+ <button type="submit" id="submit-btn" class="btn-blob" style="background: var(--mint-green);">Generate Study Plan </button>
+ </div>
+ </form>
+ </div>
+ <div id="organize-result-viewport"></div>
+ `;
 
-                    // Default date setup
-                    const defaultDate = new Date();
-                    defaultDate.setDate(defaultDate.getDate() + 5);
-                    const dateInput = document.getElementById('target-date');
-                    if (dateInput) dateInput.value = defaultDate.toISOString().split('T')[0];
-                    break;
-                }
-                case 'electives': {
-                    // Electives Tab
-                    // TODO: Replace with GET /academic/courses (electives)
-                    let html = `<div class="cards-grid">`;
-                    mockElectives.forEach(item => {
-                        html += `
-                            <div class="academic-card">
-                                <div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                        <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.75rem; margin: 0;">🎯 ${item.recommendedFor}</span>
-                                        <span class="sticker-tag" style="background: var(--mint-green); font-size: 0.75rem; margin: 0;">${item.seatsAvailable} Seats Left</span>
-                                    </div>
-                                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">${item.name}</h3>
-                                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">${item.description}</p>
-                                </div>
-                                <div style="margin-top: 1.25rem;">
-                                    <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="registerElectiveInterest('${item.name}', this)">
-                                        Select Elective →
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += `</div>`;
-                    viewport.innerHTML = html;
-                    break;
-                }
-            }
-        }
+ // Default date setup
+ const defaultDate = new Date();
+ defaultDate.setDate(defaultDate.getDate() + 5);
+ const dateInput = document.getElementById('target-date');
+ if (dateInput) dateInput.value = defaultDate.toISOString().split('T')[0];
+ break;
+ }
+ case 'electives': {
+ // Electives Tab
+ // TODO: Replace with GET /academic/courses (electives)
+ let html = `<div class="cards-grid">`;
+ mockElectives.forEach(item => {
+ html += `
+ <div class="academic-card">
+ <div>
+ <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+ <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.75rem; margin: 0;"> ${item.recommendedFor}</span>
+ <span class="sticker-tag" style="background: var(--mint-green); font-size: 0.75rem; margin: 0;">${item.seatsAvailable} Seats Left</span>
+ </div>
+ <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">${item.name}</h3>
+ <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">${item.description}</p>
+ </div>
+ <div style="margin-top: 1.25rem;">
+ <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="registerElectiveInterest('${item.name}', this)">
+ Select Elective →
+ </button>
+ </div>
+ </div>
+ `;
+ });
+ html += `</div>`;
+ viewport.innerHTML = html;
+ break;
+ }
+ }
+ }
 
-        function switchAcademicTab(tabName, el) {
-            currentTab = tabName;
-            document.querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            renderAcademicTab(tabName);
-        }
+ function switchAcademicTab(tabName, el) {
+ currentTab = tabName;
+ document.querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+ el.classList.add('active');
+ renderAcademicTab(tabName);
+ }
 
-        function showSlotDetails(courseStr, dayStr, timeStr) {
-            alert(`📅 Class Details:\nCourse: ${courseStr}\nDay: ${dayStr}\nTime: ${timeStr}`);
-        }
+ function showSlotDetails(courseStr, dayStr, timeStr) {
+ alert(` Class Details:\nCourse: ${courseStr}\nDay: ${dayStr}\nTime: ${timeStr}`);
+ }
 
-        function registerElectiveInterest(name, btn) {
-            if (btn) {
-                btn.textContent = '✓ Elective Selected';
-                btn.style.background = 'var(--mint-green)';
-                btn.disabled = true;
-            }
-        }
+ function registerElectiveInterest(name, btn) {
+ if (btn) {
+ btn.textContent = ' Elective Selected';
+ btn.style.background = 'var(--mint-green)';
+ btn.disabled = true;
+ }
+ }
 
-        function handleSyllabusDownload(code, courseName, btn) {
-            if (btn) {
-                btn.disabled = true;
-                btn.textContent = "Downloading... ⏳";
+ function handleSyllabusDownload(code, courseName, btn) {
+ if (btn) {
+ btn.disabled = true;
+ btn.textContent = "Downloading... ";
 
-                const safeTitle = (code || courseName || 'Course_Syllabus').replace(/[^a-zA-Z0-9_-]/g, '_');
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = 'docs/course_info.pdf';
-                a.download = `${safeTitle}_Syllabus.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+ const safeTitle = (code || courseName || 'Course_Syllabus').replace(/[^a-zA-Z0-9_-]/g, '_');
+ const a = document.createElement('a');
+ a.style.display = 'none';
+ a.href = 'docs/course_info.pdf';
+ a.download = `${safeTitle}_Syllabus.pdf`;
+ document.body.appendChild(a);
+ a.click();
+ document.body.removeChild(a);
 
-                setTimeout(() => {
-                    btn.textContent = "✓ Downloaded";
-                    btn.style.background = "var(--mint-green)";
-                    btn.style.color = "var(--border-dark)";
-                    btn.disabled = false;
-                }, 1000);
-            }
-        }
+ setTimeout(() => {
+ btn.textContent = " Downloaded";
+ btn.style.background = "var(--mint-green)";
+ btn.style.color = "var(--border-dark)";
+ btn.disabled = false;
+ }, 1000);
+ }
+ }
 
-        // Action for "Add to Calendar" button (following naming rule)
-        function mockAddToCalendar(subject, date) {
-            console.log('[Academic .ics Export] Generating iCalendar file for:', subject);
-            if (typeof downloadIcsFile === 'function') {
-                downloadIcsFile(`${subject} Exam`, date, 'Exam Hall 102', `Official Midterm/Endterm Exam for ${subject}`);
-            } else {
-                const icsContent = [
-                    'BEGIN:VCALENDAR',
-                    'VERSION:2.0',
-                    'PRODID:-//Synapse Multi-Agent//NONSGML v1.0//EN',
-                    'CALSCALE:GREGORIAN',
-                    'METHOD:PUBLISH',
-                    'BEGIN:VEVENT',
-                    `SUMMARY:${subject} Exam`,
-                    `DESCRIPTION:Official Midterm/Endterm Exam for ${subject}`,
-                    `LOCATION:Exam Hall 102`,
-                    `DTSTART:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
-                    `DTEND:${new Date(Date.now() + 3600000).toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
-                    'STATUS:CONFIRMED',
-                    'END:VEVENT',
-                    'END:VCALENDAR'
-                ].join('\r\n');
+ // Action for "Add to Calendar" button (following naming rule)
+ function mockAddToCalendar(subject, date) {
+ console.log('[Academic .ics Export] Generating iCalendar file for:', subject);
+ if (typeof downloadIcsFile === 'function') {
+ downloadIcsFile(`${subject} Exam`, date, 'Exam Hall 102', `Official Midterm/Endterm Exam for ${subject}`);
+ } else {
+ const icsContent = [
+ 'BEGIN:VCALENDAR',
+ 'VERSION:2.0',
+ 'PRODID:-//Synapse Multi-Agent//NONSGML v1.0//EN',
+ 'CALSCALE:GREGORIAN',
+ 'METHOD:PUBLISH',
+ 'BEGIN:VEVENT',
+ `SUMMARY:${subject} Exam`,
+ `DESCRIPTION:Official Midterm/Endterm Exam for ${subject}`,
+ `LOCATION:Exam Hall 102`,
+ `DTSTART:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+ `DTEND:${new Date(Date.now() + 3600000).toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+ 'STATUS:CONFIRMED',
+ 'END:VEVENT',
+ 'END:VCALENDAR'
+ ].join('\r\n');
 
-                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = `${subject.replace(/[^a-zA-Z0-9]/g, '_')}_Exam_reminder.ics`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
-            }
-        }
+ const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
+ const url = URL.createObjectURL(blob);
+ const a = document.createElement('a');
+ a.style.display = 'none';
+ a.href = url;
+ a.download = `${subject.replace(/[^a-zA-Z0-9]/g, '_')}_Exam_reminder.ics`;
+ document.body.appendChild(a);
+ a.click();
+ document.body.removeChild(a);
+ setTimeout(() => URL.revokeObjectURL(url), 1000);
+ }
+ }
 
-        // Form Submit Handler for Organize tab (calls shared generate_study_plan endpoint)
-        async function handleOrganizeSubmit(event) {
-            event.preventDefault();
-            const topic = document.getElementById('target-topic').value.trim();
-            const date = document.getElementById('target-date').value;
-            if (!topic || !date) return;
+ // Form Submit Handler for Organize tab (calls shared generate_study_plan endpoint)
+ async function handleOrganizeSubmit(event) {
+ event.preventDefault();
+ const topic = document.getElementById('target-topic').value.trim();
+ const date = document.getElementById('target-date').value;
+ if (!topic || !date) return;
 
-            const resultViewport = document.getElementById('organize-result-viewport');
-            const submitBtn = document.getElementById('submit-btn');
-            submitBtn.disabled = true;
+ const resultViewport = document.getElementById('organize-result-viewport');
+ const submitBtn = document.getElementById('submit-btn');
+ submitBtn.disabled = true;
 
-            resultViewport.innerHTML = `
-                <div style="text-align: center; padding: 2rem; background: var(--surface); border: 3px solid var(--border-dark); border-radius: 20px;">
-                    <div style="width: 32px; height: 32px; border: 3px solid var(--border-dark); border-top-color: var(--primary-blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 0.75rem;"></div>
-                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Decomposing ${topic} & fetching verified academic resources...</h3>
-                </div>
-            `;
+ resultViewport.innerHTML = `
+ <div style="text-align: center; padding: 2rem; background: var(--surface); border: 3px solid var(--border-dark); border-radius: 20px;">
+ <div style="width: 32px; height: 32px; border: 3px solid var(--border-dark); border-top-color: var(--primary-blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 0.75rem;"></div>
+ <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Decomposing ${topic} & fetching verified academic resources...</h3>
+ </div>
+ `;
 
-            try {
-                let planData = null;
-                if (window.CampusApi && window.CampusApi.organizeStudyPlan) {
-                    planData = await window.CampusApi.organizeStudyPlan(topic, date);
-                } else {
-                    const res = await fetch('/api/academic/organize', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ subject: topic, target_date: date })
-                    });
-                    planData = await res.json();
-                }
+ try {
+ let planData = null;
+ if (window.CampusApi && window.CampusApi.organizeStudyPlan) {
+ planData = await window.CampusApi.organizeStudyPlan(topic, date);
+ } else {
+ const res = await fetch('/api/academic/organize', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ subject: topic, target_date: date })
+ });
+ planData = await res.json();
+ }
 
-                if (window.CampusApi && window.CampusApi.createAcademicTask) {
-                    await window.CampusApi.createAcademicTask(`Study ${topic}`, date);
-                }
-                renderAcademicPlan(planData, resultViewport);
-            } catch (err) {
-                console.warn("Organize API fallback:", err);
-                resultViewport.innerHTML = `<div style="padding: 1.5rem; background: var(--soft-pink); border: 2px solid var(--border-dark); border-radius: 12px; color: #c0392b;">Failed to generate plan. Please try again.</div>`;
-            } finally {
-                submitBtn.disabled = false;
-            }
-        }
+ if (window.CampusApi && window.CampusApi.createAcademicTask) {
+ await window.CampusApi.createAcademicTask(`Study ${topic}`, date);
+ }
+ renderAcademicPlan(planData, resultViewport);
+ } catch (err) {
+ console.warn("Organize API fallback:", err);
+ resultViewport.innerHTML = `<div style="padding: 1.5rem; background: var(--soft-pink); border: 2px solid var(--border-dark); border-radius: 12px; color: #c0392b;">Failed to generate plan. Please try again.</div>`;
+ } finally {
+ submitBtn.disabled = false;
+ }
+ }
 
 
-        function renderAcademicPlan(data, viewport) {
-            const subject = data.subject || "Subject";
-            const planType = data.plan_type || "Exam Preparation Schedule";
-            const daysRemaining = data.days_remaining || 10;
-            const subtopics = data.subtopics || [];
-            const taskCount = (data.created_tasks && data.created_tasks.length) || subtopics.length;
-            const calCount = (data.calendar_events && data.calendar_events.length) || subtopics.length;
+ function renderAcademicPlan(data, viewport) {
+ const subject = data.subject || "Subject";
+ const planType = data.plan_type || "Exam Preparation Schedule";
+ const daysRemaining = data.days_remaining || 10;
+ const subtopics = data.subtopics || [];
+ const taskCount = (data.created_tasks && data.created_tasks.length) || subtopics.length;
+ const calCount = (data.calendar_events && data.calendar_events.length) || subtopics.length;
 
-            let html = `
-                <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-                    <span class="sticker-tag" style="background: var(--mint-green); margin: 0;">✓ ${taskCount} Tasks Materialized</span>
-                    <span class="sticker-tag" style="background: var(--soft-yellow); margin: 0;">✓ ${calCount} Calendar Sessions Added</span>
-                    <span class="sticker-tag" style="background: var(--lavender); margin: 0;">🎯 ${planType} (${daysRemaining} Days)</span>
-                </div>
-                <h3 style="font-family: var(--font-heading); font-size: 1.4rem; color: var(--primary-blue); margin-bottom: 1rem;">📖 Subject-Specific Breakdown: ${subject}</h3>
-            `;
+ let html = `
+ <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+ <span class="sticker-tag" style="background: var(--mint-green); margin: 0;"> ${taskCount} Tasks Materialized</span>
+ <span class="sticker-tag" style="background: var(--soft-yellow); margin: 0;"> ${calCount} Calendar Sessions Added</span>
+ <span class="sticker-tag" style="background: var(--lavender); margin: 0;"> ${planType} (${daysRemaining} Days)</span>
+ </div>
+ <h3 style="font-family: var(--font-heading); font-size: 1.4rem; color: var(--primary-blue); margin-bottom: 1rem;"> Subject-Specific Breakdown: ${subject}</h3>
+ `;
 
-            subtopics.forEach((st, idx) => {
-                const dayLabel = `Day ${st.target_day || (idx + 1)} (${st.target_date || 'Target'})`;
-                const title = st.title || `Subtopic ${idx + 1}`;
-                const priority = st.priority || "High";
-                const hours = st.estimated_hours || 2.5;
-                const resources = st.resources || [];
+ subtopics.forEach((st, idx) => {
+ const dayLabel = `Day ${st.target_day || (idx + 1)} (${st.target_date || 'Target'})`;
+ const title = st.title || `Subtopic ${idx + 1}`;
+ const priority = st.priority || "High";
+ const hours = st.estimated_hours || 2.5;
+ const resources = st.resources || [];
 
-                html += `
-                    <div class="checklist-day-card" style="margin-bottom: 1.25rem;">
-                        <div class="day-header" style="display: flex; justify-content: space-between; align-items: center; background: var(--lavender); padding: 0.6rem 1rem; border-radius: 10px; margin-bottom: 0.75rem;">
-                            <span style="font-weight: 700; color: var(--primary-blue);">📅 ${dayLabel} — ${title}</span>
-                            <span style="font-size: 0.8rem; background: var(--surface); padding: 0.2rem 0.5rem; border: 1px solid var(--border-dark); border-radius: 6px; font-weight: 600;">⏱️ ${hours} hrs | ${priority}</span>
-                        </div>
-                        <div style="padding: 0.5rem 0.5rem 0;">
-                            <div class="task-item" style="margin-bottom: 0.75rem;">
-                                <input type="checkbox" id="task-subtopic-${idx}">
-                                <label for="task-subtopic-${idx}"><strong>Study Milestone:</strong> Complete core concepts & problem set for ${title}</label>
-                            </div>
-                            <div style="margin-top: 0.5rem; padding-left: 1.75rem;">
-                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem;">VERIFIED ACADEMIC RESOURCES:</div>
-                                ${resources.map(r => `
-                                    <div style="display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 2px solid var(--border-dark); padding: 0.4rem 0.75rem; border-radius: 8px; margin-bottom: 0.4rem; font-size: 0.85rem;">
-                                        <span>${r.type === 'video' ? '📺' : '📖'} <strong>${r.provider ? r.provider + ': ' : ''}</strong>${r.title}</span>
-                                        <a href="${r.url}" target="_blank" rel="noopener" class="btn-pill" style="font-size: 0.75rem; padding: 0.2rem 0.6rem; background: ${r.type === 'video' ? '#e74c3c' : 'var(--primary-blue)'}; color: #ffffff; text-decoration: none;">Open ${r.type === 'video' ? 'Video ↗' : 'Textbook ↗'}</a>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
+ html += `
+ <div class="checklist-day-card" style="margin-bottom: 1.25rem;">
+ <div class="day-header" style="display: flex; justify-content: space-between; align-items: center; background: var(--lavender); padding: 0.6rem 1rem; border-radius: 10px; margin-bottom: 0.75rem;">
+ <span style="font-weight: 700; color: var(--primary-blue);"> ${dayLabel} — ${title}</span>
+ <span style="font-size: 0.8rem; background: var(--surface); padding: 0.2rem 0.5rem; border: 1px solid var(--border-dark); border-radius: 6px; font-weight: 600;">️ ${hours} hrs | ${priority}</span>
+ </div>
+ <div style="padding: 0.5rem 0.5rem 0;">
+ <div class="task-item" style="margin-bottom: 0.75rem;">
+ <input type="checkbox" id="task-subtopic-${idx}">
+ <label for="task-subtopic-${idx}"><strong>Study Milestone:</strong> Complete core concepts & problem set for ${title}</label>
+ </div>
+ <div style="margin-top: 0.5rem; padding-left: 1.75rem;">
+ <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem;">VERIFIED ACADEMIC RESOURCES:</div>
+ ${resources.map(r => `
+ <div style="display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 2px solid var(--border-dark); padding: 0.4rem 0.75rem; border-radius: 8px; margin-bottom: 0.4rem; font-size: 0.85rem;">
+ <span>${r.type === 'video' ? '' : ''} <strong>${r.provider ? r.provider + ': ' : ''}</strong>${r.title}</span>
+ <a href="${r.url}" target="_blank" rel="noopener" class="btn-pill" style="font-size: 0.75rem; padding: 0.2rem 0.6rem; background: ${r.type === 'video' ? '#e74c3c' : 'var(--primary-blue)'}; color: #ffffff; text-decoration: none;">Open ${r.type === 'video' ? 'Video ' : 'Textbook '}</a>
+ </div>
+ `).join('')}
+ </div>
+ </div>
+ </div>
+ `;
+ });
 
-            viewport.innerHTML = html;
-        }
+ viewport.innerHTML = html;
+ }
 
-        // Initial tab render with URL search param support
-        const urlParams = new URLSearchParams(window.location.search);
-        const initTab = urlParams.get('tab') || 'courses';
-        const targetPill = document.querySelector(`.pill-tab[onclick*="'${initTab}'"]`);
-        switchAcademicTab(initTab, targetPill || document.querySelector('.pill-tab'));
+ // Initial tab render with URL search param support
+ const urlParams = new URLSearchParams(window.location.search);
+ const initTab = urlParams.get('tab') || 'courses';
+ const targetPill = document.querySelector(`.pill-tab[onclick*="'${initTab}'"]`);
+ switchAcademicTab(initTab, targetPill || document.querySelector('.pill-tab'));
 
-        // Toggle strikethrough both ways for academic study plan task checkboxes
-        document.addEventListener('change', (e) => {
-            if (e.target && e.target.matches('.task-item input[type="checkbox"]')) {
-                const label = document.querySelector(`label[for="${e.target.id}"]`) || e.target.nextElementSibling;
-                if (label && label.tagName === 'LABEL') {
-                    if (e.target.checked) {
-                        label.style.textDecoration = 'line-through';
-                        label.style.opacity = '0.7';
-                    } else {
-                        label.style.textDecoration = 'none';
-                        label.style.opacity = '1';
-                    }
-                }
-            }
-        });
-    </script>
+ // Toggle strikethrough both ways for academic study plan task checkboxes
+ document.addEventListener('change', (e) => {
+ if (e.target && e.target.matches('.task-item input[type="checkbox"]')) {
+ const label = document.querySelector(`label[for="${e.target.id}"]`) || e.target.nextElementSibling;
+ if (label && label.tagName === 'LABEL') {
+ if (e.target.checked) {
+ label.style.textDecoration = 'line-through';
+ label.style.opacity = '0.7';
+ } else {
+ label.style.textDecoration = 'none';
+ label.style.opacity = '1';
+ }
+ }
+ }
+ });
+ </script>
 </body>
 </html>

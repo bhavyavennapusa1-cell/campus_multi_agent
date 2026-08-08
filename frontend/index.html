@@ -1,221 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Auth Guard Check -->
-    <script>
-        if (!localStorage.getItem('studentSession') && !localStorage.getItem('studentSessionToken')) {
-            window.location.replace('login.html');
-        }
-    </script>
-    <meta charset="UTF-8">
+ <!-- Auth Guard Check -->
+ <script>
+ if (!localStorage.getItem('studentSession') && !localStorage.getItem('studentSessionToken')) {
+ window.location.replace('login.html');
+ }
+ </script>
+ <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synapse | Home</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .home-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 5%;
-            text-align: center;
-        }
-        
-        .hero-banner {
-            background: var(--surface, #ffffff);
-            border: 3px solid var(--border-dark, #000000);
-            border-radius: 20px;
-            padding: 3.5rem 2rem;
-            margin-bottom: 2.5rem;
-            box-shadow: 6px 6px 0px var(--border-dark, #000000);
-        }
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Synapse | Home</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="style.css">
+ <style>
+ .home-container {
+ max-width: 1200px;
+ margin: 0 auto;
+ padding: 2rem 5%;
+ text-align: center;
+ }
+ 
+ .hero-banner {
+ background: var(--surface, #ffffff);
+ border: 3px solid var(--border-dark, #000000);
+ border-radius: 20px;
+ padding: 3.5rem 2rem;
+ margin-bottom: 2.5rem;
+ box-shadow: 6px 6px 0px var(--border-dark, #000000);
+ }
 
-        .modules-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
+ .modules-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+ gap: 1.5rem;
+ margin-top: 2rem;
+ }
 
-        .module-card {
-            background: var(--surface, #ffffff);
-            border: 3px solid var(--border-dark, #000000);
-            border-radius: 20px;
-            padding: 2.5rem 1.5rem;
-            box-shadow: 4px 4px 0px var(--border-dark, #000000);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: inherit;
-            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-            cursor: pointer;
-        }
+ .module-card {
+ background: var(--surface, #ffffff);
+ border: 3px solid var(--border-dark, #000000);
+ border-radius: 20px;
+ padding: 2.5rem 1.5rem;
+ box-shadow: 4px 4px 0px var(--border-dark, #000000);
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ text-decoration: none;
+ color: inherit;
+ transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+ cursor: pointer;
+ }
 
-        .module-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 8px 8px 0px var(--border-dark, #000000);
-            background: var(--soft-yellow, #fff9c4);
-        }
+ .module-card:hover {
+ transform: translateY(-5px);
+ box-shadow: 8px 8px 0px var(--border-dark, #000000);
+ background: var(--soft-yellow, #fff9c4);
+ }
 
-        .module-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-        }
+ .module-icon {
+ font-size: 3.5rem;
+ margin-bottom: 1rem;
+ }
 
-        .module-title {
-            font-family: var(--font-heading, sans-serif);
-            font-size: 1.4rem;
-            color: var(--primary-blue, #0056b3);
-            margin-bottom: 0.5rem;
-        }
+ .module-title {
+ font-family: var(--font-heading, sans-serif);
+ font-size: 1.4rem;
+ color: var(--primary-blue, #0056b3);
+ margin-bottom: 0.5rem;
+ }
 
-        .module-desc {
-            font-size: 0.95rem;
-            color: var(--text-muted, #666666);
-            line-height: 1.5;
-        }
-    </style>
+ .module-desc {
+ font-size: 0.95rem;
+ color: var(--text-muted, #666666);
+ line-height: 1.5;
+ }
+ </style>
 </head>
 <body>
-    <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
-    <div class="fixed-background-widgets">
-        <!-- Left Side Spread -->
-        <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
-            <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
+ <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
+ <div class="fixed-background-widgets">
+ <!-- Left Side Spread -->
+ <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
+ <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
 
-        <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
-        <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
-        </svg>
+ <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
+ <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
+ </svg>
 
-        <!-- Right Side Spread -->
-        <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-    </div>
+ <!-- Right Side Spread -->
+ <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ </div>
 
-    <!-- Top Navigation -->
-    <nav class="navbar">
-        <div class="nav-brand">🔗 Synapse</div>
-        <button class="hamburger" id="hamburger">☰</button>
-        <div class="nav-links" id="nav-links">
-            <a href="index.html" class="active">Home</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="chat.html">Assistant</a>
-            <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out 🚪</a>
-        </div>
-    </nav>
+ <!-- Top Navigation -->
+ <nav class="navbar">
+ <div class="nav-brand"> Synapse</div>
+ <button class="hamburger" id="hamburger"></button>
+ <div class="nav-links" id="nav-links">
+ <a href="index.html" class="active">Home</a>
+ <a href="dashboard.html">Dashboard</a>
+ <a href="chat.html">Assistant</a>
+ <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out </a>
+ </div>
+ </nav>
 
-    <main class="home-container" style="position: relative; z-index: 10;">
+ <main class="home-container" style="position: relative; z-index: 10;">
 
-        <!-- Hero Section -->
-        <div class="hero-banner animate-pop">
-            <div class="sticker-tag" style="background: var(--mint-green); display: inline-block; margin-bottom: 1rem;">🚀 Welcome to the Future</div>
-            <h1 style="font-family: var(--font-heading); font-size: 3.5rem; color: var(--primary-blue); margin-bottom: 1rem;">Synapse</h1>
-            <p style="color: var(--text-muted); max-width: 700px; margin: 0 auto; font-size: 1.1rem; line-height: 1.6;">
-                Your intelligent, multi-agent campus companion. Select a module below to start organizing your academic life, exploring the campus, or chatting with the AI orchestrator.
-            </p>
-        </div>
+ <!-- Hero Section -->
+ <div class="hero-banner animate-pop">
+ <div class="sticker-tag" style="background: var(--mint-green); display: inline-block; margin-bottom: 1rem;"> Welcome to the Future</div>
+ <h1 style="font-family: var(--font-heading); font-size: 3.5rem; color: var(--primary-blue); margin-bottom: 1rem;">Synapse</h1>
+ <p style="color: var(--text-muted); max-width: 700px; margin: 0 auto; font-size: 1.1rem; line-height: 1.6;">
+ Your intelligent, multi-agent campus companion. Select a module below to start organizing your academic life, exploring the campus, or chatting with the AI orchestrator.
+ </p>
+ </div>
 
-        <!-- Interactive Module Routing Grid -->
-        <div class="modules-grid">
-            
-            <!-- Dashboard Link -->
-            <a href="dashboard.html" class="module-card animate-pop" style="animation-delay: 0.1s;">
-                <div class="module-icon">📊</div>
-                <h2 class="module-title">Dashboard</h2>
-                <p class="module-desc">View your daily priorities, upcoming exam countdowns, and quick actions.</p>
-            </a>
-            
-            <!-- AI Assistant Link -->
-            <a href="chat.html" class="module-card animate-pop" style="animation-delay: 0.2s;">
-                <div class="module-icon">💬</div>
-                <h2 class="module-title">AI Assistant</h2>
-                <p class="module-desc">Interact with our multi-agent swarm to instantly resolve complex campus queries.</p>
-            </a>
+ <!-- Interactive Module Routing Grid -->
+ <div class="modules-grid">
+ 
+ <!-- Dashboard Link -->
+ <a href="dashboard.html" class="module-card animate-pop" style="animation-delay: 0.1s;">
+ <div class="module-icon"></div>
+ <h2 class="module-title">Dashboard</h2>
+ <p class="module-desc">View your daily priorities, upcoming exam countdowns, and quick actions.</p>
+ </a>
+ 
+ <!-- AI Assistant Link -->
+ <a href="chat.html" class="module-card animate-pop" style="animation-delay: 0.2s;">
+ <div class="module-icon"></div>
+ <h2 class="module-title">AI Assistant</h2>
+ <p class="module-desc">Interact with our multi-agent swarm to instantly resolve complex campus queries.</p>
+ </a>
 
-            <!-- Academic Hub Link -->
-            <a href="academic.html" class="module-card animate-pop" style="animation-delay: 0.3s;">
-                <div class="module-icon">🎓</div>
-                <h2 class="module-title">Academic Hub</h2>
-                <p class="module-desc">Manage your weekly timetables, track attendance, and generate study plans.</p>
-            </a>
+ <!-- Academic Hub Link -->
+ <a href="academic.html" class="module-card animate-pop" style="animation-delay: 0.3s;">
+ <div class="module-icon"></div>
+ <h2 class="module-title">Academic Hub</h2>
+ <p class="module-desc">Manage your weekly timetables, track attendance, and generate study plans.</p>
+ </a>
 
-            <!-- Campus Navigator Link -->
-            <a href="campus-navigator.html" class="module-card animate-pop" style="animation-delay: 0.4s;">
-                <div class="module-icon">🗺️</div>
-                <h2 class="module-title">Campus Navigator</h2>
-                <p class="module-desc">Search for academic blocks, hostels, and request turn-by-turn directions.</p>
-            </a>
+ <!-- Campus Navigator Link -->
+ <a href="campus-navigator.html" class="module-card animate-pop" style="animation-delay: 0.4s;">
+ <div class="module-icon">️</div>
+ <h2 class="module-title">Campus Navigator</h2>
+ <p class="module-desc">Search for academic blocks, hostels, and request turn-by-turn directions.</p>
+ </a>
 
-            <!-- Communication Hub Link -->
-            <a href="communication.html" class="module-card animate-pop" style="animation-delay: 0.5s;">
-                <div class="module-icon">✉️</div>
-                <h2 class="module-title">Communication Hub</h2>
-                <p class="module-desc">Manage peer groups, draft formal AI emails to faculty, and check announcements.</p>
-            </a>
+ <!-- Communication Hub Link -->
+ <a href="communication.html" class="module-card animate-pop" style="animation-delay: 0.5s;">
+ <div class="module-icon">️</div>
+ <h2 class="module-title">Communication Hub</h2>
+ <p class="module-desc">Manage peer groups, draft formal AI emails to faculty, and check announcements.</p>
+ </a>
 
-            <!-- Events & Hackathons Link -->
-            <a href="events.html" class="module-card animate-pop" style="animation-delay: 0.6s;">
-                <div class="module-icon">🎪</div>
-                <h2 class="module-title">Events & Hackathons</h2>
-                <p class="module-desc">Discover and securely register for upcoming technical workshops and club meetups.</p>
-            </a>
+ <!-- Events & Hackathons Link -->
+ <a href="events.html" class="module-card animate-pop" style="animation-delay: 0.6s;">
+ <div class="module-icon"></div>
+ <h2 class="module-title">Events & Hackathons</h2>
+ <p class="module-desc">Discover and securely register for upcoming technical workshops and club meetups.</p>
+ </a>
 
-        </div>
-    </main>
+ </div>
+ </main>
 
-    <!-- Footer -->
-    <footer class="footer" style="text-align: center; padding: 2rem; margin-top: 3rem;">
-        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
-    </footer>
+ <!-- Footer -->
+ <footer class="footer" style="text-align: center; padding: 2rem; margin-top: 3rem;">
+ <p>Built with ️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+ </footer>
 
-    <!-- Shared Scripts -->
-    <script src="script.js"></script>
-    <script>
-        const hamburger = document.getElementById('hamburger');
-        const navLinks = document.getElementById('nav-links');
-        if (hamburger && navLinks) {
-            hamburger.addEventListener('click', () => {
-                navLinks.classList.toggle('active');
-            });
-        }
-    </script>
+ <!-- Shared Scripts -->
+ <script src="script.js"></script>
+ <script>
+ const hamburger = document.getElementById('hamburger');
+ const navLinks = document.getElementById('nav-links');
+ if (hamburger && navLinks) {
+ hamburger.addEventListener('click', () => {
+ navLinks.classList.toggle('active');
+ });
+ }
+ </script>
 </body>
 </html>
 

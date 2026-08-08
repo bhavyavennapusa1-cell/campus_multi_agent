@@ -1,508 +1,508 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synapse | Communication Hub</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dashboard.css">
-    <style>
-        .comm-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 5%;
-        }
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Synapse | Communication Hub</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="style.css">
+ <link rel="stylesheet" href="dashboard.css">
+ <style>
+ .comm-container {
+ max-width: 1200px;
+ margin: 0 auto;
+ padding: 2rem 5%;
+ }
 
-        .pill-tabs-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-            margin-bottom: 2rem;
-            justify-content: center;
-        }
+ .pill-tabs-bar {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 0.6rem;
+ margin-bottom: 2rem;
+ justify-content: center;
+ }
 
-        .pill-tab {
-            font-family: var(--font-heading);
-            background: var(--surface);
-            color: var(--text-main);
-            border: 2px solid var(--border-dark);
-            border-radius: 50px;
-            padding: 0.55rem 1.3rem;
-            font-size: 0.9rem;
-            cursor: pointer;
-            box-shadow: 3px 3px 0px var(--border-dark);
-            transition: all 0.15s ease;
-        }
+ .pill-tab {
+ font-family: var(--font-heading);
+ background: var(--surface);
+ color: var(--text-main);
+ border: 2px solid var(--border-dark);
+ border-radius: 50px;
+ padding: 0.55rem 1.3rem;
+ font-size: 0.9rem;
+ cursor: pointer;
+ box-shadow: 3px 3px 0px var(--border-dark);
+ transition: all 0.15s ease;
+ }
 
-        .pill-tab:hover {
-            transform: translateY(-2px);
-            background: var(--soft-yellow);
-        }
+ .pill-tab:hover {
+ transform: translateY(-2px);
+ background: var(--soft-yellow);
+ }
 
-        .pill-tab.active {
-            background: var(--primary-blue);
-            color: #ffffff;
-            box-shadow: 4px 4px 0px var(--border-dark);
-        }
+ .pill-tab.active {
+ background: var(--primary-blue);
+ color: #ffffff;
+ box-shadow: 4px 4px 0px var(--border-dark);
+ }
 
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
+ .cards-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+ gap: 1.5rem;
+ }
 
-        .comm-card {
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow: 4px 4px 0px var(--border-dark);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s;
-        }
+ .comm-card {
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 20px;
+ padding: 1.5rem;
+ box-shadow: 4px 4px 0px var(--border-dark);
+ display: flex;
+ flex-direction: column;
+ justify-content: space-between;
+ transition: transform 0.2s;
+ }
 
-        /* Chats Layout Grid */
-        .chats-layout {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 1.5rem;
-            height: 580px;
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 5px 5px 0px var(--border-dark);
-        }
+ /* Chats Layout Grid */
+ .chats-layout {
+ display: grid;
+ grid-template-columns: 320px 1fr;
+ gap: 1.5rem;
+ height: 580px;
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 20px;
+ overflow: hidden;
+ box-shadow: 5px 5px 0px var(--border-dark);
+ }
 
-        @media (max-width: 800px) {
-            .chats-layout {
-                grid-template-columns: 1fr;
-                height: auto;
-            }
-        }
+ @media (max-width: 800px) {
+ .chats-layout {
+ grid-template-columns: 1fr;
+ height: auto;
+ }
+ }
 
-        .chat-sidebar {
-            border-right: 3px dashed var(--border-dark);
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            overflow-y: auto;
-            background: var(--surface);
-        }
+ .chat-sidebar {
+ border-right: 3px dashed var(--border-dark);
+ padding: 1rem;
+ display: flex;
+ flex-direction: column;
+ gap: 0.5rem;
+ overflow-y: auto;
+ background: var(--surface);
+ }
 
-        .chat-conv-item {
-            background: var(--surface);
-            border: 2px solid var(--border-dark);
-            border-radius: 14px;
-            padding: 0.75rem;
-            box-shadow: 2px 2px 0px var(--border-dark);
-            cursor: pointer;
-            transition: transform 0.15s;
-        }
+ .chat-conv-item {
+ background: var(--surface);
+ border: 2px solid var(--border-dark);
+ border-radius: 14px;
+ padding: 0.75rem;
+ box-shadow: 2px 2px 0px var(--border-dark);
+ cursor: pointer;
+ transition: transform 0.15s;
+ }
 
-        .chat-conv-item:hover, .chat-conv-item.active {
-            transform: translateY(-2px);
-            background: var(--soft-yellow);
-            border-color: var(--primary-blue);
-        }
+ .chat-conv-item:hover, .chat-conv-item.active {
+ transform: translateY(-2px);
+ background: var(--soft-yellow);
+ border-color: var(--primary-blue);
+ }
 
-        .chat-main-panel {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            background: var(--bg-gingham);
-        }
+ .chat-main-panel {
+ display: flex;
+ flex-direction: column;
+ height: 100%;
+ background: var(--bg-gingham);
+ }
 
-        .chat-header-bar {
-            padding: 0.85rem 1.25rem;
-            background: var(--surface);
-            border-bottom: 3px dashed var(--border-dark);
-            font-family: var(--font-heading);
-            font-size: 1.1rem;
-            color: var(--primary-blue);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+ .chat-header-bar {
+ padding: 0.85rem 1.25rem;
+ background: var(--surface);
+ border-bottom: 3px dashed var(--border-dark);
+ font-family: var(--font-heading);
+ font-size: 1.1rem;
+ color: var(--primary-blue);
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ }
 
-        .chat-messages-body {
-            flex: 1;
-            padding: 1.25rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
+ .chat-messages-body {
+ flex: 1;
+ padding: 1.25rem;
+ overflow-y: auto;
+ display: flex;
+ flex-direction: column;
+ gap: 0.75rem;
+ }
 
-        .chat-msg-bubble {
-            max-width: 75%;
-            padding: 0.65rem 1rem;
-            border: 2px solid var(--border-dark);
-            border-radius: 16px;
-            font-size: 0.9rem;
-            box-shadow: 2px 2px 0px var(--border-dark);
-        }
+ .chat-msg-bubble {
+ max-width: 75%;
+ padding: 0.65rem 1rem;
+ border: 2px solid var(--border-dark);
+ border-radius: 16px;
+ font-size: 0.9rem;
+ box-shadow: 2px 2px 0px var(--border-dark);
+ }
 
-        .chat-msg-left {
-            align-self: flex-start;
-            background: var(--surface);
-        }
+ .chat-msg-left {
+ align-self: flex-start;
+ background: var(--surface);
+ }
 
-        .chat-msg-right {
-            align-self: flex-end;
-            background: var(--primary-blue);
-            color: white;
-        }
+ .chat-msg-right {
+ align-self: flex-end;
+ background: var(--primary-blue);
+ color: white;
+ }
 
-        /* Modal Styles for Create Group */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-        }
+ /* Modal Styles for Create Group */
+ .modal-overlay {
+ display: none;
+ position: fixed;
+ top: 0; left: 0; width: 100%; height: 100%;
+ background: rgba(0,0,0,0.5);
+ z-index: 200;
+ align-items: center;
+ justify-content: center;
+ }
 
-        .modal-overlay.open {
-            display: flex;
-        }
+ .modal-overlay.open {
+ display: flex;
+ }
 
-        .modal-box {
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 480px;
-            width: 90%;
-            box-shadow: 6px 6px 0px var(--border-dark);
-        }
-    </style>
+ .modal-box {
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 20px;
+ padding: 2rem;
+ max-width: 480px;
+ width: 90%;
+ box-shadow: 6px 6px 0px var(--border-dark);
+ }
+ </style>
 </head>
 <body>
-    <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
-    <div class="fixed-background-widgets">
-        <!-- Left Side Spread -->
-        <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
-            <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
+ <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
+ <div class="fixed-background-widgets">
+ <!-- Left Side Spread -->
+ <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
+ <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
 
-        <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
-        <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
-        </svg>
+ <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
+ <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
+ </svg>
 
-        <!-- Right Side Spread -->
-        <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-    </div>
+ <!-- Right Side Spread -->
+ <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ </div>
 
-    <!-- Navbar Reused -->
-    <nav class="navbar">
-        <div class="nav-brand">🔗 Synapse</div>
-        <button class="hamburger" id="hamburger">☰</button>
-        <div class="nav-links" id="nav-links">
-            <a href="index.html">Home</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="chat.html">Assistant</a>
-            <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out 🚪</a>
-        </div>
-    </nav>
+ <!-- Navbar Reused -->
+ <nav class="navbar">
+ <div class="nav-brand"> Synapse</div>
+ <button class="hamburger" id="hamburger"></button>
+ <div class="nav-links" id="nav-links">
+ <a href="index.html">Home</a>
+ <a href="dashboard.html">Dashboard</a>
+ <a href="chat.html">Assistant</a>
+ <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out </a>
+ </div>
+ </nav>
 
-    <main class="comm-container" style="position: relative; z-index: 10;">
+ <main class="comm-container" style="position: relative; z-index: 10;">
 
-        <!-- Hero Header -->
-        <div class="cloud-container" style="padding: 2rem; margin-bottom: 2rem;">
-            <a href="chat.html?prompt=Help%20me%20contact%20faculty%20or%20draft%20an%20email" class="sticker-tag route-to-chat" data-prompt="Help me contact faculty or draft an email" style="background: var(--soft-yellow); text-decoration: none; cursor: pointer; display: inline-block;">✉️ Unified Campus Communication</a>
-            <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue);">Communication Hub</h1>
-            <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0;">
-                Connect with peers & faculty, manage group chats, generate AI email drafts, review department announcements, and schedule reminders.
-            </p>
-        </div>
+ <!-- Hero Header -->
+ <div class="cloud-container" style="padding: 2rem; margin-bottom: 2rem;">
+ <a href="chat.html?prompt=Help%20me%20contact%20faculty%20or%20draft%20an%20email" class="sticker-tag route-to-chat" data-prompt="Help me contact faculty or draft an email" style="background: var(--soft-yellow); text-decoration: none; cursor: pointer; display: inline-block;">️ Unified Campus Communication</a>
+ <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue);">Communication Hub</h1>
+ <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0;">
+ Connect with peers & faculty, manage group chats, generate AI email drafts, review department announcements, and schedule reminders.
+ </p>
+ </div>
 
-        <!-- 5 Pill Tabs -->
-        <div class="pill-tabs-bar">
-            <button class="pill-tab active" onclick="switchCommTab('contacts', this)">Contacts</button>
-            <button class="pill-tab" onclick="switchCommTab('chats', this)">Chats</button>
-            <button class="pill-tab" onclick="switchCommTab('email', this)">Email</button>
-            <button class="pill-tab" onclick="switchCommTab('announcements', this)">Announcements</button>
-            <button class="pill-tab" onclick="switchCommTab('schedule', this)">Schedule</button>
-        </div>
+ <!-- 5 Pill Tabs -->
+ <div class="pill-tabs-bar">
+ <button class="pill-tab active" onclick="switchCommTab('contacts', this)">Contacts</button>
+ <button class="pill-tab" onclick="switchCommTab('chats', this)">Chats</button>
+ <button class="pill-tab" onclick="switchCommTab('email', this)">Email</button>
+ <button class="pill-tab" onclick="switchCommTab('announcements', this)">Announcements</button>
+ <button class="pill-tab" onclick="switchCommTab('schedule', this)">Schedule</button>
+ </div>
 
-        <!-- Tab Content Viewport -->
-        <div id="comm-viewport">
-            <!-- Dynamic tab view rendered here -->
-        </div>
-    </main>
+ <!-- Tab Content Viewport -->
+ <div id="comm-viewport">
+ <!-- Dynamic tab view rendered here -->
+ </div>
+ </main>
 
-    <!-- Create Group Modal -->
-    <div class="modal-overlay" id="group-modal">
-        <div class="modal-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Create Peer Group</h3>
-                <button style="background: none; border: none; font-size: 1.5rem; cursor: pointer;" onclick="closeGroupModal()">✕</button>
-            </div>
-            <form onsubmit="handleCreateGroupSubmit(event)">
-                <div style="margin-bottom: 1rem;">
-                    <label style="font-family: var(--font-heading); font-size: 0.85rem; display: block; margin-bottom: 0.3rem;">Group Name</label>
-                    <input type="text" id="grp-name" placeholder="e.g. Distributed Systems Study Group" required style="width: 100%; border: 2px solid var(--border-dark); border-radius: 10px; padding: 0.5rem; font-size: 0.85rem;">
-                </div>
+ <!-- Create Group Modal -->
+ <div class="modal-overlay" id="group-modal">
+ <div class="modal-box">
+ <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+ <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Create Peer Group</h3>
+ <button style="background: none; border: none; font-size: 1.5rem; cursor: pointer;" onclick="closeGroupModal()"></button>
+ </div>
+ <form onsubmit="handleCreateGroupSubmit(event)">
+ <div style="margin-bottom: 1rem;">
+ <label style="font-family: var(--font-heading); font-size: 0.85rem; display: block; margin-bottom: 0.3rem;">Group Name</label>
+ <input type="text" id="grp-name" placeholder="e.g. Distributed Systems Study Group" required style="width: 100%; border: 2px solid var(--border-dark); border-radius: 10px; padding: 0.5rem; font-size: 0.85rem;">
+ </div>
 
-                <div style="margin-bottom: 1rem;">
-                    <label style="font-family: var(--font-heading); font-size: 0.85rem; display: block; margin-bottom: 0.3rem;">Select Members</label>
-                    <select id="grp-members" multiple style="width: 100%; border: 2px solid var(--border-dark); border-radius: 10px; padding: 0.5rem; font-size: 0.85rem; height: 90px;">
-                        <option value="Dr. K. V. Sharma">Dr. K. V. Sharma (Faculty)</option>
-                        <option value="Rohan Verma">Rohan Verma (Student)</option>
-                        <option value="Sneha Patel">Sneha Patel (Student)</option>
-                        <option value="Prof. Ananya Rao">Prof. Ananya Rao (HOD)</option>
-                    </select>
-                </div>
+ <div style="margin-bottom: 1rem;">
+ <label style="font-family: var(--font-heading); font-size: 0.85rem; display: block; margin-bottom: 0.3rem;">Select Members</label>
+ <select id="grp-members" multiple style="width: 100%; border: 2px solid var(--border-dark); border-radius: 10px; padding: 0.5rem; font-size: 0.85rem; height: 90px;">
+ <option value="Dr. K. V. Sharma">Dr. K. V. Sharma (Faculty)</option>
+ <option value="Rohan Verma">Rohan Verma (Student)</option>
+ <option value="Sneha Patel">Sneha Patel (Student)</option>
+ <option value="Prof. Ananya Rao">Prof. Ananya Rao (HOD)</option>
+ </select>
+ </div>
 
-                <div style="margin-bottom: 1rem;">
-                    <label style="font-family: var(--font-heading); font-size: 0.85rem; display: block; margin-bottom: 0.3rem;">Group Type</label>
-                    <label style="margin-right: 1rem; font-size: 0.85rem;"><input type="radio" name="grp-type" value="Permanent" checked onclick="toggleExpiryField(false)"> Permanent</label>
-                    <label style="font-size: 0.85rem;"><input type="radio" name="grp-type" value="Temporary" onclick="toggleExpiryField(true)"> Temporary</label>
-                </div>
+ <div style="margin-bottom: 1rem;">
+ <label style="font-family: var(--font-heading); font-size: 0.85rem; display: block; margin-bottom: 0.3rem;">Group Type</label>
+ <label style="margin-right: 1rem; font-size: 0.85rem;"><input type="radio" name="grp-type" value="Permanent" checked onclick="toggleExpiryField(false)"> Permanent</label>
+ <label style="font-size: 0.85rem;"><input type="radio" name="grp-type" value="Temporary" onclick="toggleExpiryField(true)"> Temporary</label>
+ </div>
 
-                <!-- Expiry Date field only shows when Temporary is selected -->
-                <div id="expiry-field-container" style="display: none; margin-bottom: 1rem;">
-                    <label style="font-family: var(--font-heading); font-size: 0.85rem; display: block; margin-bottom: 0.3rem;">Group Expiry Date</label>
-                    <input type="date" id="grp-expiry" style="width: 100%; border: 2px solid var(--border-dark); border-radius: 10px; padding: 0.5rem; font-size: 0.85rem;">
-                </div>
+ <!-- Expiry Date field only shows when Temporary is selected -->
+ <div id="expiry-field-container" style="display: none; margin-bottom: 1rem;">
+ <label style="font-family: var(--font-heading); font-size: 0.85rem; display: block; margin-bottom: 0.3rem;">Group Expiry Date</label>
+ <input type="date" id="grp-expiry" style="width: 100%; border: 2px solid var(--border-dark); border-radius: 10px; padding: 0.5rem; font-size: 0.85rem;">
+ </div>
 
-                <div style="text-align: right; margin-top: 1.5rem;">
-                    <button type="submit" class="btn-pill" style="background: var(--mint-green); color: var(--text-main);">Create Group ✓</button>
-                </div>
-            </form>
-        </div>
-    </div>
+ <div style="text-align: right; margin-top: 1.5rem;">
+ <button type="submit" class="btn-pill" style="background: var(--mint-green); color: var(--text-main);">Create Group </button>
+ </div>
+ </form>
+ </div>
+ </div>
 
-    <footer class="footer">
-        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
-    </footer>
+ <footer class="footer">
+ <p>Built with ️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+ </footer>
 
-    <script>
-        document.getElementById('hamburger').addEventListener('click', () => {
-            document.getElementById('nav-links').classList.toggle('active');
-        });
+ <script>
+ document.getElementById('hamburger').addEventListener('click', () => {
+ document.getElementById('nav-links').classList.toggle('active');
+ });
 
-        // --- MOCK DATA FOR DOCUMENTED ENDPOINTS ---
+ // --- MOCK DATA FOR DOCUMENTED ENDPOINTS ---
 
-        // TODO: replace with real GET /communication/contacts
-        const mockContacts = [
-            { id: 1, name: "Dr. K. V. Sharma", role: "Faculty", department: "Computer Science", email: "sharma@campus.edu", phone: "+91 98765 43210" },
-            { id: 2, name: "Prof. Ananya Rao", role: "HOD", department: "Computer Science", email: "ananya.rao@campus.edu", phone: "+91 98765 43211" },
-            { id: 3, name: "Rohan Verma", role: "Student", department: "CSE 3rd Year", email: "rohan.v@campus.edu", phone: "+91 98765 43212" },
-            { id: 4, name: "Sneha Patel", role: "Student", department: "CSE 3rd Year", email: "sneha.p@campus.edu", phone: "+91 98765 43213" },
-            { id: 5, name: "Mr. Rajesh Kumar", role: "Staff", department: "Hostel Administration", email: "rajesh.k@campus.edu", phone: "+91 98765 43214" }
-        ];
+ // TODO: replace with real GET /communication/contacts
+ const mockContacts = [
+ { id: 1, name: "Dr. K. V. Sharma", role: "Faculty", department: "Computer Science", email: "sharma@campus.edu", phone: "+91 98765 43210" },
+ { id: 2, name: "Prof. Ananya Rao", role: "HOD", department: "Computer Science", email: "ananya.rao@campus.edu", phone: "+91 98765 43211" },
+ { id: 3, name: "Rohan Verma", role: "Student", department: "CSE 3rd Year", email: "rohan.v@campus.edu", phone: "+91 98765 43212" },
+ { id: 4, name: "Sneha Patel", role: "Student", department: "CSE 3rd Year", email: "sneha.p@campus.edu", phone: "+91 98765 43213" },
+ { id: 5, name: "Mr. Rajesh Kumar", role: "Staff", department: "Hostel Administration", email: "rajesh.k@campus.edu", phone: "+91 98765 43214" }
+ ];
 
-        // TODO: replace with real GET /communication/chats
-        const mockChats = [
-            { id: "c-1", name: "Dr. K. V. Sharma", lastMessage: "Please review the lab assignment before Friday.", time: "10:30 AM", unreadCount: 1, messages: [
-                { sender: "them", text: "Hello Bhavya, did you check the lab code?" },
-                { sender: "me", text: "Yes sir, testing the concurrency locks now." },
-                { sender: "them", text: "Please review the lab assignment before Friday." }
-            ]},
-            { id: "c-2", name: "Rohan Verma", lastMessage: "Are we meeting at the library at 4 PM?", time: "Yesterday", unreadCount: 0, messages: [
-                { sender: "them", text: "Hey! Want to practice SQL mock questions today?" },
-                { sender: "me", text: "Sure! What time?" },
-                { sender: "them", text: "Are we meeting at the library at 4 PM?" }
-            ]},
-            { id: "c-3", name: "Hackathon Team Alpha", lastMessage: "Sneha: I updated the slide deck.", time: "2 days ago", unreadCount: 0, messages: [
-                { sender: "them", text: "Sneha: I updated the slide deck." }
-            ]}
-        ];
+ // TODO: replace with real GET /communication/chats
+ const mockChats = [
+ { id: "c-1", name: "Dr. K. V. Sharma", lastMessage: "Please review the lab assignment before Friday.", time: "10:30 AM", unreadCount: 1, messages: [
+ { sender: "them", text: "Hello Bhavya, did you check the lab code?" },
+ { sender: "me", text: "Yes sir, testing the concurrency locks now." },
+ { sender: "them", text: "Please review the lab assignment before Friday." }
+ ]},
+ { id: "c-2", name: "Rohan Verma", lastMessage: "Are we meeting at the library at 4 PM?", time: "Yesterday", unreadCount: 0, messages: [
+ { sender: "them", text: "Hey! Want to practice SQL mock questions today?" },
+ { sender: "me", text: "Sure! What time?" },
+ { sender: "them", text: "Are we meeting at the library at 4 PM?" }
+ ]},
+ { id: "c-3", name: "Hackathon Team Alpha", lastMessage: "Sneha: I updated the slide deck.", time: "2 days ago", unreadCount: 0, messages: [
+ { sender: "them", text: "Sneha: I updated the slide deck." }
+ ]}
+ ];
 
-        // TODO: replace with real GET /communication/announcements
-        const mockAnnouncements = [
-            { category: "Academic", title: "Midterm Examination Schedule Released", date: "Aug 06, 2026", details: "All CSE 3rd year midterm dates are published on portal." },
-            { category: "Placement", title: "Google Backend Drive Registration Open", date: "Aug 05, 2026", details: "Eligible students must register before Aug 15." },
-            { category: "Events", title: "AgentX AI Hackathon Opening Tomorrow", date: "Aug 07, 2026", details: "Keynote starts at 10 AM in Main Auditorium." }
-        ];
+ // TODO: replace with real GET /communication/announcements
+ const mockAnnouncements = [
+ { category: "Academic", title: "Midterm Examination Schedule Released", date: "Aug 06, 2026", details: "All CSE 3rd year midterm dates are published on portal." },
+ { category: "Placement", title: "Google Backend Drive Registration Open", date: "Aug 05, 2026", details: "Eligible students must register before Aug 15." },
+ { category: "Events", title: "AgentX AI Hackathon Opening Tomorrow", date: "Aug 07, 2026", details: "Keynote starts at 10 AM in Main Auditorium." }
+ ];
 
-        // TODO: replace with real GET /communication/schedule
-        const mockSchedule = [
-            { type: "exam", title: "Distributed Systems Midterm", datetime: "Aug 11, 2026 10:00 AM" },
-            { type: "event", title: "AgentX Hackathon Keynote", datetime: "Aug 08, 2026 10:00 AM" },
-            { type: "study session", title: "SQL Optimization Study Group", datetime: "Aug 09, 2026 04:00 PM" }
-        ];
+ // TODO: replace with real GET /communication/schedule
+ const mockSchedule = [
+ { type: "exam", title: "Distributed Systems Midterm", datetime: "Aug 11, 2026 10:00 AM" },
+ { type: "event", title: "AgentX Hackathon Keynote", datetime: "Aug 08, 2026 10:00 AM" },
+ { type: "study session", title: "SQL Optimization Study Group", datetime: "Aug 09, 2026 04:00 PM" }
+ ];
 
-        let activeCommTab = 'contacts';
-        let contactFilterRole = 'All';
-        let contactSearchQuery = '';
-        let activeChatId = 'c-1';
+ let activeCommTab = 'contacts';
+ let contactFilterRole = 'All';
+ let contactSearchQuery = '';
+ let activeChatId = 'c-1';
 
-        function renderCommTab(tabName) {
-            const viewport = document.getElementById('comm-viewport');
+ function renderCommTab(tabName) {
+ const viewport = document.getElementById('comm-viewport');
 
-            switch(tabName) {
-                case 'contacts': {
-                    // Contacts Tab
-                    // TODO: Replace with GET /communication/contacts
-                    const filtered = mockContacts.filter(c => {
-                        const matchRole = (contactFilterRole === 'All' || c.role.toLowerCase() === contactFilterRole.toLowerCase());
-                        const matchQ = contactSearchQuery === '' || c.name.toLowerCase().includes(contactSearchQuery.toLowerCase()) || c.department.toLowerCase().includes(contactSearchQuery.toLowerCase());
-                        return matchRole && matchQ;
-                    });
+ switch(tabName) {
+ case 'contacts': {
+ // Contacts Tab
+ // TODO: Replace with GET /communication/contacts
+ const filtered = mockContacts.filter(c => {
+ const matchRole = (contactFilterRole === 'All' || c.role.toLowerCase() === contactFilterRole.toLowerCase());
+ const matchQ = contactSearchQuery === '' || c.name.toLowerCase().includes(contactSearchQuery.toLowerCase()) || c.department.toLowerCase().includes(contactSearchQuery.toLowerCase());
+ return matchRole && matchQ;
+ });
 
-                    let html = `
-                        <div style="display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
-                            <div class="input-wrapper" style="flex: 1; min-width: 260px;">
-                                <span>🔍</span>
-                                <input type="text" placeholder="Search contacts by name or department..." value="${contactSearchQuery}" oninput="handleContactSearch(this.value)">
-                            </div>
-                            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                                <button class="category-pill ${contactFilterRole === 'All' ? 'active' : ''}" onclick="filterContactRole('All')">All</button>
-                                <button class="category-pill ${contactFilterRole === 'Student' ? 'active' : ''}" onclick="filterContactRole('Student')">Students</button>
-                                <button class="category-pill ${contactFilterRole === 'Faculty' ? 'active' : ''}" onclick="filterContactRole('Faculty')">Faculty</button>
-                                <button class="category-pill ${contactFilterRole === 'HOD' ? 'active' : ''}" onclick="filterContactRole('HOD')">HOD</button>
-                                <button class="category-pill ${contactFilterRole === 'Staff' ? 'active' : ''}" onclick="filterContactRole('Staff')">Staff</button>
-                            </div>
-                        </div>
-                        <div class="cards-grid">
-                    `;
+ let html = `
+ <div style="display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+ <div class="input-wrapper" style="flex: 1; min-width: 260px;">
+ <span></span>
+ <input type="text" placeholder="Search contacts by name or department..." value="${contactSearchQuery}" oninput="handleContactSearch(this.value)">
+ </div>
+ <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+ <button class="category-pill ${contactFilterRole === 'All' ? 'active' : ''}" onclick="filterContactRole('All')">All</button>
+ <button class="category-pill ${contactFilterRole === 'Student' ? 'active' : ''}" onclick="filterContactRole('Student')">Students</button>
+ <button class="category-pill ${contactFilterRole === 'Faculty' ? 'active' : ''}" onclick="filterContactRole('Faculty')">Faculty</button>
+ <button class="category-pill ${contactFilterRole === 'HOD' ? 'active' : ''}" onclick="filterContactRole('HOD')">HOD</button>
+ <button class="category-pill ${contactFilterRole === 'Staff' ? 'active' : ''}" onclick="filterContactRole('Staff')">Staff</button>
+ </div>
+ </div>
+ <div class="cards-grid">
+ `;
 
-                    filtered.forEach(c => {
-                        html += `
-                            <div class="comm-card">
-                                <div>
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-                                        <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.75rem; margin: 0;">${c.role}</span>
-                                        <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">${c.department}</span>
-                                    </div>
-                                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue); font-size: 1.15rem;">${c.name}</h3>
-                                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">
-                                        <div>✉️ ${c.email}</div>
-                                        <div>📞 ${c.phone}</div>
-                                    </div>
-                                </div>
-                                <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
-                                    <button class="btn-pill" style="flex: 1; justify-content: center; font-size: 0.8rem;" onclick="openChatWith('${c.name}')">Chat 💬</button>
-                                    <button class="btn-pill" style="flex: 1; justify-content: center; font-size: 0.8rem; background: var(--surface); color: var(--text-main);" onclick="prefillEmailTo('${c.email}')">Email ✉️</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += `</div>`;
-                    viewport.innerHTML = html;
-                    break;
-                }
-                case 'chats': {
-                    // Chats Tab
-                    // TODO: Replace with GET /communication/chats
-                    const currentConv = mockChats.find(c => c.id === activeChatId) || mockChats[0];
+ filtered.forEach(c => {
+ html += `
+ <div class="comm-card">
+ <div>
+ <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+ <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.75rem; margin: 0;">${c.role}</span>
+ <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">${c.department}</span>
+ </div>
+ <h3 style="font-family: var(--font-heading); color: var(--primary-blue); font-size: 1.15rem;">${c.name}</h3>
+ <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">
+ <div>️ ${c.email}</div>
+ <div> ${c.phone}</div>
+ </div>
+ </div>
+ <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
+ <button class="btn-pill" style="flex: 1; justify-content: center; font-size: 0.8rem;" onclick="openChatWith('${c.name}')">Chat </button>
+ <button class="btn-pill" style="flex: 1; justify-content: center; font-size: 0.8rem; background: var(--surface); color: var(--text-main);" onclick="prefillEmailTo('${c.email}')">Email ️</button>
+ </div>
+ </div>
+ `;
+ });
+ html += `</div>`;
+ viewport.innerHTML = html;
+ break;
+ }
+ case 'chats': {
+ // Chats Tab
+ // TODO: Replace with GET /communication/chats
+ const currentConv = mockChats.find(c => c.id === activeChatId) || mockChats[0];
 
-                    let html = `
-                        <div style="display: flex; justify-content: flex-end; margin-bottom: 0.75rem;">
-                            <button class="btn-pill" style="font-size: 0.8rem;" onclick="openGroupModal()">+ Create Group</button>
-                        </div>
-                        <div class="chats-layout">
-                            <div class="chat-sidebar">
-                                <div style="font-family: var(--font-heading); font-size: 0.95rem; color: var(--primary-blue); margin-bottom: 0.5rem;">Conversations</div>
-                                ${mockChats.map(c => `
-                                    <div class="chat-conv-item ${c.id === activeChatId ? 'active' : ''}" onclick="selectChatConv('${c.id}')">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <div style="font-family: var(--font-heading); font-size: 0.9rem;">${c.name}</div>
-                                            <div style="font-size: 0.7rem; color: var(--text-muted);">${c.time}</div>
-                                        </div>
-                                        <div style="font-size: 0.75rem; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; margin-top: 0.2rem;">
-                                            ${c.lastMessage}
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <div class="chat-main-panel">
-                                <div class="chat-header-bar">
-                                    <span>💬 ${currentConv.name}</span>
-                                    <span style="font-size: 0.75rem; color: #27ae60;">● Online</span>
-                                </div>
-                                <div class="chat-messages-body" id="chat-messages-body">
-                                    ${currentConv.messages.map(m => `
-                                        <div class="chat-msg-bubble ${m.sender === 'me' ? 'chat-msg-right' : 'chat-msg-left'}">
-                                            ${m.text}
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                <form onsubmit="handleSendChatMessage(event)" style="padding: 0.75rem; background: var(--surface); border-top: 2px dashed var(--border-dark); display: flex; gap: 0.5rem;">
-                                    <!-- TODO: Replace mock with POST /communication/chats -->
-                                    <input type="text" id="chat-msg-input" placeholder="Type a message..." required style="flex: 1; border: 2px solid var(--border-dark); border-radius: 20px; padding: 0.4rem 1rem; outline: none;">
-                                    <button type="submit" class="btn-pill" style="font-size: 0.8rem; padding: 0.4rem 1rem;">Send</button>
-                                </form>
-                            </div>
-                        </div>
-                    `;
-                    viewport.innerHTML = html;
-                    break;
-                }
-                case 'email': {
-                    // Email Tab (AI Draft Concept)
-                    // TODO: Replace with POST /communication/email
-                    let html = `
-                        <div class="cloud-container" style="padding: 1.75rem; text-align: left;">
-                            <div class="sticker-tag" style="background: var(--mint-green); margin-bottom: 0.75rem;">🤖 AI Email Generator</div>
-                            <h3 style="font-family: var(--font-heading); color: var(--primary-blue); margin-bottom: 0.5rem;">Draft Formal Email</h3>
-                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Enter a prompt to auto-generate a professional email draft.</p>
+ let html = `
+ <div style="display: flex; justify-content: flex-end; margin-bottom: 0.75rem;">
+ <button class="btn-pill" style="font-size: 0.8rem;" onclick="openGroupModal()">+ Create Group</button>
+ </div>
+ <div class="chats-layout">
+ <div class="chat-sidebar">
+ <div style="font-family: var(--font-heading); font-size: 0.95rem; color: var(--primary-blue); margin-bottom: 0.5rem;">Conversations</div>
+ ${mockChats.map(c => `
+ <div class="chat-conv-item ${c.id === activeChatId ? 'active' : ''}" onclick="selectChatConv('${c.id}')">
+ <div style="display: flex; justify-content: space-between; align-items: center;">
+ <div style="font-family: var(--font-heading); font-size: 0.9rem;">${c.name}</div>
+ <div style="font-size: 0.7rem; color: var(--text-muted);">${c.time}</div>
+ </div>
+ <div style="font-size: 0.75rem; color: var(--text-muted); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; margin-top: 0.2rem;">
+ ${c.lastMessage}
+ </div>
+ </div>
+ `).join('')}
+ </div>
+ <div class="chat-main-panel">
+ <div class="chat-header-bar">
+ <span> ${currentConv.name}</span>
+ <span style="font-size: 0.75rem; color: #27ae60;"> Online</span>
+ </div>
+ <div class="chat-messages-body" id="chat-messages-body">
+ ${currentConv.messages.map(m => `
+ <div class="chat-msg-bubble ${m.sender === 'me' ? 'chat-msg-right' : 'chat-msg-left'}">
+ ${m.text}
+ </div>
+ `).join('')}
+ </div>
+ <form onsubmit="handleSendChatMessage(event)" style="padding: 0.75rem; background: var(--surface); border-top: 2px dashed var(--border-dark); display: flex; gap: 0.5rem;">
+ <!-- TODO: Replace mock with POST /communication/chats -->
+ <input type="text" id="chat-msg-input" placeholder="Type a message..." required style="flex: 1; border: 2px solid var(--border-dark); border-radius: 20px; padding: 0.4rem 1rem; outline: none;">
+ <button type="submit" class="btn-pill" style="font-size: 0.8rem; padding: 0.4rem 1rem;">Send</button>
+ </form>
+ </div>
+ </div>
+ `;
+ viewport.innerHTML = html;
+ break;
+ }
+ case 'email': {
+ // Email Tab (AI Draft Concept)
+ // TODO: Replace with POST /communication/email
+ let html = `
+ <div class="cloud-container" style="padding: 1.75rem; text-align: left;">
+ <div class="sticker-tag" style="background: var(--mint-green); margin-bottom: 0.75rem;"> AI Email Generator</div>
+ <h3 style="font-family: var(--font-heading); color: var(--primary-blue); margin-bottom: 0.5rem;">Draft Formal Email</h3>
+ <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Enter a prompt to auto-generate a professional email draft.</p>
 
-                            <div style="margin-bottom: 1rem;">
-                                <label style="font-family: var(--font-heading); font-size: 0.85rem;">AI Prompt</label>
-                                <div class="input-wrapper">
-                                    <input type="text" id="email-prompt" placeholder="e.g. Request Prof. Sharma for extension on Distributed Systems assignment" value="Request Prof. Sharma for extension on assignment">
-                                    <button class="btn-pill" style="font-size: 0.8rem;" onclick="generateAiEmail()">Generate Draft ✨</button>
-                                </div>
-                            </div>
+ <div style="margin-bottom: 1rem;">
+ <label style="font-family: var(--font-heading); font-size: 0.85rem;">AI Prompt</label>
+ <div class="input-wrapper">
+ <input type="text" id="email-prompt" placeholder="e.g. Request Prof. Sharma for extension on Distributed Systems assignment" value="Request Prof. Sharma for extension on assignment">
+ <button class="btn-pill" style="font-size: 0.8rem;" onclick="generateAiEmail()">Generate Draft </button>
+ </div>
+ </div>
 
-                            <form onsubmit="handleSendEmail(event)">
-                                <div style="margin-bottom: 0.75rem;">
-                                    <label style="font-family: var(--font-heading); font-size: 0.85rem;">To</label>
-                                    <input type="email" id="email-to" value="sharma@campus.edu" required style="width: 100%; border: 2px solid var(--border-dark); border-radius: 10px; padding: 0.5rem; font-size: 0.9rem;">
-                                </div>
-                                <div style="margin-bottom: 0.75rem;">
-                                    <label style="font-family: var(--font-heading); font-size: 0.85rem;">Subject</label>
-                                    <input type="text" id="email-subject" value="Request for Deadline Extension - CSE301 Assignment" required style="width: 100%; border: 2px solid var(--border-dark); border-radius: 10px; padding: 0.5rem; font-size: 0.9rem;">
-                                </div>
-                                <div style="margin-bottom: 1.25rem;">
-                                    <label style="font-family: var(--font-heading); font-size: 0.85rem;">Body</label>
-                                    <textarea id="email-body" rows="6" required style="width: 100%; border: 2px solid var(--border-dark); border-radius: 12px; padding: 0.75rem; font-family: var(--font-body); font-size: 0.9rem;">Dear Dr. Sharma,
+ <form onsubmit="handleSendEmail(event)">
+ <div style="margin-bottom: 0.75rem;">
+ <label style="font-family: var(--font-heading); font-size: 0.85rem;">To</label>
+ <input type="email" id="email-to" value="sharma@campus.edu" required style="width: 100%; border: 2px solid var(--border-dark); border-radius: 10px; padding: 0.5rem; font-size: 0.9rem;">
+ </div>
+ <div style="margin-bottom: 0.75rem;">
+ <label style="font-family: var(--font-heading); font-size: 0.85rem;">Subject</label>
+ <input type="text" id="email-subject" value="Request for Deadline Extension - CSE301 Assignment" required style="width: 100%; border: 2px solid var(--border-dark); border-radius: 10px; padding: 0.5rem; font-size: 0.9rem;">
+ </div>
+ <div style="margin-bottom: 1.25rem;">
+ <label style="font-family: var(--font-heading); font-size: 0.85rem;">Body</label>
+ <textarea id="email-body" rows="6" required style="width: 100%; border: 2px solid var(--border-dark); border-radius: 12px; padding: 0.75rem; font-family: var(--font-body); font-size: 0.9rem;">Dear Dr. Sharma,
 
 I am writing to respectfully request a short extension of 2 days on the CSE301 Distributed Systems assignment. Due to upcoming hackathon commitments, I would greatly appreciate extra time to refine my submission.
 
@@ -510,227 +510,227 @@ Thank you for your understanding.
 
 Sincerely,
 Student</textarea>
-                                </div>
-                                <div style="display: flex; gap: 0.75rem;">
-                                    <button type="submit" class="btn-pill" style="background: var(--primary-blue); color: white;">Send Email ✉️</button>
-                                    <button type="button" class="btn-pill" style="background: var(--surface); color: var(--text-main);" onclick="document.getElementById('email-body').focus()">Edit Draft ✏️</button>
-                                </div>
-                            </form>
-                        </div>
-                    `;
-                    viewport.innerHTML = html;
-                    break;
-                }
-                case 'announcements': {
-                    // Announcements Tab
-                    // TODO: Replace with GET /communication/announcements
-                    let html = `<div class="cards-grid">`;
-                    mockAnnouncements.forEach(a => {
-                        html += `
-                            <div class="comm-card">
-                                <div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                        <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.75rem; margin: 0;">${a.category}</span>
-                                        <span style="font-size: 0.75rem; color: var(--text-muted);">${a.date}</span>
-                                    </div>
-                                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">${a.title}</h3>
-                                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">${a.details}</p>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += `</div>`;
-                    viewport.innerHTML = html;
-                    break;
-                }
-                case 'schedule': {
-                    // Schedule Tab
-                    // TODO: Replace with GET /communication/schedule
-                    let html = `
-                        <!-- Comment: Note that Google Calendar sync happens via backend POST /communication/calendar -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                            <div style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-main);">📅 Calendar Reminders & Schedule</div>
-                            <button class="btn-pill" style="font-size: 0.8rem;" onclick="addScheduleEntry()">+ Add Schedule Entry</button>
-                        </div>
-                        <div class="cards-grid">
-                    `;
-                    mockSchedule.forEach(s => {
-                        html += `
-                            <div class="comm-card">
-                                <div>
-                                    <div class="sticker-tag" style="background: var(--mint-green); font-size: 0.75rem; margin-bottom: 0.4rem;">📌 ${s.type.toUpperCase()}</div>
-                                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">${s.title}</h3>
-                                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">⏰ ${s.datetime}</p>
-                                </div>
-                                <div style="display: flex; gap: 0.4rem; margin-top: 1rem;">
-                                    <button class="btn-pill" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="downloadIcsFile('${s.title}', '${s.datetime}', 'Campus Grounds')">Export .ics 📅</button>
-                                    <button class="btn-pill" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; background: #c0392b; color: white;" onclick="cancelScheduleEntry(this)">Cancel</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    html += `</div>`;
-                    viewport.innerHTML = html;
-                    break;
-                }
-            }
-        }
+ </div>
+ <div style="display: flex; gap: 0.75rem;">
+ <button type="submit" class="btn-pill" style="background: var(--primary-blue); color: white;">Send Email ️</button>
+ <button type="button" class="btn-pill" style="background: var(--surface); color: var(--text-main);" onclick="document.getElementById('email-body').focus()">Edit Draft ️</button>
+ </div>
+ </form>
+ </div>
+ `;
+ viewport.innerHTML = html;
+ break;
+ }
+ case 'announcements': {
+ // Announcements Tab
+ // TODO: Replace with GET /communication/announcements
+ let html = `<div class="cards-grid">`;
+ mockAnnouncements.forEach(a => {
+ html += `
+ <div class="comm-card">
+ <div>
+ <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+ <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.75rem; margin: 0;">${a.category}</span>
+ <span style="font-size: 0.75rem; color: var(--text-muted);">${a.date}</span>
+ </div>
+ <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">${a.title}</h3>
+ <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">${a.details}</p>
+ </div>
+ </div>
+ `;
+ });
+ html += `</div>`;
+ viewport.innerHTML = html;
+ break;
+ }
+ case 'schedule': {
+ // Schedule Tab
+ // TODO: Replace with GET /communication/schedule
+ let html = `
+ <!-- Comment: Note that Google Calendar sync happens via backend POST /communication/calendar -->
+ <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+ <div style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-main);"> Calendar Reminders & Schedule</div>
+ <button class="btn-pill" style="font-size: 0.8rem;" onclick="addScheduleEntry()">+ Add Schedule Entry</button>
+ </div>
+ <div class="cards-grid">
+ `;
+ mockSchedule.forEach(s => {
+ html += `
+ <div class="comm-card">
+ <div>
+ <div class="sticker-tag" style="background: var(--mint-green); font-size: 0.75rem; margin-bottom: 0.4rem;"> ${s.type.toUpperCase()}</div>
+ <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">${s.title}</h3>
+ <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;"> ${s.datetime}</p>
+ </div>
+ <div style="display: flex; gap: 0.4rem; margin-top: 1rem;">
+ <button class="btn-pill" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="downloadIcsFile('${s.title}', '${s.datetime}', 'Campus Grounds')">Export .ics </button>
+ <button class="btn-pill" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; background: #c0392b; color: white;" onclick="cancelScheduleEntry(this)">Cancel</button>
+ </div>
+ </div>
+ `;
+ });
+ html += `</div>`;
+ viewport.innerHTML = html;
+ break;
+ }
+ }
+ }
 
-        function switchCommTab(tabName, el) {
-            activeCommTab = tabName;
-            document.querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-            renderCommTab(tabName);
-        }
+ function switchCommTab(tabName, el) {
+ activeCommTab = tabName;
+ document.querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+ el.classList.add('active');
+ renderCommTab(tabName);
+ }
 
-        function filterContactRole(role) {
-            contactFilterRole = role;
-            renderCommTab('contacts');
-        }
+ function filterContactRole(role) {
+ contactFilterRole = role;
+ renderCommTab('contacts');
+ }
 
-        function handleContactSearch(val) {
-            contactSearchQuery = val.trim();
-            renderCommTab('contacts');
-        }
+ function handleContactSearch(val) {
+ contactSearchQuery = val.trim();
+ renderCommTab('contacts');
+ }
 
-        function openChatWith(name) {
-            switchCommTab('chats', document.querySelectorAll('.pill-tab')[1]);
-        }
+ function openChatWith(name) {
+ switchCommTab('chats', document.querySelectorAll('.pill-tab')[1]);
+ }
 
-        function prefillEmailTo(email) {
-            switchCommTab('email', document.querySelectorAll('.pill-tab')[2]);
-            setTimeout(() => {
-                const el = document.getElementById('email-to');
-                if (el) el.value = email;
-            }, 50);
-        }
+ function prefillEmailTo(email) {
+ switchCommTab('email', document.querySelectorAll('.pill-tab')[2]);
+ setTimeout(() => {
+ const el = document.getElementById('email-to');
+ if (el) el.value = email;
+ }, 50);
+ }
 
-        function selectChatConv(convId) {
-            activeChatId = convId;
-            renderCommTab('chats');
-        }
+ function selectChatConv(convId) {
+ activeChatId = convId;
+ renderCommTab('chats');
+ }
 
-        // TODO: Replace with POST /communication/chats
-        function handleSendChatMessage(e) {
-            e.preventDefault();
-            const input = document.getElementById('chat-msg-input');
-            const text = input.value.trim();
-            if (!text) return;
+ // TODO: Replace with POST /communication/chats
+ function handleSendChatMessage(e) {
+ e.preventDefault();
+ const input = document.getElementById('chat-msg-input');
+ const text = input.value.trim();
+ if (!text) return;
 
-            const conv = mockChats.find(c => c.id === activeChatId);
-            if (conv) {
-                conv.messages.push({ sender: 'me', text });
-                conv.lastMessage = "You: " + text;
-                renderCommTab('chats');
-            }
-            input.value = '';
-        }
+ const conv = mockChats.find(c => c.id === activeChatId);
+ if (conv) {
+ conv.messages.push({ sender: 'me', text });
+ conv.lastMessage = "You: " + text;
+ renderCommTab('chats');
+ }
+ input.value = '';
+ }
 
-        async function generateAiEmail() {
-            const prompt = document.getElementById('email-prompt')?.value || "Request extension";
-            const recipientEmail = document.getElementById('email-to')?.value || "sharma@campus.edu";
-            const subject = document.getElementById('email-subject')?.value || "Request for Extension";
+ async function generateAiEmail() {
+ const prompt = document.getElementById('email-prompt')?.value || "Request extension";
+ const recipientEmail = document.getElementById('email-to')?.value || "sharma@campus.edu";
+ const subject = document.getElementById('email-subject')?.value || "Request for Extension";
 
-            let userName = 'Student';
-            let userBranch = 'CSE';
-            try {
-                const p = JSON.parse(localStorage.getItem('studentProfile') || '{}');
-                if (p.name) userName = p.name;
-                if (p.branch) userBranch = p.branch;
-            } catch (e) {}
+ let userName = 'Student';
+ let userBranch = 'CSE';
+ try {
+ const p = JSON.parse(localStorage.getItem('studentProfile') || '{}');
+ if (p.name) userName = p.name;
+ if (p.branch) userBranch = p.branch;
+ } catch (e) {}
 
-            try {
-                if (window.CampusApi && window.CampusApi.draftEmail) {
-                    const res = await window.CampusApi.draftEmail(recipientEmail, subject, prompt);
-                    if (res && res.data && res.data.draft_body) {
-                        document.getElementById('email-body').value = res.data.draft_body;
-                    } else if (res && res.draft) {
-                        document.getElementById('email-body').value = res.draft;
-                    }
-                }
-            } catch (err) {
-                console.warn("Draft email backend fallback:", err);
-                document.getElementById('email-body').value = `Dear Dr. Sharma,\n\nI am writing regarding "${prompt}". Please accept this request as discussed.\n\nBest regards,\n${userName} (${userBranch})`;
-            }
-            alert("✓ AI Draft Generated!");
-        }
+ try {
+ if (window.CampusApi && window.CampusApi.draftEmail) {
+ const res = await window.CampusApi.draftEmail(recipientEmail, subject, prompt);
+ if (res && res.data && res.data.draft_body) {
+ document.getElementById('email-body').value = res.data.draft_body;
+ } else if (res && res.draft) {
+ document.getElementById('email-body').value = res.draft;
+ }
+ }
+ } catch (err) {
+ console.warn("Draft email backend fallback:", err);
+ document.getElementById('email-body').value = `Dear Dr. Sharma,\n\nI am writing regarding "${prompt}". Please accept this request as discussed.\n\nBest regards,\n${userName} (${userBranch})`;
+ }
+ alert(" AI Draft Generated!");
+ }
 
-        // Connects to real POST /communication/email
-        async function handleSendEmail(e) {
-            e.preventDefault();
-            const to = document.getElementById('email-to').value;
-            const subject = document.getElementById('email-subject').value;
-            const body = document.getElementById('email-body').value;
+ // Connects to real POST /communication/email
+ async function handleSendEmail(e) {
+ e.preventDefault();
+ const to = document.getElementById('email-to').value;
+ const subject = document.getElementById('email-subject').value;
+ const body = document.getElementById('email-body').value;
 
-            try {
-                if (window.CampusApi && window.CampusApi.sendEmail) {
-                    await window.CampusApi.sendEmail(to, subject, body);
-                }
-            } catch (err) {
-                console.warn("Send email backend fallback:", err);
-            }
-            alert("✓ Email sent successfully!");
-        }
+ try {
+ if (window.CampusApi && window.CampusApi.sendEmail) {
+ await window.CampusApi.sendEmail(to, subject, body);
+ }
+ } catch (err) {
+ console.warn("Send email backend fallback:", err);
+ }
+ alert(" Email sent successfully!");
+ }
 
-        // Group Modal Logic
-        function openGroupModal() {
-            document.getElementById('group-modal').classList.add('open');
-        }
+ // Group Modal Logic
+ function openGroupModal() {
+ document.getElementById('group-modal').classList.add('open');
+ }
 
-        function closeGroupModal() {
-            document.getElementById('group-modal').classList.remove('open');
-        }
+ function closeGroupModal() {
+ document.getElementById('group-modal').classList.remove('open');
+ }
 
-        function toggleExpiryField(show) {
-            document.getElementById('expiry-field-container').style.display = show ? 'block' : 'none';
-        }
+ function toggleExpiryField(show) {
+ document.getElementById('expiry-field-container').style.display = show ? 'block' : 'none';
+ }
 
-        // Connects to real POST /communication/groups
-        async function handleCreateGroupSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('grp-name').value;
-            try {
-                if (window.CampusApi && window.CampusApi.createGroup) {
-                    await window.CampusApi.createGroup(name, [], "study", 24);
-                }
-            } catch (err) {
-                console.warn("Create group backend fallback:", err);
-            }
+ // Connects to real POST /communication/groups
+ async function handleCreateGroupSubmit(e) {
+ e.preventDefault();
+ const name = document.getElementById('grp-name').value;
+ try {
+ if (window.CampusApi && window.CampusApi.createGroup) {
+ await window.CampusApi.createGroup(name, [], "study", 24);
+ }
+ } catch (err) {
+ console.warn("Create group backend fallback:", err);
+ }
 
-            mockChats.push({
-                id: "c-" + (mockChats.length + 1),
-                name: name + " (Group)",
-                lastMessage: "Group created.",
-                time: "Just now",
-                unreadCount: 0,
-                messages: [{ sender: 'them', text: `Welcome to ${name}!` }]
-            });
-            closeGroupModal();
-            renderCommTab('chats');
-            alert(`✓ Group "${name}" created!`);
-        }
+ mockChats.push({
+ id: "c-" + (mockChats.length + 1),
+ name: name + " (Group)",
+ lastMessage: "Group created.",
+ time: "Just now",
+ unreadCount: 0,
+ messages: [{ sender: 'them', text: `Welcome to ${name}!` }]
+ });
+ closeGroupModal();
+ renderCommTab('chats');
+ alert(` Group "${name}" created!`);
+ }
 
 
-        function addScheduleEntry() {
-            const title = prompt("Enter Schedule Event Title:", "Faculty Office Hours Consultation");
-            if (!title) return;
-            const dateStr = prompt("Enter Date & Time (e.g. Aug 15, 2026 10:00 AM):", "Aug 15, 2026 10:00 AM");
-            downloadIcsFile(title, dateStr || 'Aug 15, 2026', 'Department Office', `Scheduled reminder for ${title}`);
-        }
+ function addScheduleEntry() {
+ const title = prompt("Enter Schedule Event Title:", "Faculty Office Hours Consultation");
+ if (!title) return;
+ const dateStr = prompt("Enter Date & Time (e.g. Aug 15, 2026 10:00 AM):", "Aug 15, 2026 10:00 AM");
+ downloadIcsFile(title, dateStr || 'Aug 15, 2026', 'Department Office', `Scheduled reminder for ${title}`);
+ }
 
-        function cancelScheduleEntry(btn) {
-            if (btn) {
-                const card = btn.closest('.comm-card');
-                if (card) {
-                    card.style.opacity = '0.5';
-                    btn.textContent = 'Cancelled';
-                    btn.disabled = true;
-                }
-            }
-        }
+ function cancelScheduleEntry(btn) {
+ if (btn) {
+ const card = btn.closest('.comm-card');
+ if (card) {
+ card.style.opacity = '0.5';
+ btn.textContent = 'Cancelled';
+ btn.disabled = true;
+ }
+ }
+ }
 
-        // Initial render
-        renderCommTab('contacts');
-    </script>
+ // Initial render
+ renderCommTab('contacts');
+ </script>
 </body>
 </html>

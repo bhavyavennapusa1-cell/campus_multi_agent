@@ -115,7 +115,9 @@
   border-radius: 20px;
   font-family: var(--font-body);
   font-size: 0.95rem;
-  line-height: 1.5;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--text-main);
   box-shadow: 3px 3px 0px var(--border-dark);
   word-break: break-word;
   position: relative;

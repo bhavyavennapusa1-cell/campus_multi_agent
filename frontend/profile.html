@@ -1,342 +1,342 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synapse | Student Profile</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dashboard.css">
-    <link rel="stylesheet" href="chat.css">
-    <style>
-        .profile-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 2rem 5%;
-        }
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Synapse | Student Profile</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="style.css">
+ <link rel="stylesheet" href="dashboard.css">
+ <link rel="stylesheet" href="chat.css">
+ <style>
+ .profile-container {
+ max-width: 900px;
+ margin: 0 auto;
+ padding: 2rem 5%;
+ }
 
-        .profile-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
+ .profile-grid {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 1.5rem;
+ }
 
-        @media (max-width: 768px) {
-            .profile-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+ @media (max-width: 768px) {
+ .profile-grid {
+ grid-template-columns: 1fr;
+ }
+ }
 
-        .profile-card-display {
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 20px;
-            padding: 1.75rem;
-            box-shadow: 4px 4px 0px var(--border-dark);
-        }
+ .profile-card-display {
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 20px;
+ padding: 1.75rem;
+ box-shadow: 4px 4px 0px var(--border-dark);
+ }
 
-        .info-row {
-            padding: 0.75rem 0;
-            border-bottom: 2px dashed var(--border-dark);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+ .info-row {
+ padding: 0.75rem 0;
+ border-bottom: 2px dashed var(--border-dark);
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ }
 
-        .info-row:last-child {
-            border-bottom: none;
-        }
+ .info-row:last-child {
+ border-bottom: none;
+ }
 
-        .info-label {
-            font-family: var(--font-heading);
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
+ .info-label {
+ font-family: var(--font-heading);
+ font-size: 0.9rem;
+ color: var(--text-muted);
+ }
 
-        .info-value {
-            font-family: var(--font-body);
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-main);
-        }
-    </style>
+ .info-value {
+ font-family: var(--font-body);
+ font-size: 1rem;
+ font-weight: 700;
+ color: var(--text-main);
+ }
+ </style>
 </head>
 <body>
-    <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
-    <div class="fixed-background-widgets">
-        <!-- Left Side Spread -->
-        <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
-            <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
+ <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
+ <div class="fixed-background-widgets">
+ <!-- Left Side Spread -->
+ <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
+ <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
 
-        <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
-        <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
-        </svg>
+ <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
+ <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
+ </svg>
 
-        <!-- Right Side Spread -->
-        <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-    </div>
+ <!-- Right Side Spread -->
+ <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ </div>
 
-    <!-- Navbar Reused -->
-    <nav class="navbar">
-        <div class="nav-brand">🔗 Synapse</div>
-        <button class="hamburger" id="hamburger">☰</button>
-        <div class="nav-links" id="nav-links">
-            <a href="index.html">Home</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="chat.html">Assistant</a>
-            <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out 🚪</a>
-        </div>
-    </nav>
+ <!-- Navbar Reused -->
+ <nav class="navbar">
+ <div class="nav-brand"> Synapse</div>
+ <button class="hamburger" id="hamburger"></button>
+ <div class="nav-links" id="nav-links">
+ <a href="index.html">Home</a>
+ <a href="dashboard.html">Dashboard</a>
+ <a href="chat.html">Assistant</a>
+ <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out </a>
+ </div>
+ </nav>
 
-    <main class="profile-container" style="position: relative; z-index: 10;">
+ <main class="profile-container" style="position: relative; z-index: 10;">
 
-        <!-- Hero Header -->
-        <div class="cloud-container" style="padding: 1.75rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <div>
-                <a href="chat.html?prompt=Show%20my%20stored%20student%20profile%20and%20memory" class="sticker-tag route-to-chat" data-prompt="Show my stored student profile and memory" style="background: var(--soft-yellow); text-decoration: none; cursor: pointer; display: inline-block;">👤 Memory & Identity</a>
-                <h1 style="font-family: var(--font-heading); font-size: 2.3rem; color: var(--primary-blue);">Student Profile</h1>
-                <p style="color: var(--text-muted); max-width: 600px; margin: 0.25rem 0 0;">
-                    View persistent memory parameters injected into Orchestrator context and update your student records.
-                </p>
-            </div>
-            <button class="btn-pill" onclick="handleLogout(event)" style="background: #c0392b; color: white;">Logout 🚪</button>
-        </div>
+ <!-- Hero Header -->
+ <div class="cloud-container" style="padding: 1.75rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+ <div>
+ <a href="chat.html?prompt=Show%20my%20stored%20student%20profile%20and%20memory" class="sticker-tag route-to-chat" data-prompt="Show my stored student profile and memory" style="background: var(--soft-yellow); text-decoration: none; cursor: pointer; display: inline-block;"> Memory & Identity</a>
+ <h1 style="font-family: var(--font-heading); font-size: 2.3rem; color: var(--primary-blue);">Student Profile</h1>
+ <p style="color: var(--text-muted); max-width: 600px; margin: 0.25rem 0 0;">
+ View persistent memory parameters injected into Orchestrator context and update your student records.
+ </p>
+ </div>
+ <button class="btn-pill" onclick="handleLogout(event)" style="background: #c0392b; color: white;">Logout </button>
+ </div>
 
-        <div class="profile-grid">
-            <!-- 1. Current Profile State Card -->
-            <div class="profile-card-display">
-                <div class="sticker-tag" style="background: var(--mint-green); margin-bottom: 1rem;">🧠 Active State</div>
-                <h3 style="font-family: var(--font-heading); color: var(--text-main); margin-bottom: 1rem;">Current Memory Values</h3>
+ <div class="profile-grid">
+ <!-- 1. Current Profile State Card -->
+ <div class="profile-card-display">
+ <div class="sticker-tag" style="background: var(--mint-green); margin-bottom: 1rem;"> Active State</div>
+ <h3 style="font-family: var(--font-heading); color: var(--text-main); margin-bottom: 1rem;">Current Memory Values</h3>
 
-                <div class="info-row">
-                    <span class="info-label">Student Name</span>
-                    <span class="info-value" id="display-name">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Branch & Year</span>
-                    <span class="info-value" id="display-branch">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Attendance %</span>
-                    <span class="info-value" id="display-attendance" style="color: #27ae60;">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Hostel Block</span>
-                    <span class="info-value" id="display-hostel">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Career Goal</span>
-                    <span class="info-value" id="display-goal" style="color: var(--primary-blue);">-</span>
-                </div>
-            </div>
+ <div class="info-row">
+ <span class="info-label">Student Name</span>
+ <span class="info-value" id="display-name">-</span>
+ </div>
+ <div class="info-row">
+ <span class="info-label">Branch & Year</span>
+ <span class="info-value" id="display-branch">-</span>
+ </div>
+ <div class="info-row">
+ <span class="info-label">Attendance %</span>
+ <span class="info-value" id="display-attendance" style="color: #27ae60;">-</span>
+ </div>
+ <div class="info-row">
+ <span class="info-label">Hostel Block</span>
+ <span class="info-value" id="display-hostel">-</span>
+ </div>
+ <div class="info-row">
+ <span class="info-label">Career Goal</span>
+ <span class="info-value" id="display-goal" style="color: var(--primary-blue);">-</span>
+ </div>
+ </div>
 
-            <!-- 2. Editable Profile Form Card -->
-            <div class="memory-panel" style="height: auto; border-radius: 20px;">
-                <div class="sticker-tag" style="background: var(--bubble-pink); margin-bottom: 0.5rem;">✏️ Edit Profile</div>
-                <div class="memory-title">Update Memory Context</div>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem;">Changes take effect immediately across all multi-agent workflows.</p>
+ <!-- 2. Editable Profile Form Card -->
+ <div class="memory-panel" style="height: auto; border-radius: 20px;">
+ <div class="sticker-tag" style="background: var(--bubble-pink); margin-bottom: 0.5rem;">️ Edit Profile</div>
+ <div class="memory-title">Update Memory Context</div>
+ <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem;">Changes take effect immediately across all multi-agent workflows.</p>
 
-                <div id="profile-status-msg" style="display: none; border-radius: 12px; padding: 0.65rem 0.9rem; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem;"></div>
+ <div id="profile-status-msg" style="display: none; border-radius: 12px; padding: 0.65rem 0.9rem; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem;"></div>
 
-                <form id="profile-edit-form" onsubmit="handleProfileSave(event)">
-                    <div class="memory-group">
-                        <label for="prof-name">Student Name</label>
-                        <input type="text" id="prof-name" placeholder="e.g. Bhavya Vennapusa" required>
-                    </div>
+ <form id="profile-edit-form" onsubmit="handleProfileSave(event)">
+ <div class="memory-group">
+ <label for="prof-name">Student Name</label>
+ <input type="text" id="prof-name" placeholder="e.g. Bhavya Vennapusa" required>
+ </div>
 
-                    <div class="memory-group">
-                        <label for="prof-branch">Branch & Year</label>
-                        <input type="text" id="prof-branch" placeholder="e.g. CSE - 3rd Year" required>
-                    </div>
+ <div class="memory-group">
+ <label for="prof-branch">Branch & Year</label>
+ <input type="text" id="prof-branch" placeholder="e.g. CSE - 3rd Year" required>
+ </div>
 
-                    <div class="memory-group">
-                        <label for="prof-attendance">Attendance %</label>
-                        <input type="text" id="prof-attendance" placeholder="e.g. 88%" required>
-                    </div>
+ <div class="memory-group">
+ <label for="prof-attendance">Attendance %</label>
+ <input type="text" id="prof-attendance" placeholder="e.g. 88%" required>
+ </div>
 
-                    <div class="memory-group">
-                        <label for="prof-hostel">Hostel Block</label>
-                        <input type="text" id="prof-hostel" placeholder="e.g. Block B" required>
-                    </div>
+ <div class="memory-group">
+ <label for="prof-hostel">Hostel Block</label>
+ <input type="text" id="prof-hostel" placeholder="e.g. Block B" required>
+ </div>
 
-                    <div class="memory-group" style="margin-bottom: 1.25rem;">
-                        <label for="prof-goal">Career Goal</label>
-                        <input type="text" id="prof-goal" placeholder="e.g. Backend Developer" required>
-                    </div>
+ <div class="memory-group" style="margin-bottom: 1.25rem;">
+ <label for="prof-goal">Career Goal</label>
+ <input type="text" id="prof-goal" placeholder="e.g. Backend Developer" required>
+ </div>
 
-                    <button type="submit" id="save-profile-btn" class="btn-pill" style="width: 100%; justify-content: center; font-size: 0.95rem;">Save Profile Changes →</button>
-                </form>
-            </div>
-        </div>
-    </main>
+ <button type="submit" id="save-profile-btn" class="btn-pill" style="width: 100%; justify-content: center; font-size: 0.95rem;">Save Profile Changes →</button>
+ </form>
+ </div>
+ </div>
+ </main>
 
-    <footer class="footer">
-        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
-    </footer>
+ <footer class="footer">
+ <p>Built with ️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+ </footer>
 
-    <script>
-        const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-            ? 'http://localhost:8000' : '';
+ <script>
+ const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+ ? 'http://localhost:8000' : '';
 
-        const token = localStorage.getItem('studentSessionToken');
-        if (!token) {
-            window.location.replace('login.html');
-        }
+ const token = localStorage.getItem('studentSessionToken');
+ if (!token) {
+ window.location.replace('login.html');
+ }
 
-        document.getElementById('hamburger').addEventListener('click', () => {
-            document.getElementById('nav-links').classList.toggle('active');
-        });
+ document.getElementById('hamburger').addEventListener('click', () => {
+ document.getElementById('nav-links').classList.toggle('active');
+ });
 
-        function populateDisplayValues(data) {
-            if (!data) return;
-            document.getElementById('display-name').textContent = data.name || "-";
-            document.getElementById('display-branch').textContent = data.branch || "-";
-            document.getElementById('display-attendance').textContent = data.attendance || "-";
-            document.getElementById('display-hostel').textContent = data.hostel || "-";
-            document.getElementById('display-goal').textContent = data.career_goal || data.careerGoal || "-";
+ function populateDisplayValues(data) {
+ if (!data) return;
+ document.getElementById('display-name').textContent = data.name || "-";
+ document.getElementById('display-branch').textContent = data.branch || "-";
+ document.getElementById('display-attendance').textContent = data.attendance || "-";
+ document.getElementById('display-hostel').textContent = data.hostel || "-";
+ document.getElementById('display-goal').textContent = data.career_goal || data.careerGoal || "-";
 
-            document.getElementById('prof-name').value = data.name || "";
-            document.getElementById('prof-branch').value = data.branch || "";
-            document.getElementById('prof-attendance').value = data.attendance || "";
-            document.getElementById('prof-hostel').value = data.hostel || "";
-            document.getElementById('prof-goal').value = data.career_goal || data.careerGoal || "";
-        }
+ document.getElementById('prof-name').value = data.name || "";
+ document.getElementById('prof-branch').value = data.branch || "";
+ document.getElementById('prof-attendance').value = data.attendance || "";
+ document.getElementById('prof-hostel').value = data.hostel || "";
+ document.getElementById('prof-goal').value = data.career_goal || data.careerGoal || "";
+ }
 
-        // Hydrate profile data from local cache first, then fetch fresh data from backend SQLite store
-        async function loadProfileData() {
-            const saved = localStorage.getItem('studentProfile');
-            if (saved) {
-                try {
-                    const localData = JSON.parse(saved);
-                    populateDisplayValues(localData);
-                } catch(e) {}
-            }
+ // Hydrate profile data from local cache first, then fetch fresh data from backend SQLite store
+ async function loadProfileData() {
+ const saved = localStorage.getItem('studentProfile');
+ if (saved) {
+ try {
+ const localData = JSON.parse(saved);
+ populateDisplayValues(localData);
+ } catch(e) {}
+ }
 
-            if (token) {
-                try {
-                    const res = await fetch(`${API_BASE}/auth/me?token=${encodeURIComponent(token)}`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.user) {
-                            localStorage.setItem('studentProfile', JSON.stringify(data.user));
-                            populateDisplayValues(data.user);
-                        }
-                    } else if (res.status === 401) {
-                        handleLogout();
-                    }
-                } catch (err) {
-                    console.warn("Backend load profile fallback:", err);
-                }
-            }
-        }
+ if (token) {
+ try {
+ const res = await fetch(`${API_BASE}/auth/me?token=${encodeURIComponent(token)}`);
+ if (res.ok) {
+ const data = await res.json();
+ if (data.user) {
+ localStorage.setItem('studentProfile', JSON.stringify(data.user));
+ populateDisplayValues(data.user);
+ }
+ } else if (res.status === 401) {
+ handleLogout();
+ }
+ } catch (err) {
+ console.warn("Backend load profile fallback:", err);
+ }
+ }
+ }
 
-        // Handle profile save to backend SQLite database
-        async function handleProfileSave(e) {
-            e.preventDefault();
-            const statusMsg = document.getElementById('profile-status-msg');
-            const saveBtn = document.getElementById('save-profile-btn');
-            
-            statusMsg.style.display = 'none';
-            saveBtn.disabled = true;
-            saveBtn.textContent = "Saving to Database... ⏳";
+ // Handle profile save to backend SQLite database
+ async function handleProfileSave(e) {
+ e.preventDefault();
+ const statusMsg = document.getElementById('profile-status-msg');
+ const saveBtn = document.getElementById('save-profile-btn');
+ 
+ statusMsg.style.display = 'none';
+ saveBtn.disabled = true;
+ saveBtn.textContent = "Saving to Database... ";
 
-            const updatedData = {
-                token: token,
-                name: document.getElementById('prof-name').value.trim(),
-                branch: document.getElementById('prof-branch').value.trim(),
-                attendance: document.getElementById('prof-attendance').value.trim(),
-                hostel: document.getElementById('prof-hostel').value.trim(),
-                career_goal: document.getElementById('prof-goal').value.trim()
-            };
+ const updatedData = {
+ token: token,
+ name: document.getElementById('prof-name').value.trim(),
+ branch: document.getElementById('prof-branch').value.trim(),
+ attendance: document.getElementById('prof-attendance').value.trim(),
+ hostel: document.getElementById('prof-hostel').value.trim(),
+ career_goal: document.getElementById('prof-goal').value.trim()
+ };
 
-            try {
-                const res = await fetch(`${API_BASE}/auth/profile`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updatedData)
-                });
-                const data = await res.json();
-                
-                if (!res.ok) {
-                    throw new Error(data.detail || "Failed to update profile.");
-                }
+ try {
+ const res = await fetch(`${API_BASE}/auth/profile`, {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify(updatedData)
+ });
+ const data = await res.json();
+ 
+ if (!res.ok) {
+ throw new Error(data.detail || "Failed to update profile.");
+ }
 
-                localStorage.setItem('studentProfile', JSON.stringify(data.user));
-                populateDisplayValues(data.user);
+ localStorage.setItem('studentProfile', JSON.stringify(data.user));
+ populateDisplayValues(data.user);
 
-                statusMsg.style.background = '#d4edda';
-                statusMsg.style.border = '2px solid #27ae60';
-                statusMsg.style.color = '#155724';
-                statusMsg.textContent = "✓ Profile successfully saved to database!";
-                statusMsg.style.display = 'block';
-            } catch (err) {
-                statusMsg.style.background = '#fadbd8';
-                statusMsg.style.border = '2px solid #e74c3c';
-                statusMsg.style.color = '#c0392b';
-                statusMsg.textContent = `❌ Error saving profile: ${err.message}`;
-                statusMsg.style.display = 'block';
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.textContent = "Save Profile Changes →";
-            }
-        }
+ statusMsg.style.background = '#d4edda';
+ statusMsg.style.border = '2px solid #27ae60';
+ statusMsg.style.color = '#155724';
+ statusMsg.textContent = " Profile successfully saved to database!";
+ statusMsg.style.display = 'block';
+ } catch (err) {
+ statusMsg.style.background = '#fadbd8';
+ statusMsg.style.border = '2px solid #e74c3c';
+ statusMsg.style.color = '#c0392b';
+ statusMsg.textContent = ` Error saving profile: ${err.message}`;
+ statusMsg.style.display = 'block';
+ } finally {
+ saveBtn.disabled = false;
+ saveBtn.textContent = "Save Profile Changes →";
+ }
+ }
 
-        async function handleLogout(e) {
-            if (e) e.preventDefault();
-            const currentToken = localStorage.getItem('studentSessionToken');
-            if (currentToken) {
-                try {
-                    await fetch(`${API_BASE}/auth/logout`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ token: currentToken })
-                    });
-                } catch (err) {}
-            }
-            localStorage.removeItem('studentSessionToken');
-            localStorage.removeItem('studentProfile');
-            localStorage.removeItem('studentSession');
-            window.location.replace('login.html');
-        }
+ async function handleLogout(e) {
+ if (e) e.preventDefault();
+ const currentToken = localStorage.getItem('studentSessionToken');
+ if (currentToken) {
+ try {
+ await fetch(`${API_BASE}/auth/logout`, {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ token: currentToken })
+ });
+ } catch (err) {}
+ }
+ localStorage.removeItem('studentSessionToken');
+ localStorage.removeItem('studentProfile');
+ localStorage.removeItem('studentSession');
+ window.location.replace('login.html');
+ }
 
-        loadProfileData();
-    </script>
+ loadProfileData();
+ </script>
 </body>
 </html>

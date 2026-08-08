@@ -1,286 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synapse | Onboarding</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .onboarding-wrapper {
-            min-height: calc(100vh - 74px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 5%;
-        }
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Synapse | Onboarding</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="style.css">
+ <style>
+ .onboarding-wrapper {
+ min-height: calc(100vh - 74px);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ padding: 2rem 5%;
+ }
 
-        .onboarding-card {
-            max-width: 520px;
-            width: 100%;
-            padding: 3rem 2.5rem;
-            text-align: center;
-        }
+ .onboarding-card {
+ max-width: 520px;
+ width: 100%;
+ padding: 3rem 2.5rem;
+ text-align: center;
+ }
 
-        .step-indicators {
-            display: flex;
-            justify-content: center;
-            gap: 0.75rem;
-            margin-bottom: 2.5rem;
-        }
+ .step-indicators {
+ display: flex;
+ justify-content: center;
+ gap: 0.75rem;
+ margin-bottom: 2.5rem;
+ }
 
-        .step-pill {
-            font-size: 0.85rem;
-            padding: 0.4rem 1rem;
-            pointer-events: none;
-            opacity: 0.6;
-            transition: all 0.3s ease;
-        }
-        .step-pill.active {
-            opacity: 1;
-            transform: scale(1.05);
-            background: var(--primary-blue) !important;
-            color: white !important;
-        }
+ .step-pill {
+ font-size: 0.85rem;
+ padding: 0.4rem 1rem;
+ pointer-events: none;
+ opacity: 0.6;
+ transition: all 0.3s ease;
+ }
+ .step-pill.active {
+ opacity: 1;
+ transform: scale(1.05);
+ background: var(--primary-blue) !important;
+ color: white !important;
+ }
 
-        .step-content {
-            display: none;
-            text-align: left;
-            animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .step-content.active { display: block; }
+ .step-content {
+ display: none;
+ text-align: left;
+ animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+ }
+ .step-content.active { display: block; }
 
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
+ @keyframes slideInRight {
+ from { opacity: 0; transform: translateX(20px); }
+ to { opacity: 1; transform: translateX(0); }
+ }
 
-        .form-select-wrapper select {
-            width: 100%;
-            border: none;
-            outline: none;
-            font-family: var(--font-body);
-            font-size: 1rem;
-            background: transparent;
-            color: var(--text-main);
-            cursor: pointer;
-        }
-    </style>
+ .form-select-wrapper select {
+ width: 100%;
+ border: none;
+ outline: none;
+ font-family: var(--font-body);
+ font-size: 1rem;
+ background: transparent;
+ color: var(--text-main);
+ cursor: pointer;
+ }
+ </style>
 </head>
 <body>
-    <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
-    <div class="fixed-background-widgets">
-        <!-- Left Side Spread -->
-        <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
-            <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
+ <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
+ <div class="fixed-background-widgets">
+ <!-- Left Side Spread -->
+ <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
+ <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
 
-        <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
-        <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
-        </svg>
+ <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
+ <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
+ </svg>
 
-        <!-- Right Side Spread -->
-        <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-    </div>
+ <!-- Right Side Spread -->
+ <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ </div>
 
-    <nav class="navbar">
-        <div class="nav-brand">🔗 Synapse</div>
-        <button class="hamburger" id="hamburger">☰</button>
-        <div class="nav-links" id="nav-links">
-            <a href="index.html">Home</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="chat.html">Assistant</a>
-        </div>
+ <nav class="navbar">
+ <div class="nav-brand"> Synapse</div>
+ <button class="hamburger" id="hamburger"></button>
+ <div class="nav-links" id="nav-links">
+ <a href="index.html">Home</a>
+ <a href="dashboard.html">Dashboard</a>
+ <a href="chat.html">Assistant</a>
+ </div>
 
-    </nav>
+ </nav>
 
 
-    <div class="onboarding-wrapper" style="position: relative; z-index: 10;">
-        <div class="cloud-container onboarding-card animate-pop">
-            <div class="sticker-tag" style="background: var(--soft-yellow); margin-bottom: 1rem;">🚀 Initialize Agent</div>
-            <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue); margin-bottom: 0.5rem;">Profile Setup</h1>
-            <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 2rem;">Personalize your multi-agent campus assistant.</p>
+ <div class="onboarding-wrapper" style="position: relative; z-index: 10;">
+ <div class="cloud-container onboarding-card animate-pop">
+ <div class="sticker-tag" style="background: var(--soft-yellow); margin-bottom: 1rem;"> Initialize Agent</div>
+ <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue); margin-bottom: 0.5rem;">Profile Setup</h1>
+ <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 2rem;">Personalize your multi-agent campus assistant.</p>
 
-            <div class="step-indicators">
-                <button type="button" class="btn-pill step-pill active" id="pill-step-1">1. Identity</button>
-                <button type="button" class="btn-pill step-pill" id="pill-step-2" style="background: var(--surface); color: var(--text-main);">2. Academics</button>
-                <button type="button" class="btn-pill step-pill" id="pill-step-3" style="background: var(--surface); color: var(--text-main);">3. Goals</button>
-            </div>
+ <div class="step-indicators">
+ <button type="button" class="btn-pill step-pill active" id="pill-step-1">1. Identity</button>
+ <button type="button" class="btn-pill step-pill" id="pill-step-2" style="background: var(--surface); color: var(--text-main);">2. Academics</button>
+ <button type="button" class="btn-pill step-pill" id="pill-step-3" style="background: var(--surface); color: var(--text-main);">3. Goals</button>
+ </div>
 
-            <div id="ob-error-msg" style="display: none; background: #fadbd8; border: 2px solid #e74c3c; border-radius: 12px; padding: 0.75rem 1rem; font-size: 0.9rem; color: #c0392b; font-weight: 600; margin-bottom: 1.5rem; text-align: left;"></div>
+ <div id="ob-error-msg" style="display: none; background: #fadbd8; border: 2px solid #e74c3c; border-radius: 12px; padding: 0.75rem 1rem; font-size: 0.9rem; color: #c0392b; font-weight: 600; margin-bottom: 1.5rem; text-align: left;"></div>
 
-            <form id="onboarding-form" onsubmit="handleOnboardingSubmit(event)">
-                
-                <div class="step-content active" id="step-1">
-                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">What's your full name?</label>
-                    <div class="input-wrapper" style="margin-bottom: 1rem;">
-                        <input type="text" id="ob-name" placeholder="e.g. Bhavya Vennapusa" required style="border: none; box-shadow: none;">
-                    </div>
-                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Email or Roll Number</label>
-                    <div class="input-wrapper" style="margin-bottom: 2rem;">
-                        <input type="text" id="ob-email" placeholder="e.g. student@campus.edu" required style="border: none; box-shadow: none;">
-                    </div>
-                    <div style="text-align: right;">
-                        <button type="button" class="btn-blob" onclick="goToStep(2)">Continue →</button>
-                    </div>
-                </div>
+ <form id="onboarding-form" onsubmit="handleOnboardingSubmit(event)">
+ 
+ <div class="step-content active" id="step-1">
+ <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">What's your full name?</label>
+ <div class="input-wrapper" style="margin-bottom: 1rem;">
+ <input type="text" id="ob-name" placeholder="e.g. Bhavya Vennapusa" required style="border: none; box-shadow: none;">
+ </div>
+ <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Email or Roll Number</label>
+ <div class="input-wrapper" style="margin-bottom: 2rem;">
+ <input type="text" id="ob-email" placeholder="e.g. student@campus.edu" required style="border: none; box-shadow: none;">
+ </div>
+ <div style="text-align: right;">
+ <button type="button" class="btn-blob" onclick="goToStep(2)">Continue →</button>
+ </div>
+ </div>
 
-                <div class="step-content" id="step-2">
-                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Branch & Academic Year</label>
-                    <div class="input-wrapper" style="margin-bottom: 1rem;">
-                        <input type="text" id="ob-branch" placeholder="e.g. CSE - 3rd Year" required style="border: none; box-shadow: none;">
-                    </div>
-                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Account Password</label>
-                    <div class="input-wrapper" style="margin-bottom: 2rem;">
-                        <input type="password" id="ob-password" placeholder="••••••••" required style="border: none; box-shadow: none;">
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <button type="button" class="btn-pill" style="background: var(--surface); color: var(--text-main);" onclick="goToStep(1)">← Back</button>
-                        <button type="button" class="btn-blob" onclick="goToStep(3)">Continue →</button>
-                    </div>
-                </div>
+ <div class="step-content" id="step-2">
+ <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Branch & Academic Year</label>
+ <div class="input-wrapper" style="margin-bottom: 1rem;">
+ <input type="text" id="ob-branch" placeholder="e.g. CSE - 3rd Year" required style="border: none; box-shadow: none;">
+ </div>
+ <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Account Password</label>
+ <div class="input-wrapper" style="margin-bottom: 2rem;">
+ <input type="password" id="ob-password" placeholder="••••••••" required style="border: none; box-shadow: none;">
+ </div>
+ <div style="display: flex; justify-content: space-between;">
+ <button type="button" class="btn-pill" style="background: var(--surface); color: var(--text-main);" onclick="goToStep(1)">← Back</button>
+ <button type="button" class="btn-blob" onclick="goToStep(3)">Continue →</button>
+ </div>
+ </div>
 
-                <div class="step-content" id="step-3">
-                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Primary Career Goal</label>
-                    <div class="input-wrapper form-select-wrapper" style="margin-bottom: 1rem; padding: 0.75rem 1rem;">
-                        <select id="ob-career-goal" required>
-                            <option value="Backend Developer" selected>Backend Developer</option>
-                            <option value="Frontend Developer">Frontend Developer</option>
-                            <option value="Data Scientist">Data Scientist</option>
-                            <option value="Product Manager">Product Manager</option>
-                        </select>
-                    </div>
-                    <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Hostel Block</label>
-                    <div class="input-wrapper" style="margin-bottom: 2rem;">
-                        <input type="text" id="ob-hostel" value="Block B" required style="border: none; box-shadow: none;">
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <button type="button" class="btn-pill" style="background: var(--surface); color: var(--text-main);" onclick="goToStep(2)">← Back</button>
-                        <button type="submit" id="ob-submit-btn" class="btn-blob" style="background: var(--mint-green);">Finish Setup ✨</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+ <div class="step-content" id="step-3">
+ <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Primary Career Goal</label>
+ <div class="input-wrapper form-select-wrapper" style="margin-bottom: 1rem; padding: 0.75rem 1rem;">
+ <select id="ob-career-goal" required>
+ <option value="Backend Developer" selected>Backend Developer</option>
+ <option value="Frontend Developer">Frontend Developer</option>
+ <option value="Data Scientist">Data Scientist</option>
+ <option value="Product Manager">Product Manager</option>
+ </select>
+ </div>
+ <label style="font-family: var(--font-heading); display: block; margin-bottom: 0.3rem; font-size: 1.05rem;">Hostel Block</label>
+ <div class="input-wrapper" style="margin-bottom: 2rem;">
+ <input type="text" id="ob-hostel" value="Block B" required style="border: none; box-shadow: none;">
+ </div>
+ <div style="display: flex; justify-content: space-between;">
+ <button type="button" class="btn-pill" style="background: var(--surface); color: var(--text-main);" onclick="goToStep(2)">← Back</button>
+ <button type="submit" id="ob-submit-btn" class="btn-blob" style="background: var(--mint-green);">Finish Setup </button>
+ </div>
+ </div>
+ </form>
+ </div>
+ </div>
 
-    <script>
-        const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-            ? 'http://localhost:8000' : '';
+ <script>
+ const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+ ? 'http://localhost:8000' : '';
 
-        const hamburger = document.getElementById('hamburger');
-        const navLinks = document.getElementById('nav-links');
-        if (hamburger && navLinks) {
-            hamburger.addEventListener('click', () => {
-                navLinks.classList.toggle('active');
-            });
-        }
+ const hamburger = document.getElementById('hamburger');
+ const navLinks = document.getElementById('nav-links');
+ if (hamburger && navLinks) {
+ hamburger.addEventListener('click', () => {
+ navLinks.classList.toggle('active');
+ });
+ }
 
-        function goToStep(stepNum) {
-            const errBox = document.getElementById('ob-error-msg');
-            if (errBox) errBox.style.display = 'none';
-            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
-            const stepEl = document.getElementById(`step-${stepNum}`);
-            if (stepEl) stepEl.classList.add('active');
+ function goToStep(stepNum) {
+ const errBox = document.getElementById('ob-error-msg');
+ if (errBox) errBox.style.display = 'none';
+ document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+ const stepEl = document.getElementById(`step-${stepNum}`);
+ if (stepEl) stepEl.classList.add('active');
 
-            for (let i = 1; i <= 3; i++) {
-                const pill = document.getElementById(`pill-step-${i}`);
-                if (pill) {
-                    if (i === stepNum) pill.classList.add('active');
-                    else pill.classList.remove('active');
-                }
-            }
-        }
+ for (let i = 1; i <= 3; i++) {
+ const pill = document.getElementById(`pill-step-${i}`);
+ if (pill) {
+ if (i === stepNum) pill.classList.add('active');
+ else pill.classList.remove('active');
+ }
+ }
+ }
 
-        async function handleOnboardingSubmit(e) {
-            if (e) e.preventDefault();
-            const errBox = document.getElementById('ob-error-msg');
-            if (errBox) errBox.style.display = 'none';
+ async function handleOnboardingSubmit(e) {
+ if (e) e.preventDefault();
+ const errBox = document.getElementById('ob-error-msg');
+ if (errBox) errBox.style.display = 'none';
 
-            const btn = document.getElementById('ob-submit-btn');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = "Creating Account... ⏳";
-            }
+ const btn = document.getElementById('ob-submit-btn');
+ if (btn) {
+ btn.disabled = true;
+ btn.innerHTML = "Creating Account... ";
+ }
 
-            const payload = {
-                email: document.getElementById('ob-email').value.trim(),
-                password: document.getElementById('ob-password').value,
-                name: document.getElementById('ob-name').value.trim(),
-                branch: document.getElementById('ob-branch').value.trim() || "CSE - 3rd Year",
-                attendance: "100%",
-                hostel: document.getElementById('ob-hostel').value.trim() || "Block B",
-                career_goal: document.getElementById('ob-career-goal').value
-            };
+ const payload = {
+ email: document.getElementById('ob-email').value.trim(),
+ password: document.getElementById('ob-password').value,
+ name: document.getElementById('ob-name').value.trim(),
+ branch: document.getElementById('ob-branch').value.trim() || "CSE - 3rd Year",
+ attendance: "100%",
+ hostel: document.getElementById('ob-hostel').value.trim() || "Block B",
+ career_goal: document.getElementById('ob-career-goal').value
+ };
 
-            try {
-                const res = await fetch(`${API_BASE}/auth/signup`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
+ try {
+ const res = await fetch(`${API_BASE}/auth/signup`, {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify(payload)
+ });
+ const data = await res.json();
 
-                const token = data.token || ("demo_token_" + Date.now());
-                const userObj = data.user || payload;
+ const token = data.token || ("demo_token_" + Date.now());
+ const userObj = data.user || payload;
 
-                localStorage.setItem('studentSessionToken', token);
-                localStorage.setItem('studentProfile', JSON.stringify(userObj));
-                localStorage.setItem('mem_name', userObj.name);
-                localStorage.setItem('mem_branch', userObj.branch);
-                localStorage.setItem('mem_attendance', userObj.attendance);
-                localStorage.setItem('mem_hostel', userObj.hostel);
-                localStorage.setItem('studentSession', JSON.stringify({ email: userObj.email, name: userObj.name, token: token }));
-                
-                window.location.href = 'dashboard.html';
-            } catch (err) {
-                console.warn("[Onboarding Fallback]:", err);
-                const fallbackToken = "demo_token_" + Date.now();
-                localStorage.setItem('studentSessionToken', fallbackToken);
-                localStorage.setItem('studentProfile', JSON.stringify(payload));
-                localStorage.setItem('mem_name', payload.name);
-                localStorage.setItem('mem_branch', payload.branch);
-                localStorage.setItem('mem_attendance', payload.attendance);
-                localStorage.setItem('mem_hostel', payload.hostel);
-                localStorage.setItem('studentSession', JSON.stringify({ email: payload.email, name: payload.name, token: fallbackToken }));
-                window.location.href = 'dashboard.html';
-            }
-        }
-    </script>
+ localStorage.setItem('studentSessionToken', token);
+ localStorage.setItem('studentProfile', JSON.stringify(userObj));
+ localStorage.setItem('mem_name', userObj.name);
+ localStorage.setItem('mem_branch', userObj.branch);
+ localStorage.setItem('mem_attendance', userObj.attendance);
+ localStorage.setItem('mem_hostel', userObj.hostel);
+ localStorage.setItem('studentSession', JSON.stringify({ email: userObj.email, name: userObj.name, token: token }));
+ 
+ window.location.href = 'dashboard.html';
+ } catch (err) {
+ console.warn("[Onboarding Fallback]:", err);
+ const fallbackToken = "demo_token_" + Date.now();
+ localStorage.setItem('studentSessionToken', fallbackToken);
+ localStorage.setItem('studentProfile', JSON.stringify(payload));
+ localStorage.setItem('mem_name', payload.name);
+ localStorage.setItem('mem_branch', payload.branch);
+ localStorage.setItem('mem_attendance', payload.attendance);
+ localStorage.setItem('mem_hostel', payload.hostel);
+ localStorage.setItem('studentSession', JSON.stringify({ email: payload.email, name: payload.name, token: fallbackToken }));
+ window.location.href = 'dashboard.html';
+ }
+ }
+ </script>
 </body>
 </html>

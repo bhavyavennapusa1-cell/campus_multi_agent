@@ -1,336 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synapse | Academic Organizer</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="dashboard.css">
-    <style>
-        .academic-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 2rem 5%;
-        }
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Synapse | Academic Organizer</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="style.css">
+ <link rel="stylesheet" href="dashboard.css">
+ <style>
+ .academic-container {
+ max-width: 900px;
+ margin: 0 auto;
+ padding: 2rem 5%;
+ }
 
-        .organize-form-card {
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 5px 5px 0px var(--border-dark);
-            margin-bottom: 2rem;
-        }
+ .organize-form-card {
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 20px;
+ padding: 2rem;
+ box-shadow: 5px 5px 0px var(--border-dark);
+ margin-bottom: 2rem;
+ }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
-        }
+ .form-group {
+ display: flex;
+ flex-direction: column;
+ gap: 0.5rem;
+ margin-bottom: 1.25rem;
+ }
 
-        .form-group label {
-            font-family: var(--font-heading);
-            font-size: 1.1rem;
-            color: var(--text-main);
-        }
+ .form-group label {
+ font-family: var(--font-heading);
+ font-size: 1.1rem;
+ color: var(--text-main);
+ }
 
-        .form-input {
-            width: 100%;
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 16px;
-            padding: 0.75rem 1rem;
-            font-family: var(--font-body);
-            font-size: 1rem;
-            outline: none;
-            box-shadow: 3px 3px 0px var(--border-dark);
-            transition: all 0.15s ease;
-        }
+ .form-input {
+ width: 100%;
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 16px;
+ padding: 0.75rem 1rem;
+ font-family: var(--font-body);
+ font-size: 1rem;
+ outline: none;
+ box-shadow: 3px 3px 0px var(--border-dark);
+ transition: all 0.15s ease;
+ }
 
-        .form-input:focus {
-            border-color: var(--primary-blue);
-            transform: translateY(-1px);
-            box-shadow: 4px 4px 0px var(--border-dark);
-        }
+ .form-input:focus {
+ border-color: var(--primary-blue);
+ transform: translateY(-1px);
+ box-shadow: 4px 4px 0px var(--border-dark);
+ }
 
-        .confirmation-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
+ .confirmation-chips {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 0.75rem;
+ margin-bottom: 1.5rem;
+ }
 
-        .checklist-day-card {
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 1.25rem;
-            box-shadow: 4px 4px 0px var(--border-dark);
-        }
+ .checklist-day-card {
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 20px;
+ padding: 1.5rem;
+ margin-bottom: 1.25rem;
+ box-shadow: 4px 4px 0px var(--border-dark);
+ }
 
-        .day-header {
-            font-family: var(--font-heading);
-            font-size: 1.25rem;
-            color: var(--primary-blue-dark);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px dashed var(--border-dark);
-        }
+ .day-header {
+ font-family: var(--font-heading);
+ font-size: 1.25rem;
+ color: var(--primary-blue-dark);
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ margin-bottom: 1rem;
+ padding-bottom: 0.5rem;
+ border-bottom: 2px dashed var(--border-dark);
+ }
 
-        .task-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-            font-size: 0.95rem;
-        }
+ .task-item {
+ display: flex;
+ align-items: center;
+ gap: 0.75rem;
+ padding: 0.5rem 0;
+ font-size: 0.95rem;
+ }
 
-        .task-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: var(--primary-blue);
-        }
+ .task-item input[type="checkbox"] {
+ width: 18px;
+ height: 18px;
+ cursor: pointer;
+ accent-color: var(--primary-blue);
+ }
 
-        .loading-box {
-            text-align: center;
-            padding: 3rem 1.5rem;
-            background: var(--surface);
-            border: 3px solid var(--border-dark);
-            border-radius: 20px;
-            box-shadow: 4px 4px 0px var(--border-dark);
-        }
+ .loading-box {
+ text-align: center;
+ padding: 3rem 1.5rem;
+ background: var(--surface);
+ border: 3px solid var(--border-dark);
+ border-radius: 20px;
+ box-shadow: 4px 4px 0px var(--border-dark);
+ }
 
-        .spinner-large {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border-dark);
-            border-top-color: var(--primary-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-    </style>
+ .spinner-large {
+ width: 40px;
+ height: 40px;
+ border: 4px solid var(--border-dark);
+ border-top-color: var(--primary-blue);
+ border-radius: 50%;
+ animation: spin 1s linear infinite;
+ margin: 0 auto 1rem;
+ }
+ </style>
 </head>
 <body>
-    <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
-    <div class="fixed-background-widgets">
-        <!-- Left Side Spread -->
-        <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
-            <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
+ <!-- Background Widgets Container (Fixed to viewport, scattered to prevent overlap) -->
+ <div class="fixed-background-widgets">
+ <!-- Left Side Spread -->
+ <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
+ <rect x="20" y="40" width="60" height="20" rx="3" fill="#FFB6C1"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 85%; left: 12%; width: 45px; animation-delay: 2s; transform: rotate(20deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
 
-        <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
-        <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
-        </svg>
+ <!-- Center-ish Spread (Safely peeking behind gaps in cards) -->
+ <svg class="widget-sticker" style="top: 20%; left: 30%; width: 35px; animation-delay: 0.8s; transform: rotate(10deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 75%; left: 45%; width: 30px; animation-delay: 1.5s; transform: rotate(-15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="bottom: 8%; left: 35%; width: 40px; animation-delay: 2.2s; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#D1C4E9"/>
+ </svg>
 
-        <!-- Right Side Spread -->
-        <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
-            <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-        <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
-            <rect x="10" y="10" width="80" height="80" rx="4"/>
-            <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
-        </svg>
-    </div>
+ <!-- Right Side Spread -->
+ <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 25%; right: 25%; width: 30px; animation-delay: 1s; transform: rotate(12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
+ </svg>
+ </div>
 
-    <!-- Navbar Reused -->
-    <nav class="navbar">
-        <div class="nav-brand">🔗 Synapse</div>
-        <button class="hamburger" id="hamburger">☰</button>
-        <div class="nav-links" id="nav-links">
-            <a href="index.html">Home</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="chat.html">Assistant</a>
-            <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out 🚪</a>
-        </div>
-    </nav>
+ <!-- Navbar Reused -->
+ <nav class="navbar">
+ <div class="nav-brand"> Synapse</div>
+ <button class="hamburger" id="hamburger"></button>
+ <div class="nav-links" id="nav-links">
+ <a href="index.html">Home</a>
+ <a href="dashboard.html">Dashboard</a>
+ <a href="chat.html">Assistant</a>
+ <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out </a>
+ </div>
+ </nav>
 
-    <main class="academic-container" style="position: relative; z-index: 10;">
+ <main class="academic-container" style="position: relative; z-index: 10;">
 
-        <!-- Cloud Container Hero -->
-        <div class="cloud-container" style="padding: 2rem; margin-bottom: 2rem;">
-            <a href="chat.html?prompt=Help%20me%20generate%20a%20study%20plan%20and%20organize%20tasks" class="sticker-tag route-to-chat" data-prompt="Help me generate a study plan and organize tasks" style="background: var(--mint-green); text-decoration: none; cursor: pointer; display: inline-block;">🎓 Academic Organizer Agent</a>
-            <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue);">Organize Study Agenda</h1>
-            <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0;">
-                Tell our Academic Agent what exam, project, or topic you are preparing for. We'll generate a day-by-day plan and automatically sync tasks & calendar reminders!
-            </p>
-        </div>
+ <!-- Cloud Container Hero -->
+ <div class="cloud-container" style="padding: 2rem; margin-bottom: 2rem;">
+ <a href="chat.html?prompt=Help%20me%20generate%20a%20study%20plan%20and%20organize%20tasks" class="sticker-tag route-to-chat" data-prompt="Help me generate a study plan and organize tasks" style="background: var(--mint-green); text-decoration: none; cursor: pointer; display: inline-block;"> Academic Organizer Agent</a>
+ <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--primary-blue);">Organize Study Agenda</h1>
+ <p style="color: var(--text-muted); max-width: 600px; margin: 0.5rem auto 0;">
+ Tell our Academic Agent what exam, project, or topic you are preparing for. We'll generate a day-by-day plan and automatically sync tasks & calendar reminders!
+ </p>
+ </div>
 
-        <!-- Form Section -->
-        <div class="organize-form-card">
-            <form id="academic-organize-form" onsubmit="handleFormSubmit(event)">
-                <div class="form-group">
-                    <label for="target-topic">What do you need to prepare for?</label>
-                    <input type="text" id="target-topic" class="form-input" placeholder="e.g. Operating Systems Final Exam & Lab Viva" required>
-                </div>
+ <!-- Form Section -->
+ <div class="organize-form-card">
+ <form id="academic-organize-form" onsubmit="handleFormSubmit(event)">
+ <div class="form-group">
+ <label for="target-topic">What do you need to prepare for?</label>
+ <input type="text" id="target-topic" class="form-input" placeholder="e.g. Operating Systems Final Exam & Lab Viva" required>
+ </div>
 
-                <div class="form-group">
-                    <label for="target-date">Target Date / Exam Date</label>
-                    <input type="date" id="target-date" class="form-input" required>
-                </div>
+ <div class="form-group">
+ <label for="target-date">Target Date / Exam Date</label>
+ <input type="date" id="target-date" class="form-input" required>
+ </div>
 
-                <div style="margin-top: 1.5rem; text-align: right;">
-                    <button type="submit" id="submit-btn" class="btn-blob" style="background: var(--mint-green);">Generate Study Plan ✨</button>
-                </div>
-            </form>
-        </div>
+ <div style="margin-top: 1.5rem; text-align: right;">
+ <button type="submit" id="submit-btn" class="btn-blob" style="background: var(--mint-green);">Generate Study Plan </button>
+ </div>
+ </form>
+ </div>
 
-        <!-- Dynamic Output Viewport -->
-        <div id="organize-result-viewport"></div>
-    </main>
+ <!-- Dynamic Output Viewport -->
+ <div id="organize-result-viewport"></div>
+ </main>
 
-    <footer class="footer">
-        <p>Built with ❤️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
-    </footer>
+ <footer class="footer">
+ <p>Built with ️ for AgentX National Hackathon 2026 | <a href="https://github.com/bhavyavennapusa1-cell/campus_multi_agent" target="_blank" style="color: var(--primary-blue); font-weight: 600;">GitHub Repository</a></p>
+ </footer>
 
-    <script>
-        document.getElementById('hamburger').addEventListener('click', () => {
-            document.getElementById('nav-links').classList.toggle('active');
-        });
+ <script>
+ document.getElementById('hamburger').addEventListener('click', () => {
+ document.getElementById('nav-links').classList.toggle('active');
+ });
 
-        const defaultDate = new Date();
-        defaultDate.setDate(defaultDate.getDate() + 5);
-        document.getElementById('target-date').value = defaultDate.toISOString().split('T')[0];
+ const defaultDate = new Date();
+ defaultDate.setDate(defaultDate.getDate() + 5);
+ document.getElementById('target-date').value = defaultDate.toISOString().split('T')[0];
 
-        async function handleFormSubmit(event) {
-            event.preventDefault();
-            const topic = document.getElementById('target-topic').value.trim();
-            const date = document.getElementById('target-date').value;
-            if (!topic || !date) return;
+ async function handleFormSubmit(event) {
+ event.preventDefault();
+ const topic = document.getElementById('target-topic').value.trim();
+ const date = document.getElementById('target-date').value;
+ if (!topic || !date) return;
 
-            const viewport = document.getElementById('organize-result-viewport');
-            const submitBtn = document.getElementById('submit-btn');
+ const viewport = document.getElementById('organize-result-viewport');
+ const submitBtn = document.getElementById('submit-btn');
 
-            submitBtn.disabled = true;
-            viewport.innerHTML = `
-                <div class="loading-box">
-                    <div class="spinner-large"></div>
-                    <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Generating your plan...</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
-                        Synthesizing study modules for "${topic}" and creating task checklist & calendar reminders...
-                    </p>
-                </div>
-            `;
+ submitBtn.disabled = true;
+ viewport.innerHTML = `
+ <div class="loading-box">
+ <div class="spinner-large"></div>
+ <h3 style="font-family: var(--font-heading); color: var(--primary-blue);">Generating your plan...</h3>
+ <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+ Synthesizing study modules for "${topic}" and creating task checklist & calendar reminders...
+ </p>
+ </div>
+ `;
 
-            try {
-                const res = await fetch('/api/academic/organize', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ subject: topic, target_date: date })
-                });
-                const planData = await res.json();
-                submitBtn.disabled = false;
-                renderAcademicPlan(planData);
-            } catch (err) {
-                console.warn("Backend organize API error:", err);
-                submitBtn.disabled = false;
-                resultViewport.innerHTML = `<div class="loading-box"><p style="color: #c0392b;">Failed to generate study plan. Please try again.</p></div>`;
-            }
-        }
+ try {
+ const res = await fetch('/api/academic/organize', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ subject: topic, target_date: date })
+ });
+ const planData = await res.json();
+ submitBtn.disabled = false;
+ renderAcademicPlan(planData);
+ } catch (err) {
+ console.warn("Backend organize API error:", err);
+ submitBtn.disabled = false;
+ resultViewport.innerHTML = `<div class="loading-box"><p style="color: #c0392b;">Failed to generate study plan. Please try again.</p></div>`;
+ }
+ }
 
 
-        function renderAcademicPlan(data) {
-            const viewport = document.getElementById('organize-result-viewport');
-            if (!data || data.status !== "success") {
-                viewport.innerHTML = `<div class="loading-box"><p>No plan generated.</p></div>`;
-                return;
-            }
+ function renderAcademicPlan(data) {
+ const viewport = document.getElementById('organize-result-viewport');
+ if (!data || data.status !== "success") {
+ viewport.innerHTML = `<div class="loading-box"><p>No plan generated.</p></div>`;
+ return;
+ }
 
-            const subject = data.subject || "Subject";
-            const planType = data.plan_type || "Exam Preparation Schedule";
-            const daysRemaining = data.days_remaining || 10;
-            const subtopics = data.subtopics || [];
-            const taskCount = (data.created_tasks && data.created_tasks.length) || subtopics.length;
-            const calCount = (data.calendar_events && data.calendar_events.length) || subtopics.length;
+ const subject = data.subject || "Subject";
+ const planType = data.plan_type || "Exam Preparation Schedule";
+ const daysRemaining = data.days_remaining || 10;
+ const subtopics = data.subtopics || [];
+ const taskCount = (data.created_tasks && data.created_tasks.length) || subtopics.length;
+ const calCount = (data.calendar_events && data.calendar_events.length) || subtopics.length;
 
-            let html = `
-                <div class="confirmation-chips" style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-                    <span class="sticker-tag" style="background: var(--mint-green); font-size: 0.95rem; margin: 0; transform: rotate(-1deg);">
-                        ✓ ${taskCount} tasks added to Tasks
-                    </span>
-                    <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.95rem; margin: 0; transform: rotate(1deg);">
-                        ✓ ${calCount} reminders added to Calendar
-                    </span>
-                    <span class="sticker-tag" style="background: var(--lavender); font-size: 0.95rem; margin: 0;">
-                        🎯 ${planType} (${daysRemaining} Days)
-                    </span>
-                </div>
-                <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary-blue); margin-bottom: 1rem;">
-                    📖 Subject-Specific Breakdown: ${subject}
-                </h3>
-            `;
+ let html = `
+ <div class="confirmation-chips" style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+ <span class="sticker-tag" style="background: var(--mint-green); font-size: 0.95rem; margin: 0; transform: rotate(-1deg);">
+ ${taskCount} tasks added to Tasks
+ </span>
+ <span class="sticker-tag" style="background: var(--soft-yellow); font-size: 0.95rem; margin: 0; transform: rotate(1deg);">
+ ${calCount} reminders added to Calendar
+ </span>
+ <span class="sticker-tag" style="background: var(--lavender); font-size: 0.95rem; margin: 0;">
+ ${planType} (${daysRemaining} Days)
+ </span>
+ </div>
+ <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary-blue); margin-bottom: 1rem;">
+ Subject-Specific Breakdown: ${subject}
+ </h3>
+ `;
 
-            subtopics.forEach((st, idx) => {
-                const dayLabel = `Day ${st.target_day || (idx + 1)} (${st.target_date || 'Target'})`;
-                const title = st.title || `Subtopic ${idx + 1}`;
-                const priority = st.priority || "High";
-                const hours = st.estimated_hours || 2.5;
-                const resources = st.resources || [];
+ subtopics.forEach((st, idx) => {
+ const dayLabel = `Day ${st.target_day || (idx + 1)} (${st.target_date || 'Target'})`;
+ const title = st.title || `Subtopic ${idx + 1}`;
+ const priority = st.priority || "High";
+ const hours = st.estimated_hours || 2.5;
+ const resources = st.resources || [];
 
-                html += `
-                    <div class="checklist-day-card" style="margin-bottom: 1.25rem;">
-                        <div class="day-header" style="display: flex; justify-content: space-between; align-items: center; background: var(--lavender); padding: 0.6rem 1rem; border-radius: 10px; margin-bottom: 0.75rem;">
-                            <span style="font-weight: 700; color: var(--primary-blue);">📅 ${dayLabel} — ${title}</span>
-                            <span style="font-size: 0.8rem; background: var(--surface); padding: 0.2rem 0.5rem; border: 1px solid var(--border-dark); border-radius: 6px; font-weight: 600;">⏱️ ${hours} hrs | ${priority}</span>
-                        </div>
-                        <div class="tasks-list" style="padding: 0.5rem 0.5rem 0;">
-                            <div class="task-item" style="margin-bottom: 0.75rem;">
-                                <input type="checkbox" id="task-subtopic-org-${idx}">
-                                <label for="task-subtopic-org-${idx}"><strong>Study Milestone:</strong> Complete core concepts & problem set for ${title}</label>
-                            </div>
-                            <div style="margin-top: 0.5rem; padding-left: 1.75rem;">
-                                <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem;">VERIFIED ACADEMIC RESOURCES:</div>
-                                ${resources.map(r => `
-                                    <div style="display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 2px solid var(--border-dark); padding: 0.4rem 0.75rem; border-radius: 8px; margin-bottom: 0.4rem; font-size: 0.85rem;">
-                                        <span>${r.type === 'video' ? '📺' : '📖'} <strong>${r.provider ? r.provider + ': ' : ''}</strong>${r.title}</span>
-                                        <a href="${r.url}" target="_blank" rel="noopener" class="btn-pill" style="font-size: 0.75rem; padding: 0.2rem 0.6rem; background: ${r.type === 'video' ? '#e74c3c' : 'var(--primary-blue)'}; color: #ffffff; text-decoration: none;">Open ${r.type === 'video' ? 'Video ↗' : 'Textbook ↗'}</a>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
+ html += `
+ <div class="checklist-day-card" style="margin-bottom: 1.25rem;">
+ <div class="day-header" style="display: flex; justify-content: space-between; align-items: center; background: var(--lavender); padding: 0.6rem 1rem; border-radius: 10px; margin-bottom: 0.75rem;">
+ <span style="font-weight: 700; color: var(--primary-blue);"> ${dayLabel} — ${title}</span>
+ <span style="font-size: 0.8rem; background: var(--surface); padding: 0.2rem 0.5rem; border: 1px solid var(--border-dark); border-radius: 6px; font-weight: 600;">️ ${hours} hrs | ${priority}</span>
+ </div>
+ <div class="tasks-list" style="padding: 0.5rem 0.5rem 0;">
+ <div class="task-item" style="margin-bottom: 0.75rem;">
+ <input type="checkbox" id="task-subtopic-org-${idx}">
+ <label for="task-subtopic-org-${idx}"><strong>Study Milestone:</strong> Complete core concepts & problem set for ${title}</label>
+ </div>
+ <div style="margin-top: 0.5rem; padding-left: 1.75rem;">
+ <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.4rem;">VERIFIED ACADEMIC RESOURCES:</div>
+ ${resources.map(r => `
+ <div style="display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 2px solid var(--border-dark); padding: 0.4rem 0.75rem; border-radius: 8px; margin-bottom: 0.4rem; font-size: 0.85rem;">
+ <span>${r.type === 'video' ? '' : ''} <strong>${r.provider ? r.provider + ': ' : ''}</strong>${r.title}</span>
+ <a href="${r.url}" target="_blank" rel="noopener" class="btn-pill" style="font-size: 0.75rem; padding: 0.2rem 0.6rem; background: ${r.type === 'video' ? '#e74c3c' : 'var(--primary-blue)'}; color: #ffffff; text-decoration: none;">Open ${r.type === 'video' ? 'Video ' : 'Textbook '}</a>
+ </div>
+ `).join('')}
+ </div>
+ </div>
+ </div>
+ `;
+ });
 
-            viewport.innerHTML = html;
-        }
-    </script>
+ viewport.innerHTML = html;
+ }
+ </script>
 </body>
 </html>

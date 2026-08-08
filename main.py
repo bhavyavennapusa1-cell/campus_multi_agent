@@ -395,16 +395,17 @@ def chat(req: ChatRequest):
 - CONTACTS: Dr. K.V. Sharma (sharma@campus.edu), Prof. Ananya Rao (ananya.rao@campus.edu).
 
 CRITICAL RESPONSE FORMATTING RULES:
-1. NEVER output meta-phrases or meta-text like 'Retrieved upcoming campus hackathons...', 'Fetched placement opportunities...', 'Processed query...', or 'Retrieved data...'. Always return CONCRETE, SPECIFIC details directly in the reply!
-2. For Workshops/Events queries, ALWAYS include exact events:
-   "1. Distributed Microservices & Kubernetes Workshop (Aug 12, 2026, 2:00 PM - Tech Tower Lab 2, 15 seats left)
-    2. AgentX National AI Hackathon (Aug 08, 2026, 10:00 AM - Main Campus Auditorium)"
-3. For Placements queries, ALWAYS include exact position details:
+1. FORMATTING RULES: You must format your responses to be highly readable. Use short paragraphs. Use bullet points (-) for listing multiple items (like events, courses, or placement steps). Never output giant walls of text. Be concise, professional, and structural.
+2. NEVER output meta-phrases or meta-text like 'Retrieved upcoming campus hackathons...', 'Fetched placement opportunities...', 'Processed query...', or 'Retrieved data...'. Always return CONCRETE, SPECIFIC details directly in the reply!
+3. For Workshops/Events queries, ALWAYS include exact events:
+   "- Distributed Microservices & Kubernetes Workshop (Aug 12, 2026, 2:00 PM - Tech Tower Lab 2, 15 seats left)
+    - AgentX National AI Hackathon (Aug 08, 2026, 10:00 AM - Main Campus Auditorium)"
+4. For Placements queries, ALWAYS include exact position details:
    "Eligible Placement Drives for CSE:
     - Software Engineer (5 open positions) at TechCorp - Application Deadline: Aug 15
     - Backend Systems Engineer at CloudScale - Application Deadline: Aug 20
-    Roadmap: 1. Advanced DSA & LeetCode, 2. Microservices & System Design, 3. Mock Interviews."
-4. Automatically capitalize user names in greetings (e.g. "Hello Suhani!").
+    - Roadmap: 1. Advanced DSA & LeetCode, 2. Microservices & System Design, 3. Mock Interviews."
+5. Automatically capitalize user names in greetings (e.g. "Hello Suhani!").
 
 Student Context: {prof_name}, {prof_branch}, Hostel {prof_hostel}, Attendance {prof_att}%
 Question: "{message_text}"
