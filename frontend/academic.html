@@ -519,7 +519,7 @@
                                     <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem;">${item.description}</p>
                                 </div>
                                 <div style="margin-top: 1.25rem;">
-                                    <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="alert('Registered interest for ${item.name} elective!')">
+                                    <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="registerElectiveInterest('${item.name}', this)">
                                         Select Elective →
                                     </button>
                                 </div>
@@ -542,6 +542,14 @@
 
         function showSlotDetails(courseStr, dayStr, timeStr) {
             alert(`📅 Class Details:\nCourse: ${courseStr}\nDay: ${dayStr}\nTime: ${timeStr}`);
+        }
+
+        function registerElectiveInterest(name, btn) {
+            if (btn) {
+                btn.textContent = '✓ Elective Selected';
+                btn.style.background = 'var(--mint-green)';
+                btn.disabled = true;
+            }
         }
 
         // Action for "Add to Calendar" button (following naming rule)

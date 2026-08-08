@@ -506,7 +506,7 @@ I am writing to respectfully request a short extension of 2 days on the CSE301 D
 Thank you for your understanding.
 
 Sincerely,
-Bhavya Vennapusa (CSE - 3rd Year)</textarea>
+Student</textarea>
                                 </div>
                                 <div style="display: flex; gap: 0.75rem;">
                                     <button type="submit" class="btn-pill" style="background: var(--primary-blue); color: white;">Send Email ✉️</button>
@@ -547,7 +547,7 @@ Bhavya Vennapusa (CSE - 3rd Year)</textarea>
                         <!-- Comment: Note that Google Calendar sync happens via backend POST /communication/calendar -->
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                             <div style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-main);">📅 Calendar Reminders & Schedule</div>
-                            <button class="btn-pill" style="font-size: 0.8rem;" onclick="alert('Add Schedule Entry stub triggered')">+ Add Schedule Entry</button>
+                            <button class="btn-pill" style="font-size: 0.8rem;" onclick="addScheduleEntry()">+ Add Schedule Entry</button>
                         </div>
                         <div class="cards-grid">
                     `;
@@ -560,8 +560,8 @@ Bhavya Vennapusa (CSE - 3rd Year)</textarea>
                                     <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">⏰ ${s.datetime}</p>
                                 </div>
                                 <div style="display: flex; gap: 0.4rem; margin-top: 1rem;">
-                                    <button class="btn-pill" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="alert('Editing schedule entry...')">Edit</button>
-                                    <button class="btn-pill" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; background: #c0392b; color: white;" onclick="alert('Cancelled entry.')">Cancel</button>
+                                    <button class="btn-pill" style="font-size: 0.75rem; padding: 0.25rem 0.6rem;" onclick="downloadIcsFile('${s.title}', '${s.datetime}', 'Campus Grounds')">Export .ics 📅</button>
+                                    <button class="btn-pill" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; background: #c0392b; color: white;" onclick="cancelScheduleEntry(this)">Cancel</button>
                                 </div>
                             </div>
                         `;
@@ -628,6 +628,14 @@ Bhavya Vennapusa (CSE - 3rd Year)</textarea>
             const recipientEmail = document.getElementById('email-to')?.value || "sharma@campus.edu";
             const subject = document.getElementById('email-subject')?.value || "Request for Extension";
 
+            let userName = 'Student';
+            let userBranch = 'CSE';
+            try {
+                const p = JSON.parse(localStorage.getItem('studentProfile') || '{}');
+                if (p.name) userName = p.name;
+                if (p.branch) userBranch = p.branch;
+            } catch (e) {}
+
             try {
                 if (window.CampusApi && window.CampusApi.draftEmail) {
                     const res = await window.CampusApi.draftEmail(recipientEmail, subject, prompt);
@@ -639,7 +647,7 @@ Bhavya Vennapusa (CSE - 3rd Year)</textarea>
                 }
             } catch (err) {
                 console.warn("Draft email backend fallback:", err);
-                document.getElementById('email-body').value = `Dear Recipient,\n\nI am writing regarding "${prompt}". Please accept this request as discussed.\n\nBest regards,\nBhavya Vennapusa`;
+                document.getElementById('email-body').value = `Dear Dr. Sharma,\n\nI am writing regarding "${prompt}". Please accept this request as discussed.\n\nBest regards,\n${userName} (${userBranch})`;
             }
             alert("✓ AI Draft Generated!");
         }
@@ -699,6 +707,24 @@ Bhavya Vennapusa (CSE - 3rd Year)</textarea>
             alert(`✓ Group "${name}" created!`);
         }
 
+
+        function addScheduleEntry() {
+            const title = prompt("Enter Schedule Event Title:", "Faculty Office Hours Consultation");
+            if (!title) return;
+            const dateStr = prompt("Enter Date & Time (e.g. Aug 15, 2026 10:00 AM):", "Aug 15, 2026 10:00 AM");
+            downloadIcsFile(title, dateStr || 'Aug 15, 2026', 'Department Office', `Scheduled reminder for ${title}`);
+        }
+
+        function cancelScheduleEntry(btn) {
+            if (btn) {
+                const card = btn.closest('.comm-card');
+                if (card) {
+                    card.style.opacity = '0.5';
+                    btn.textContent = 'Cancelled';
+                    btn.disabled = true;
+                }
+            }
+        }
 
         // Initial render
         renderCommTab('contacts');

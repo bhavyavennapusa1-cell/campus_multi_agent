@@ -171,7 +171,7 @@
                         <div style="margin-top: 0.3rem;"><strong>Mess Supervisor:</strong> Mr. Rajesh Kumar</div>
                         <div style="margin-top: 0.3rem;"><strong>Mess Menu Today:</strong> Paneer Butter Masala, Chapati, Dal & Rice</div>
                         <div style="margin-top: 0.6rem;">
-                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); alert('Maintenance request logged for Block B!')">Log Room Maintenance Request →</button>
+                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); logRoomMaintenance(this)">Log Room Maintenance Request →</button>
                         </div>
                     </div>
                 </div>
@@ -192,7 +192,7 @@
                         <div><strong>Books Issued:</strong> 2 Active ("Designing Data-Intensive Applications", "Operating Systems Internals")</div>
                         <div style="margin-top: 0.3rem;"><strong>Due Date:</strong> Aug 18, 2026</div>
                         <div style="margin-top: 0.6rem;">
-                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); alert('Book renewal request submitted!')">Renew Book Loan 📖</button>
+                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); renewBookLoan(this)">Renew Book Loan 📖</button>
                         </div>
                     </div>
                 </div>
@@ -234,7 +234,7 @@
                         <div><strong>Route 4 Shuttle:</strong> City Station ↔ Main Gate</div>
                         <div style="margin-top: 0.3rem;"><strong>Next Departure:</strong> 05:30 PM (Main Gate Bay 2)</div>
                         <div style="margin-top: 0.6rem;">
-                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); alert('Live Shuttle Location: 2.1 km away')">Track Live Bus 📍</button>
+                            <button class="btn-pill" style="font-size: 0.75rem;" onclick="event.stopPropagation(); trackLiveShuttle(this)">Track Live Bus 📍</button>
                         </div>
                     </div>
                 </div>
@@ -316,6 +316,31 @@
         function showGrievanceForm() {
             const form = document.getElementById('grievance-form-container');
             if (form) form.style.display = 'block';
+        }
+
+        function logRoomMaintenance(btn) {
+            const ticketId = "MNT-" + Math.floor(1000 + Math.random() * 9000);
+            if (btn) {
+                btn.textContent = `✓ Request Logged (${ticketId})`;
+                btn.style.background = 'var(--mint-green)';
+                btn.disabled = true;
+            }
+        }
+
+        function renewBookLoan(btn) {
+            const newDueDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            if (btn) {
+                btn.textContent = `✓ Extended to ${newDueDate}`;
+                btn.style.background = 'var(--mint-green)';
+                btn.disabled = true;
+            }
+        }
+
+        function trackLiveShuttle(btn) {
+            if (btn) {
+                btn.textContent = '📍 Shuttle Live: 1.8 km away (Est: 4 mins)';
+                btn.style.background = 'var(--soft-yellow)';
+            }
         }
 
         // TODO: Replace with real POST /services/grievance
