@@ -712,8 +712,11 @@
             viewport.innerHTML = html;
         }
 
-        // Initial tab render
-        renderAcademicTab('courses');
+        // Initial tab render with URL search param support
+        const urlParams = new URLSearchParams(window.location.search);
+        const initTab = urlParams.get('tab') || 'courses';
+        const targetPill = document.querySelector(`.pill-tab[onclick*="'${initTab}'"]`);
+        switchAcademicTab(initTab, targetPill || document.querySelector('.pill-tab'));
 
         // Toggle strikethrough both ways for academic study plan task checkboxes
         document.addEventListener('change', (e) => {
