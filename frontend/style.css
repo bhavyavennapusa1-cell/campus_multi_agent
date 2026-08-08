@@ -14,9 +14,81 @@
   --text-muted: #7F8C8D;
   --border-dark: #2C3E50;
 
+  --bg-color: #E8F4F8;
+  --card-bg: #FFFFFF;
+  --text-color: #2C3E50;
+  --border-color: #2C3E50;
+  --shadow-color: rgba(44, 62, 80, 0.85);
+
   --font-heading: 'Space Grotesk', sans-serif;
   --font-script: 'Inter', sans-serif;
   --font-body: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+    --bg-color: #0f172a; /* Deep Slate Background */
+    --card-bg: #1e293b; /* Darker Card Background */
+    --text-color: #f8fafc; /* Crisp White Text */
+    --text-muted: #94a3b8; /* Soft Gray Text */
+    --border-color: #334155; /* Muted Borders */
+    --shadow-color: rgba(0, 0, 0, 0.8); /* Deeper shadows for Brutalism */
+    --soft-yellow: #475569; /* Mute pastel colors so they don't blind the user */
+    --bg-gingham: #0f172a;
+    --surface: #1e293b;
+    --text-main: #f8fafc;
+    --border-dark: #334155;
+    --primary-blue: #60a5fa;
+}
+
+/* Ensure the background grid safely inverts */
+[data-theme="dark"] body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+[data-theme="dark"] .module-card, 
+[data-theme="dark"] .chat-message, 
+[data-theme="dark"] .dashboard-card,
+[data-theme="dark"] .hero-banner,
+[data-theme="dark"] .navbar,
+[data-theme="dark"] .card,
+[data-theme="dark"] .status-card,
+[data-theme="dark"] .service-card,
+[data-theme="dark"] .placement-card,
+[data-theme="dark"] .academic-card,
+[data-theme="dark"] .checklist-day-card,
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .group-card,
+[data-theme="dark"] .widget-card,
+[data-theme="dark"] .info-card,
+[data-theme="dark"] .hero-card,
+[data-theme="dark"] .cloud-container,
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--border-color);
+    box-shadow: 4px 4px 0px var(--shadow-color);
+}
+
+[data-theme="dark"] h1, 
+[data-theme="dark"] h2, 
+[data-theme="dark"] h3, 
+[data-theme="dark"] h4, 
+[data-theme="dark"] p, 
+[data-theme="dark"] span, 
+[data-theme="dark"] label, 
+[data-theme="dark"] a {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .nav-links a {
+    color: var(--text-muted);
+}
+[data-theme="dark"] .nav-links a:hover, [data-theme="dark"] .nav-links a.active {
+    color: var(--text-color);
+    background: #334155;
+    border-color: var(--border-color);
 }
 
 h1, h2, h3 {
