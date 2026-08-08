@@ -50,13 +50,13 @@
  align-items: center;
  text-decoration: none;
  color: inherit;
- transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+ transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
  cursor: pointer;
  }
 
  .module-card:hover {
- transform: translateY(-5px);
- box-shadow: 8px 8px 0px var(--border-dark, #000000);
+ transform: translateY(-6px);
+ box-shadow: 6px 6px 0px rgba(15, 23, 42, 0.85);
  background: var(--soft-yellow, #fff9c4);
  }
 
@@ -86,8 +86,15 @@
  <svg class="widget-sticker" style="top: 8%; left: 4%; width: 45px; animation-delay: 0s; transform: rotate(-12deg);" viewBox="0 0 100 80" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
  <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
  </svg>
+ <svg class="widget-sticker" style="top: 22%; left: 2%; width: 42px; transform: rotate(-5deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
+ <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
  <svg class="widget-sticker" style="top: 35%; left: 8%; width: 50px; animation-delay: 0.5s; transform: rotate(15deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
  <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 50%; left: 5%; width: 46px; transform: rotate(18deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
+ <rect x="10" y="10" width="80" height="80" rx="4"/>
+ <line x1="25" y1="35" x2="75" y2="35" stroke="#2C3E50" stroke-width="3"/>
  </svg>
  <svg class="widget-sticker" style="top: 65%; left: 3%; width: 40px; animation-delay: 1.2s; transform: rotate(-8deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
  <rect x="15" y="60" width="70" height="20" rx="3" fill="#A8E6CF"/>
@@ -113,11 +120,18 @@
  <svg class="widget-sticker" style="top: 12%; right: 6%; width: 40px; animation-delay: 0.3s; transform: rotate(25deg);" viewBox="0 0 100 100" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
  <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
  </svg>
+ <svg class="widget-sticker" style="top: 28%; right: 10%; width: 38px; transform: rotate(-12deg);" viewBox="0 0 100 100" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
+ <rect x="15" y="60" width="70" height="20" rx="3" fill="#FFF9C4"/>
+ <rect x="20" y="40" width="60" height="20" rx="3" fill="#A8E6CF"/>
+ </svg>
  <svg class="widget-sticker" style="top: 38%; right: 4%; width: 45px; animation-delay: 1.8s; transform: rotate(-18deg);" viewBox="0 0 100 80" fill="#FFF9C4" stroke="#2C3E50" stroke-width="3">
  <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
  </svg>
  <svg class="widget-sticker" style="top: 60%; right: 9%; width: 50px; animation-delay: 0.7s; transform: rotate(8deg);" viewBox="0 0 100 100" fill="#D1C4E9" stroke="#2C3E50" stroke-width="3">
  <path d="M50 10 L60 40 L90 50 L60 60 L50 90 L40 60 L10 50 L40 40 Z"/>
+ </svg>
+ <svg class="widget-sticker" style="top: 72%; right: 3%; width: 44px; transform: rotate(15deg);" viewBox="0 0 100 80" fill="#A8E6CF" stroke="#2C3E50" stroke-width="3">
+ <path d="M10 20 C10 10, 20 10, 50 10 C80 10, 90 10, 90 20 C90 30, 80 30, 50 30 C30 30, 20 40, 15 50 C18 40, 15 30, 10 20 Z"/>
  </svg>
  <svg class="widget-sticker" style="top: 82%; right: 5%; width: 35px; animation-delay: 1.4s; transform: rotate(-22deg);" viewBox="0 0 100 100" fill="#FFB6C1" stroke="#2C3E50" stroke-width="3">
  <rect x="10" y="10" width="80" height="80" rx="4"/>
@@ -137,7 +151,7 @@
  <a href="index.html" class="active">Home</a>
  <a href="dashboard.html">Dashboard</a>
  <a href="chat.html">Assistant</a>
- <a href="#" onclick="handleLogout(event)" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out </a>
+ <a href="#" onclick="handleLogout(event)" class="logout-btn" style="background: #c0392b; color: white; border-radius: 20px; padding: 0.35rem 0.85rem; font-weight: 700; text-decoration: none;">Log out </a>
  </div>
  </nav>
 
