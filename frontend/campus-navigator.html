@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Campus AI | Campus Navigator</title>
+    <title>Synapse | Campus Navigator</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dashboard.css">
     <style>
@@ -192,7 +192,7 @@
 
     <!-- Navbar Reused -->
     <nav class="navbar">
-        <div class="nav-brand">📚 CampusAgenda AI</div>
+        <div class="nav-brand">🔗 Synapse</div>
         <button class="hamburger" id="hamburger">☰</button>
         <div class="nav-links" id="nav-links">
             <a href="index.html">Home</a>
@@ -258,7 +258,7 @@
         // Display-only key, not used for search/directions logic — see team API rule
         const GOOGLE_MAPS_API_KEY = "YOUR_API_KEY_HERE";
 
-        // Placeholder Campus Center Lat/Lng (e.g. Smart Campus Center)
+        // Placeholder Campus Center Lat/Lng (e.g. Synapse Center)
         const CAMPUS_CENTER = { lat: 17.4455, lng: 78.3488 };
 
         // Mock Campus Locations Array
@@ -516,7 +516,7 @@
             container.innerHTML = `
                 <div class="canvas-map-fallback">
                     <div style="position: absolute; top: 15px; left: 15px; background: var(--surface); border: 2px solid var(--border-dark); border-radius: 12px; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-family: var(--font-heading); box-shadow: 2px 2px 0px var(--border-dark); z-index: 5;">
-                        🗺️ Smart Campus Vector Grid (${CAMPUS_CENTER.lat}, ${CAMPUS_CENTER.lng})
+                        🗺️ Synapse Vector Grid (${CAMPUS_CENTER.lat}, ${CAMPUS_CENTER.lng})
                     </div>
                     ${pinsHtml}
                 </div>

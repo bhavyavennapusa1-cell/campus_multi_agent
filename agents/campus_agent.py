@@ -1,5 +1,5 @@
 """
-Campus Agent for Smart Campus Multi-Agent System.
+Campus Agent for Synapse Multi-Agent System.
 Handles hostel regulations, campus events/hackathons, and grievance SOPs using RAG & Memory.
 """
 

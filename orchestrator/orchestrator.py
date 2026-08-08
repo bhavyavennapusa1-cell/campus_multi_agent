@@ -1,5 +1,5 @@
 """
-Orchestrator for Smart Campus Multi-Agent System.
+Orchestrator for Synapse Multi-Agent System.
 Parses user queries using LLM planner (with keyword planner fallback), resolves context from memory,
 caps plan steps (max 5), dispatches to specialized agents, logs conversation turns, and returns completed steps.
 """
@@ -451,7 +451,7 @@ def synthesize_response(user_message: str, steps: list[PlanStep], profile: dict 
         res_citation = res.citation if (res and hasattr(res, 'citation')) else ""
         agent_results_str += f"- Agent: {s.agent}, Action: {s.action}, Status: {res_status}, Message: {res_msg}, Data: {res_data}, Citation: {res_citation}\n"
 
-    system_prompt = f"""You are CampusAgenda AI, a warm and efficient assistant for a university student. You've already gathered results from one or more specialized backend agents. Your job now is to turn those raw results into ONE natural, coherent, personalized reply — not a list of agent outputs stitched together.
+    system_prompt = f"""You are Synapse, a warm and efficient assistant for a university student. You've already gathered results from one or more specialized backend agents. Your job now is to turn those raw results into ONE natural, coherent, personalized reply — not a list of agent outputs stitched together.
 
 Student: {prof_name}, {prof_branch}, Hostel {prof_hostel}, Attendance {prof_att}%
 

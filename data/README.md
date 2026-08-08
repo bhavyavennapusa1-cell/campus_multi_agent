@@ -1,6 +1,6 @@
 # Campus Multi-Agent System — Structured Datasets Documentation
 
-This directory contains the authoritative structured datasets for the Smart Campus Multi-Agent Assistant.
+This directory contains the authoritative structured datasets for the Synapse Multi-Agent Assistant.
 Each domain maintains **one shared dataset** structured cleanly as JSON records for deterministic agent retrieval and relational joining.
 
 ---

@@ -65,7 +65,7 @@ def init_db():
                 skills TEXT DEFAULT '["Python", "Java", "Data Structures", "SQL"]',
                 academic_interests TEXT DEFAULT '["Artificial Intelligence", "Distributed Systems"]',
                 courses_in_progress TEXT DEFAULT '["CS301", "CS302", "CS303"]',
-                current_projects TEXT DEFAULT '["Smart Campus Multi-Agent System"]',
+                current_projects TEXT DEFAULT '["Synapse Multi-Agent System"]',
                 events_interested_in TEXT DEFAULT '["Axiom AI Hackathon", "Google Resume Workshop"]',
                 learning_goals TEXT DEFAULT '["Master System Design", "Build LLM Agent Workflows"]'
             );
@@ -85,7 +85,7 @@ def init_db():
             "skills": "TEXT DEFAULT '[\"Python\", \"Java\", \"Data Structures\", \"SQL\"]'",
             "academic_interests": "TEXT DEFAULT '[\"Artificial Intelligence\", \"Distributed Systems\"]'",
             "courses_in_progress": "TEXT DEFAULT '[\"CS301\", \"CS302\", \"CS303\"]'",
-            "current_projects": "TEXT DEFAULT '[\"Smart Campus Multi-Agent System\"]'",
+            "current_projects": "TEXT DEFAULT '[\"Synapse Multi-Agent System\"]'",
             "events_interested_in": "TEXT DEFAULT '[\"Axiom AI Hackathon\", \"Google Resume Workshop\"]'",
             "learning_goals": "TEXT DEFAULT '[\"Master System Design\", \"Build LLM Agent Workflows\"]'"
         }
@@ -214,7 +214,7 @@ def create_session(session_id: str, profile_overrides: dict = None) -> dict:
             "skills": json.dumps(["Python", "Java", "Data Structures", "SQL"]),
             "academic_interests": json.dumps(["Artificial Intelligence", "Distributed Systems"]),
             "courses_in_progress": json.dumps(["CS301", "CS302", "CS303"]),
-            "current_projects": json.dumps(["Smart Campus Multi-Agent System"]),
+            "current_projects": json.dumps(["Synapse Multi-Agent System"]),
             "events_interested_in": json.dumps(["Axiom AI Hackathon", "Google Resume Workshop"]),
             "learning_goals": json.dumps(["Master System Design", "Build LLM Agent Workflows"])
         }
@@ -240,7 +240,7 @@ def create_session(session_id: str, profile_overrides: dict = None) -> dict:
             "skills": json.dumps(["Python", "Java", "Data Structures", "SQL"]),
             "academic_interests": json.dumps(["Artificial Intelligence", "Distributed Systems"]),
             "courses_in_progress": json.dumps(["CS301", "CS302", "CS303"]),
-            "current_projects": json.dumps(["Smart Campus Multi-Agent System"]),
+            "current_projects": json.dumps(["Synapse Multi-Agent System"]),
             "events_interested_in": json.dumps(["Axiom AI Hackathon", "Google Resume Workshop"]),
             "learning_goals": json.dumps(["Master System Design", "Build LLM Agent Workflows"])
         }

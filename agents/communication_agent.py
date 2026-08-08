@@ -1,5 +1,5 @@
 """
-Communication Agent for Smart Campus Multi-Agent System.
+Communication Agent for Synapse Multi-Agent System.
 Handles contacts lookup (via ContactsRepo interface), local chat groups (via SQLite operational tables),
 email drafting with human-in-the-loop approval, Gmail sending, and Google Calendar scheduling.
 """

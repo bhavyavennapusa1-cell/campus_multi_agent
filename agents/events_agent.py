@@ -1,5 +1,5 @@
 """
-Events Agent for Smart Campus Multi-Agent System.
+Events Agent for Synapse Multi-Agent System.
 Handles event registration, waitlisting, and Google Calendar event sync using adapter pattern.
 """
 

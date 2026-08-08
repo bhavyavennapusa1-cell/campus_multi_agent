@@ -12,12 +12,12 @@ endobj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 5 0 obj
-<< /Length 520 >>
+<< /Length 510 >>
 stream
 BT
 /F1 18 Tf
 50 750 Td
-(Smart Campus AI - Course Syllabus) Tj
+(Synapse - Course Syllabus) Tj
 /F1 14 Tf
 0 -30 Td
 (CSE301: Distributed Systems & Cloud Computing) Tj
@@ -64,5 +64,5 @@ xref
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-877
+867
 %%EOF

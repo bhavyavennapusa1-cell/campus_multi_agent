@@ -1,5 +1,5 @@
-# 📚 CampusAgenda AI
-### Smart Campus Multi-Agent AI System — built for AgentX National Level Hackathon 2026
+# 🔗 Synapse
+### Synapse Multi-Agent AI System — built for AgentX National Level Hackathon 2026
 
 Vasavi College of Engineering (Autonomous) · HackerRank Campus Crew
 
@@ -12,7 +12,7 @@ Vasavi College of Engineering (Autonomous) · HackerRank Campus Crew
 
 Educational institutions run on disconnected platforms — academics, placements, exams, events, hostel, library — and students spend more time switching tabs than getting things done.
 
-CampusAgenda AI is a proof-of-concept **multi-agent AI system**, not a chatbot with a system prompt. A user sends one natural-language request; an **Orchestrator agent** plans the steps, decides which specialized agents are needed, and dispatches them — pulling from a shared knowledge base, calling tools, and remembering who's asking — to return one coherent answer.
+Synapse is a proof-of-concept **multi-agent AI system**, not a chatbot with a system prompt. A user sends one natural-language request; an **Orchestrator agent** plans the steps, decides which specialized agents are needed, and dispatches them — pulling from a shared knowledge base, calling tools, and remembering who's asking — to return one coherent answer.
 
 ## Why this isn't "just a chatbot"
 

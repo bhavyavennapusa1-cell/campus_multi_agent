@@ -1,5 +1,5 @@
 """
-Academic Agent for Smart Campus Multi-Agent System.
+Academic Agent for Synapse Multi-Agent System.
 Handles student attendance checks, exam schedules, study plans, Todoist task integration,
 and Google Calendar scheduling using adapter pattern with live/mock fallbacks.
 """

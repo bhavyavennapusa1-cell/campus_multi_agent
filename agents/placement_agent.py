@@ -1,5 +1,5 @@
 """
-Placement Agent for Smart Campus Multi-Agent System.
+Placement Agent for Synapse Multi-Agent System.
 Evaluates placement eligibility, internship opportunities, GitHub profile metrics,
 and job portal data using adapter pattern with live/mock fallback handlers.
 """

@@ -173,7 +173,7 @@ window.downloadIcsFile = function(title, dateStr, location = 'Campus Main Block'
         const icsContent = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
-            'PRODID:-//Smart Campus Multi-Agent//NONSGML v1.0//EN',
+            'PRODID:-//Synapse Multi-Agent//NONSGML v1.0//EN',
             'CALSCALE:GREGORIAN',
             'METHOD:PUBLISH',
             'BEGIN:VEVENT',
@@ -260,7 +260,7 @@ Issued Date  : August 2026
 
 ===================================================================
 Authorized by: Office of Student Affairs & Financial Aid
-Smart Campus Multi-Agent Network (AgentX 2026)
+Synapse Multi-Agent Network (AgentX 2026)
 ===================================================================`;
 
         const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8;' });

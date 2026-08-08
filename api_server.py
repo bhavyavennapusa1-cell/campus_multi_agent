@@ -1,5 +1,5 @@
 """
-API Server for Smart Campus Multi-Agent System.
+API Server for Synapse Multi-Agent System.
 Exposes FastAPI REST endpoints for HTML/CSS/JS frontend integration and multi-agent query orchestration.
 """
 

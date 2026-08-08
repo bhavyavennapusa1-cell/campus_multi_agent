@@ -106,7 +106,7 @@
       "skills": ["Python", "Java", "SQL", "FastAPI", "RAG Systems", "BM25 Search"],
       "academic_interests": ["Artificial Intelligence", "Multi-Agent Systems", "Database Optimization"],
       "courses_in_progress": ["CS301 Design & Analysis of Algorithms", "CS302 DBMS", "CS303 Operating Systems"],
-      "current_projects": ["Smart Campus Multi-Agent Assistant System"],
+      "current_projects": ["Synapse Multi-Agent Assistant System"],
       "events_interested_in": ["Axiom 2026 AI Hackathon", "Google Placement Workshop"],
       "learning_goals": ["Build Production Multi-Agent Workflows", "Secure Dream Tier Summer Internship"]
     }

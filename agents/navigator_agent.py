@@ -1,5 +1,5 @@
 """
-Campus Navigator Agent for Smart Campus Multi-Agent System.
+Campus Navigator Agent for Synapse Multi-Agent System.
 Handles on-campus and off-campus directions using campus DB and Google Maps API fallback.
 """
 

@@ -1,5 +1,5 @@
 """
-Main entrypoint for Smart Campus Multi-Agent FastAPI backend server.
+Main entrypoint for Synapse Multi-Agent FastAPI backend server.
 Exposes /chat, /transcribe (voice), communication approval, and domain agent REST endpoints
 with static frontend file serving and CORS middleware.
 """
@@ -49,7 +49,7 @@ from shared import user_db
 
 
 app = FastAPI(
-    title="Smart Campus Multi-Agent API",
+    title="Synapse Multi-Agent API",
     description="Backend orchestration API, voice transcription, and multi-agent system endpoints",
     version="1.1.0"
 )
@@ -158,7 +158,7 @@ class LogoutRequest(BaseModel):
 @app.get("/health")
 def health():
     """Liveness check endpoint."""
-    return {"status": "ok", "service": "Smart Campus Multi-Agent System"}
+    return {"status": "ok", "service": "Synapse Multi-Agent System"}
 
 
 # --- Authentication & User Profile Endpoints ---
@@ -360,7 +360,7 @@ def chat(req: ChatRequest):
                 for s in steps
             )
 
-            synthesis_system_prompt = f"""You are the Smart Campus Multi-Agent Orchestrator. You have access to the following live data:
+            synthesis_system_prompt = f"""You are the Synapse Multi-Agent Orchestrator. You have access to the following live data:
 - ACADEMICS: Courses are CSE301 (Distributed Systems, Dr. K.V. Sharma), CSE302 (OS), CSE303 (DB), CSE304 (AI, Dr. S.K. Roy). Overall attendance is 86%. WARNING: CSE304 attendance is 72% (below 75% threshold). Upcoming Exam: Distributed Systems Midterm on Aug 11, 2026.
 - PLACEMENTS: 3-step Backend Developer roadmap: 1. Advanced DSA, 2. System Design, 3. Mock Interviews. Google Internship deadline is Aug 15.
 - EVENTS: AgentX Hackathon on Aug 08; Microservices Workshop on Aug 12.

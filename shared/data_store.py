@@ -1,5 +1,5 @@
 """
-Shared Data Store for Smart Campus Multi-Agent System.
+Shared Data Store for Synapse Multi-Agent System.
 Loads and caches structured JSON datasets from data/ once at import time.
 Provides generic get_by_id(collection, id) helper and domain-specific query helpers.
 Fails gracefully with logging and empty/None returns if any file is missing or malformed.
