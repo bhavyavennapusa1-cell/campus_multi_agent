@@ -513,15 +513,41 @@ def general_synthesis(params: dict) -> AgentResponse:
 
 def web_search_action(params: dict) -> AgentResponse:
     """
-    Fix 2: Web Search Grounding Action for General / External / Technical Queries.
+    Web Search Grounding Action for General / External / Technical Queries.
     Calls knowledge.web_search.search_web_grounding to retrieve grounded search facts & citations.
+    Handles 'no_result' status explicitly with an honest response and topic suggestions.
     """
     from knowledge.web_search import search_web_grounding
     query = params.get("query") or params.get("subject") or "general campus query"
     res = search_web_grounding(query)
 
+    if res.get("status") == "no_result":
+        honest_msg = (
+            f"I don't have grounded information on '{query}'. "
+            "Here is what I can help you with on campus:\n"
+            "• Academics: Timetables, subject attendance, exam schedules, study plans & syllabus.\n"
+            "• Placements: Drive eligibility, company schedules, and registration.\n"
+            "• Events: Technical workshops, hackathons, and calendar reminders.\n"
+            "• Campus Services & Navigation: Block directions, hostel complaints, and faculty contact info."
+        )
+        return AgentResponse(
+            status="no_result",
+            data={
+                "query": query,
+                "title": res.get("title", "No Search Results"),
+                "snippet": res.get("snippet", "No grounded information found."),
+                "url": None,
+                "key_facts": [],
+                "synthesis_text": honest_msg,
+                "source": res.get("source", "web_search_no_result")
+            },
+            message=honest_msg,
+            citation=None
+        )
+
     facts_str = "\n".join([f"• {f}" for f in res.get("key_facts", [])])
-    synthesis_out = f"Web Search Grounding for '{query}':\n{res['snippet']}\n\nKey Findings:\n{facts_str}\n\nReference Link: {res['url']}"
+    ref_link_str = f"\n\nReference Link: {res['url']}" if res.get("url") else ""
+    synthesis_out = f"Web Search Grounding for '{query}':\n{res['snippet']}\n\nKey Findings:\n{facts_str}{ref_link_str}"
 
     return AgentResponse(
         status="success",
@@ -529,13 +555,13 @@ def web_search_action(params: dict) -> AgentResponse:
             "query": query,
             "title": res["title"],
             "snippet": res["snippet"],
-            "url": res["url"],
-            "key_facts": res["key_facts"],
+            "url": res.get("url"),
+            "key_facts": res.get("key_facts", []),
             "synthesis_text": synthesis_out,
             "source": res["source"]
         },
         message=synthesis_out,
-        citation=f"{res['title']} ({res['url']})"
+        citation=f"{res['title']} ({res['url']})" if res.get("url") else None
     )
 
 

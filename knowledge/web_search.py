@@ -105,16 +105,13 @@ def search_web_grounding(query: str) -> dict:
     except Exception as e:
         logger.warning(f"Live web search request failed: {e}")
 
-    # Fallback Grounding Output
-    encoded_q = urllib.parse.quote_plus(query_clean)
+    # Fallback Grounding Output when no results are found
     return {
-        "status": "success",
+        "status": "no_result",
         "query": query_clean,
-        "title": f"Web Search Grounding: {query_clean}",
-        "snippet": f"Web search results retrieved for '{query_clean}' covering key definitions, standard methodologies, and technical documentation.",
-        "url": f"https://www.google.com/search?q={encoded_q}",
-        "key_facts": [
-            f"Grounded technical overview for '{query_clean}' from online documentation and academic reference manuals."
-        ],
-        "source": "web_search_fallback"
+        "title": f"No Search Results Found: {query_clean}",
+        "snippet": "No grounded information found for this query.",
+        "url": None,
+        "key_facts": [],
+        "source": "web_search_no_result"
     }
