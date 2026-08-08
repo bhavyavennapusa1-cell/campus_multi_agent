@@ -966,3 +966,9 @@ document.addEventListener('mousemove', (e) => {
         elem.style.transform = `translate3d(${moveX}px, ${moveY}px, 0px)`;
     });
 });
+
+// Background Grid Spotlight Cursor Tracking
+document.addEventListener('mousemove', (e) => {
+    document.documentElement.style.setProperty('--mouse-x', e.clientX + 'px');
+    document.documentElement.style.setProperty('--mouse-y', e.clientY + 'px');
+});

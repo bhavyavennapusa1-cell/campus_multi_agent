@@ -320,3 +320,20 @@ button:hover, .btn:hover, .btn-pill:hover, .chip:hover {
   }
 }
 
+/* Background Grid Spotlight Cursor Hover Effect */
+body::after { 
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+    
+    background-image: inherit; 
+    background-size: inherit;
+    
+    -webkit-mask-image: radial-gradient(circle 250px at var(--mouse-x, 50vw) var(--mouse-y, 50vh), black 0%, transparent 100%);
+    mask-image: radial-gradient(circle 250px at var(--mouse-x, 50vw) var(--mouse-y, 50vh), black 0%, transparent 100%);
+    
+    filter: brightness(1.15) drop-shadow(0 0 8px rgba(99, 102, 241, 0.4)); 
+}
+
