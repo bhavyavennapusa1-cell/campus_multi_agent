@@ -3,6 +3,7 @@ import json
 import re
 from datetime import datetime, timedelta
 from pathlib import Path
+from shared.youtube_service import resolve_youtube_resource
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 STUDY_RESOURCES_PATH = PROJECT_ROOT / "data" / "study_resources.json"
@@ -146,16 +147,25 @@ def generate_study_plan(subject: str, target_deadline=10) -> dict:
 
         clean_res = []
         for r in st.get("resources", []):
-            u = r.get("url", "")
-            if u in seen_urls:
-                url_duplicates_found = True
-            seen_urls.add(u)
-            clean_res.append({
-                "type": r.get("type", "video"),
-                "title": r.get("title", f"{st['title']} Resource"),
-                "provider": r.get("provider", "Academic Portal"),
-                "url": u
-            })
+            res_type = r.get("type", "video")
+            if res_type == "video":
+                resolved_v = resolve_youtube_resource(display_subject, st["title"], r.get("title", ""))
+                u = resolved_v["url"]
+                if u in seen_urls:
+                    url_duplicates_found = True
+                seen_urls.add(u)
+                clean_res.append(resolved_v)
+            else:
+                u = r.get("url", "https://nptel.ac.in")
+                if u in seen_urls:
+                    url_duplicates_found = True
+                seen_urls.add(u)
+                clean_res.append({
+                    "type": res_type,
+                    "title": r.get("title", f"{st['title']} Reference Notes"),
+                    "provider": r.get("provider", "NPTEL Academic Portal"),
+                    "url": u
+                })
 
         formatted_subtopics.append({
             "subtopic_id": idx + 1,

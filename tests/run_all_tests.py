@@ -4,6 +4,7 @@ Runs Feature 1, Feature 2, Feature 3, and Orchestrator/Synthesis test suites.
 """
 
 import sys
+import unittest
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -65,6 +66,14 @@ def run_all():
     test_batch_varied_open_ended_queries()
     test_dbms_10_day_demo_flow_tracing()
     print("✔ LLM Planner & General Synthesis tests passed!")
+
+    print("\n--- 5. Testing YouTube Resource Resolution & Accuracy ---")
+    from tests.test_youtube_accuracy import TestYouTubeAccuracy
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestYouTubeAccuracy)
+    runner = unittest.TextTestRunner(verbosity=0)
+    res = runner.run(suite)
+    assert res.wasSuccessful(), "YouTube accuracy tests failed!"
+    print("✔ Feature 5 YouTube Resource Resolution tests passed!")
 
     print("\n==================================================")
     print(" ALL BACKEND TEST SUITES COMPLETED WITH 100% SUCCESS!")
