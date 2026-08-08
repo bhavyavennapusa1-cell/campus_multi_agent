@@ -242,6 +242,31 @@ label {
   100% { transform: translateY(0px); }
 }
 
+/* Continuous Floating Animations */
+@keyframes floatShape {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(4deg); }
+}
+
+.sticker-tag, .widget-sticker, .floating-shape, .bg-shape, .decorative-shape, .badge-floating {
+  animation: floatShape 6s ease-in-out infinite;
+  display: inline-block;
+}
+
+.sticker-tag:nth-child(even), .widget-sticker:nth-child(even), .floating-shape:nth-child(even), .bg-shape:nth-child(even), .decorative-shape:nth-child(even) {
+  animation-delay: -3s;
+}
+
+/* Enhanced Card Micro-Interactions */
+.card, .status-card, .nav-card, .checklist-day-card, .academic-card, .feature-card, .group-card, .widget-card, .info-card, .hero-card {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.card:hover, .status-card:hover, .nav-card:hover, .checklist-day-card:hover, .academic-card:hover, .feature-card:hover, .group-card:hover, .widget-card:hover, .info-card:hover, .hero-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 6px 6px 0px var(--border-dark, #2C3E50);
+}
+
 /* Accessibility Reduced Motion Rule */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
